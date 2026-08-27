@@ -1,0 +1,17 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — 404{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('notfound.kicker') }}</div>
+  <h1>{{ t('notfound.title') }}</h1>
+</header>
+<main id="main">
+  <p class="promise" style="margin-top: 0; padding: 0">
+    {{ t('notfound.text_pre') }} <a href="/">{{ t('notfound.link_edition') }}</a>{{ t('notfound.text_mid') }}
+    <a href="/sources">{{ t('notfound.link_sources') }}</a> {{ t('notfound.text_mid2') }}
+    <a href="/categories">{{ t('notfound.link_categories') }}</a>.
+  </p>
+</main>
+{% endblock %}

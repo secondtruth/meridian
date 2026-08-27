@@ -1,0 +1,174 @@
+{% extends 'layout.html.twig' %}
+{% import '_icons.html.twig' as ui %}
+
+{% block title %}Meridian — {{ t('edition.kicker') }} {{ date_human }}{% endblock %}
+
+{% block style %}
+  .fullnotice { max-width: 76rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); }
+  .fullnotice .inner {
+    border: 1px solid var(--line-strong); border-left: 3px solid var(--accent);
+    background: var(--accent-soft); border-radius: .4rem;
+    padding: .6rem .9rem; font-size: .82rem;
+  }
+  .fullnotice a { color: var(--accent); font-weight: 600; }
+
+  .topicnav {
+    max-width: 76rem; margin: 0 auto; padding: .9rem clamp(1rem, 4vw, 2.5rem) 0;
+    display: flex; flex-wrap: wrap; gap: .45rem;
+  }
+  .topicnav a {
+    display: inline-flex; align-items: center; gap: .4rem;
+    text-decoration: none; font-size: .78rem; font-weight: 600;
+    border: 1px solid var(--line-strong); border-radius: 999px;
+    padding: .3rem .8rem; color: var(--muted); background: var(--surface);
+  }
+  .topicnav .icon { width: .95em; height: .95em; vertical-align: 0; }
+  .topicnav a:hover { color: var(--ink); border-color: var(--accent); }
+  .topicnav a b { color: var(--accent); font-variant-numeric: tabular-nums; }
+
+  .sectionhead .spread { margin-left: auto; display: flex; align-items: center; gap: .55rem; }
+  .spread .label { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .sectionhead .persp { font-size: .74rem; color: var(--muted); }
+  .sectionhead .persp b { color: var(--ink); font-weight: 500; }
+
+  .blindspot { margin: -.3rem 0 .8rem; font-size: .74rem; color: var(--muted); }
+  .blindspot b { font-weight: 600; color: var(--ink); letter-spacing: .04em; }
+
+  .dailylimit { max-width: 76rem; margin: 0 auto; padding: .9rem clamp(1rem, 4vw, 2.5rem) 0; }
+  .dailylimit .notice { margin-bottom: 0; }
+  .dailylimit a { color: var(--accent); font-weight: 600; }
+
+  .empty { max-width: 40rem; margin: 3rem auto; text-align: center; color: var(--muted); font-size: .9rem; }
+  .legend {
+    max-width: 76rem; margin: 2.2rem auto 0; padding: 0 clamp(1rem, 4vw, 2.5rem);
+    font-size: .72rem; color: var(--muted);
+  }
+  .legend a { color: var(--accent); }
+  .legend .sw { display: inline-block; width: .55rem; height: .55rem; border-radius: 2px; margin: 0 .2rem 0 .6rem; vertical-align: baseline; }
+{% endblock %}
+
+{% block topbar_extra %}
+  <div class="modeswitch" role="group" aria-label="{{ t('mode.aria') }}">
+    {% for m in modes %}
+      <a href="/?mode={{ m.value }}" class="{{ m == mode ? 'active' }}"
+         {% if m == mode %}aria-current="page"{% endif %}>{{ t('mode.' ~ m.value) }}</a>
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('edition.kicker') }} · {{ date_human }}</div>
+  <h1>{% if mode.value == 'full' %}{{ t('edition.title_full', window_hours) }}{% else %}{{ t('edition.title_compact') }}{% endif %}</h1>
+  <div class="meta-row">
+    <span class="stat"><b>{{ edition.total }}</b> {{ t('edition.stat_articles') }}</span>
+    <span class="stat"><b>{{ source_count }}</b> {{ t('edition.stat_sources') }}</span>
+    <span class="stat"><b>{{ perspective_count }}</b> {{ t('edition.stat_perspectives') }}</span>
+    {% if fetched_at %}<span>{{ t('edition.as_of', fetched_at|date('H:i')) }}</span>{% endif %}
+  </div>
+  <p class="promise">
+    {% if mode.value == 'full' %}
+      {{ t('edition.promise_full') }}
+    {% else %}
+      <strong>{{ t('edition.promise_compact_strong') }}</strong> {{ t('edition.promise_compact', max_total) }}
+    {% endif %}
+  </p>
+</header>
+
+{% if mode.value == 'full' %}
+<div class="fullnotice">
+  <div class="inner">
+    {{ t('edition.full_notice_pre') }} <strong>{{ t('edition.full_notice_mode') }}</strong>{{ t('edition.full_notice_mid') }}
+    <a href="/">{{ t('edition.full_notice_link') }}</a> {{ t('edition.full_notice_post') }}
+  </div>
+</div>
+{% endif %}
+
+{% if daily_limit_reached %}
+<div class="dailylimit">
+  <div class="notice">
+    <strong>{{ t('edition.limit_strong') }}</strong>
+    {{ t('edition.limit_text', read_today) }}
+    <a href="/balance">{{ t('edition.limit_link') }}</a>
+  </div>
+</div>
+{% endif %}
+
+{% if muted_topics is not empty %}
+<div class="dailylimit">
+  <div class="notice">
+    {{ t('edition.muted_text') }}
+    {% for topic in muted_topics %}<strong>{{ label_topic(topic) }}</strong>{% if not loop.last %}, {% endif %}{% endfor %}.
+    <a href="/account">{{ t('edition.muted_link') }}</a>
+  </div>
+</div>
+{% endif %}
+
+{% if edition.sections %}
+<nav class="topicnav" aria-label="{{ t('edition.topics_aria') }}">
+  {% for section in edition.sections %}
+    <a href="#{{ section.topic }}">{{ ui.icon('topic-' ~ section.topic) }} {{ label_topic(section.topic) }} <b>{{ section.articles|length }}</b></a>
+  {% endfor %}
+</nav>
+{% endif %}
+
+<main id="main">
+  {% for section in edition.sections %}
+  <section id="{{ section.topic }}">
+    <div class="sectionhead">
+      <h2>{{ label_topic(section.topic) }}</h2>
+      <span class="count">{{ section.articles|length == 1 ? t('edition.articles_count_one') : t('edition.articles_count', section.articles|length) }}</span>
+      <span class="persp">{{ t('edition.perspectives_in') }}
+        <b>{% for p in section.diversity.coveredPerspectives %}{{ label_perspective(p) }}{% if not loop.last %} · {% endif %}{% endfor %}</b>
+      </span>
+      <span class="spread">
+        <span class="label">{{ t('edition.spectrum') }}</span>
+        {% set d = section.economicDistribution %}
+        {% include '_axis_grid.html.twig' with {
+          'grid': section.axisGrid,
+          'aria': t('edition.coverage_summary', d[0] + d[1], d[2], d[3] + d[4]),
+        } only %}
+      </span>
+    </div>
+    {% if section.missingEconomicSides %}
+    <p class="blindspot">
+      <b>{{ t('edition.blindspot_intro') }}</b>
+      {% for side in section.missingEconomicSides %}{{ t('edition.blindspot_' ~ side) }}{% if not loop.last %} · {% endif %}{% endfor %}
+    </p>
+    {% endif %}
+    <div class="cards">
+      {% for article in section.articles %}
+        {% include '_article_card.html.twig' with {'interactive': true} %}
+      {% endfor %}
+    </div>
+  </section>
+  {% else %}
+  <div class="empty">
+    {% if no_data %}{{ t('edition.empty_no_data') }}{% else %}{{ t('edition.empty_no_articles') }}{% endif %}
+  </div>
+  {% endfor %}
+
+  {% if edition.sections %}
+  <div class="legend">
+    {{ t('edition.legend_intro') }}
+    <span class="sw" style="background: var(--econ-0)"></span>{{ t('edition.legend_econ') }}<span class="sw" style="background: var(--econ-4)"></span> ·
+    <span class="sw" style="background: var(--cult-0)"></span>{{ t('edition.legend_cult') }}<span class="sw" style="background: var(--cult-4)"></span> ·
+    {{ t('edition.legend_rel') }} · {{ t('edition.legend_more') }} <a href="/methodology">{{ t('edition.legend_more_link') }}</a>.
+  </div>
+  {% endif %}
+</main>
+{% endblock %}
+
+{% block footer %}
+  {% if edition.total == 0 %}
+    <p>{{ t('ui.footer_tagline') }}</p>
+  {% elseif mode.value == 'full' %}
+    <p class="enough">{{ t('edition.footer_end') }}</p>
+    <p>{{ t('edition.footer_full', edition.total, window_hours) }}
+       {{ t('edition.footer_back') }} <a href="/">{{ t('edition.footer_back_link') }}</a>.</p>
+  {% else %}
+    <p class="enough">{{ t('edition.footer_enough') }}</p>
+    <p>{{ t('edition.footer_compact', edition.total) }}</p>
+    <p>{{ t('edition.footer_more') }} <a href="/?mode=full">{{ t('edition.footer_more_link') }}</a> {{ t('edition.footer_more_post', window_hours) }}</p>
+  {% endif %}
+{% endblock %}

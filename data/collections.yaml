@@ -1,0 +1,28 @@
+# Curated collections — explicit source lists with finite caps, specified
+# in docs/collections.md. Labels, descriptions and inclusion criteria are
+# user-facing copy and live in the message catalogs under collections.*;
+# this file holds only the machine-readable selection parameters.
+
+- id: good-news
+  sources: [squirrel-news, goodnews-magazin]
+  window_days: 7
+  cap: 12
+  per_source: 6
+
+- id: kids
+  sources: [logo, duda, kindersache]
+  window_days: 7
+  cap: 12
+  per_source: 4
+
+- id: easy-language
+  sources: [nachrichtenleicht]
+  window_days: 7
+  cap: 12
+  per_source: 12
+
+- id: global-south
+  sources: [aljazeera, thehindu, africasacountry, mongabay, ips, bhekisisa, thenewhumanitarian]
+  window_days: 2
+  cap: 12
+  per_source: 3

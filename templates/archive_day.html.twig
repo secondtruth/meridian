@@ -1,0 +1,59 @@
+{% extends 'layout.html.twig' %}
+{% import '_icons.html.twig' as ui %}
+
+{% block title %}Meridian — {{ t('archive.day_title', date_human) }}{% endblock %}
+
+{% block style %}
+  .archivenote { max-width: 76rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); }
+  .archivenote .inner {
+    border: 1px solid var(--line-strong); border-left: 3px solid var(--accent);
+    background: var(--accent-soft); border-radius: .4rem;
+    padding: .6rem .9rem; font-size: .82rem;
+  }
+  .card.gone .srcline .src { color: var(--muted); }
+  .card.gone .note { font-size: .7rem; color: var(--muted); font-style: italic; }
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('archive.day_kicker') }}</div>
+  <h1>{{ t('archive.day_title', date_human) }}</h1>
+  <p class="promise"><a href="/archive">{{ ui.icon('arrow-left') }} {{ t('archive.back') }}</a></p>
+</header>
+
+<div class="archivenote">
+  <div class="inner">{{ t('archive.note') }}</div>
+</div>
+
+<main id="main">
+  {% for section in sections %}
+  <section id="{{ section.topic }}">
+    <div class="sectionhead">
+      <h2>{{ label_topic(section.topic) }}</h2>
+      <span class="count">{{ section.entries|length == 1 ? t('edition.articles_count_one') : t('edition.articles_count', section.entries|length) }}</span>
+    </div>
+    <div class="cards">
+      {% for entry in section.entries %}
+        {% if entry.article %}
+          {% include '_article_card.html.twig' with {'article': entry.article, 'interactive': false, 'read_urls': {}, 'saved_urls': {}} %}
+        {% else %}
+        <article class="card gone">
+          <div class="srcline">
+            <span class="src">{{ entry.stored.source_name }}</span>
+          </div>
+          <h3><a href="{{ entry.stored.link }}" rel="noopener">{{ entry.stored.title }}</a></h3>
+          {% if entry.stored.summary %}<p class="summary">{{ entry.stored.summary }}</p>{% endif %}
+          <p class="note">{{ t('archive.unknown_source') }}</p>
+        </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</main>
+{% endblock %}
+
+{% block footer %}
+  <p class="enough">{{ t('archive.footer_title') }}</p>
+  <p>{{ t('archive.footer_text') }}</p>
+{% endblock %}

@@ -1,0 +1,16 @@
+{# 5×5 coverage grid on the economic (x, left → right) × cultural
+   (y, TAN top — same orientation as the spectrum map) band plane.
+   Expects: grid ([econ][cult] => count), aria; optional offer (dataset
+   reference — cells offered but uncovered render dashed), large (bool).
+   The grid is one image; each cell carries its counts as a tooltip. #}
+{% set has_offer = offer is defined and offer is not null %}
+<span class="axisgrid{{ large|default(false) ? ' large' }}" role="img" aria-label="{{ aria }}">
+  {% for cult in [4, 3, 2, 1, 0] %}
+    {% for econ in 0..4 %}
+      {% set n = grid[econ][cult] %}
+      {% set offered = has_offer and offer[econ][cult] > 0 %}
+      <i class="{{ n > 0 ? 'n' ~ min(n, 3) }}{{ offered and n == 0 ? ' offered' }}"
+         title="{{ label_band('economic', econ) }} × {{ label_band('cultural', cult) }}: {{ has_offer ? t('balance.grid_cell', n, offer[econ][cult]) : n }}"></i>
+    {% endfor %}
+  {% endfor %}
+</span>

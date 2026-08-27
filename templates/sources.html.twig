@@ -1,0 +1,165 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — {{ t('nav.sources') }}{% endblock %}
+
+{% block style %}
+  .mapwrap {
+    background: var(--surface); border: 1px solid var(--line); border-radius: .45rem;
+    padding: 1rem; overflow-x: auto;
+  }
+  .mapwrap svg { display: block; width: 100%; height: auto; min-width: 560px; }
+  .maplegend { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; margin-top: .7rem; font-size: .74rem; color: var(--muted); }
+  .maplegend .sw { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: .3rem; }
+
+  .srcgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr)); gap: .8rem; }
+  .srccard .head { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+  .srccard .head .favicon { align-self: center; }
+  .srccard .head h3 { margin: 0; font-size: 1rem; font-weight: 700; }
+  .srccard .head h3 a { text-decoration: none; }
+  .srccard .head h3 a:hover { color: var(--accent); text-decoration: underline; }
+  .srccard .head .cc { font-size: .72rem; color: var(--muted); letter-spacing: .08em; }
+  .srccard .head .pill { margin-left: auto; }
+  .srccard .gauges { display: flex; flex-wrap: wrap; gap: .8rem; font-size: .66rem; color: var(--muted); }
+  .srccard dl {
+    margin: 0; display: grid; grid-template-columns: auto 1fr; gap: .15rem .8rem;
+    font-size: .76rem; border-top: 1px solid var(--line); padding-top: .55rem;
+  }
+  .srccard dt { color: var(--muted); }
+  .srccard dd { margin: 0; }
+  .srccard details { font-size: .74rem; color: var(--muted); }
+  .srccard details summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+  .srccard details ul { margin: .4rem 0 0; padding-left: 1.1rem; }
+  .srccard details li { margin-bottom: .35rem; }
+  .srccard details a { color: var(--accent); word-break: break-all; }
+  .confidence-low { color: var(--econ-0); font-weight: 600; }
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('sources.kicker') }}</div>
+  <h1>{{ t('sources.title', sources|length) }}</h1>
+  <div class="meta-row">
+    {% for perspective, count in perspective_counts %}
+      <span class="stat"><b>{{ count }}</b> {{ label_perspective(perspective) }}</span>
+    {% endfor %}
+  </div>
+  <p class="promise">{{ t('sources.intro') }}</p>
+</header>
+
+<main id="main">
+  <section>
+    <div class="sectionhead">
+      <h2>{{ t('sources.map_title') }}</h2>
+      <span class="count">{{ t('sources.map_sub') }}</span>
+    </div>
+    <div class="mapwrap">
+      <svg viewBox="0 0 720 460" role="img" aria-label="{{ t('sources.map_aria') }}">
+        <line x1="50" y1="220" x2="690" y2="220" stroke="var(--line-strong)" stroke-width="1"/>
+        <line x1="370" y1="30" x2="370" y2="410" stroke="var(--line-strong)" stroke-width="1"/>
+        <line x1="50" y1="30" x2="50" y2="410" stroke="var(--line)" stroke-width="1"/>
+        <line x1="690" y1="30" x2="690" y2="410" stroke="var(--line)" stroke-width="1"/>
+        <line x1="50" y1="30" x2="690" y2="30" stroke="var(--line)" stroke-width="1"/>
+        <line x1="50" y1="410" x2="690" y2="410" stroke="var(--line)" stroke-width="1"/>
+
+        <text x="55" y="442" font-size="12" fill="var(--muted)">{{ t('sources.map_left') }}</text>
+        <text x="360" y="442" font-size="12" fill="var(--muted)">{{ t('sources.map_centre') }}</text>
+        <text x="655" y="442" font-size="12" fill="var(--muted)">{{ t('sources.map_right') }}</text>
+        <text x="14" y="40" font-size="12" fill="var(--muted)">TAN</text>
+        <text x="14" y="226" font-size="12" fill="var(--muted)">0</text>
+        <text x="14" y="408" font-size="12" fill="var(--muted)">GAL</text>
+
+        {% for point in map_points %}
+          {% set r = point.source.rating %}
+          <g role="img" aria-label="{{ point.source.name }} — {{ rating_summary(r) }}">
+            <title>{{ point.source.name }} — {{ rating_summary(r) }} · {{ t('sources.reliability_summary', r.reliability) }} · {{ t('sources.confidence_summary', t('grade.' ~ r.confidence)) }}</title>
+            <circle cx="{{ point.cx }}" cy="{{ point.cy }}" r="{{ 4 + r.reliability }}"
+                    fill="var(--persp-{{ point.source.perspective }})" fill-opacity="0.85"
+                    stroke="var(--surface)" stroke-width="1.5"/>
+            <text x="{{ point.lx }}" y="{{ point.ly }}" font-size="11" fill="var(--ink)"
+                  text-anchor="{{ point.anchor }}">{{ point.source.id }}</text>
+          </g>
+        {% endfor %}
+      </svg>
+      <div class="maplegend">
+        <span><span class="sw" style="background: var(--persp-dach)"></span>{{ label_perspective('dach') }}</span>
+        <span><span class="sw" style="background: var(--persp-europe)"></span>{{ label_perspective('europe') }}</span>
+        <span><span class="sw" style="background: var(--persp-global-south)"></span>{{ label_perspective('global-south') }}</span>
+        <span><span class="sw" style="background: var(--persp-international)"></span>{{ label_perspective('international') }}</span>
+        <span>{{ t('sources.map_dotsize') }}</span>
+        <span>{{ t('sources.map_axis_note') }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sectionhead">
+      <h2>{{ t('sources.all_title') }}</h2>
+      <span class="count">{{ t('sources.all_sub') }}</span>
+    </div>
+    <div class="srcgrid">
+      {% for source in sources %}
+      {% set r = source.rating %}
+      <article class="card srccard">
+        <div class="head">
+          {% if favicons[source.id] is defined %}
+            <img class="favicon" src="/favicons/{{ favicons[source.id] }}" alt="" width="14" height="14" loading="lazy">
+          {% endif %}
+          <h3><a href="{{ source.homepage }}" rel="noopener">{{ source.name }}</a></h3>
+          <span class="cc">{{ source.country }}</span>
+          <span class="pill">{{ label_perspective(source.perspective) }}</span>
+        </div>
+        <div class="tags">
+          <span class="tag">{{ label_economic(r.economic) }}</span>
+          <span class="tag">{{ label_cultural(r.cultural) }}</span>
+          <span class="tag">{{ label_eu(r.euStance) }}</span>
+          <span class="tag">{{ label_state_influence(r.stateInfluence) }}</span>
+        </div>
+        <div class="gauges">
+          <span class="gauge" title="{{ t('axis.economic_title') }}: {{ r.economic|decimal }}">
+            <span class="name">{{ t('axis.econ_short') }}</span>
+            <span class="track"><span class="dot" style="left: {{ axis_percent(r.economic) }}%; background: var(--econ-{{ band_of(r.economic) }})"></span></span>
+          </span>
+          <span class="gauge" title="{{ t('axis.cultural_title') }}: {{ r.cultural|decimal }}">
+            <span class="name">{{ t('axis.galtan_short') }}</span>
+            <span class="track"><span class="dot" style="left: {{ axis_percent(r.cultural) }}%; background: var(--cult-{{ band_of(r.cultural) }})"></span></span>
+          </span>
+          <span class="gauge" title="{{ t('axis.eu_title') }}: {{ r.euStance|decimal }}">
+            <span class="name">{{ t('axis.eu_short') }}</span>
+            <span class="track"><span class="dot" style="left: {{ axis_percent(r.euStance) }}%; background: var(--accent)"></span></span>
+          </span>
+        </div>
+        <dl>
+          <dt>{{ t('sources.reliability') }}</dt>
+          <dd><span class="rel" role="img" aria-label="{{ r.reliability }}/5">{{ reliability_dots(r.reliability) }}</span> {{ r.reliability }}/5</dd>
+          <dt>{{ t('party_family.label') }}</dt><dd>{{ label_party_family(r.partyFamily) }}</dd>
+          <dt>{{ t('sources.publisher') }}</dt><dd>{{ source.publisher }}</dd>
+          {% if source.wikidata %}
+          <dt>{{ t('sources.wikidata') }}</dt><dd><a href="{{ source.wikidataUrl() }}" rel="noopener">{{ source.wikidata }}</a></dd>
+          {% endif %}
+          <dt>{{ t('sources.ownership') }}</dt><dd>{{ t('ownership.' ~ source.ownership) }} · {{ t('sources.funding') }}: {% for f in source.funding %}{{ t('funding.' ~ f) }}{% if not loop.last %}, {% endif %}{% endfor %}</dd>
+          <dt>{{ t('sources.transparency') }}</dt><dd>{{ t('grade.' ~ r.transparency) }}</dd>
+          <dt>{{ t('sources.confidence') }}</dt><dd class="{{ r.confidence == 'low' ? 'confidence-low' }}">{{ t('grade.' ~ r.confidence) }}</dd>
+          <dt>{{ t('sources.topics') }}</dt><dd>{% for topic in source.topics %}{{ label_topic(topic) }}{% if not loop.last %}, {% endif %}{% endfor %}</dd>
+          <dt>{{ t('sources.in_focus') }}</dt><dd>{{ (in_focus[source.id] ?? 0) == 1 ? t('sources.in_focus_value_one') : t('sources.in_focus_value', in_focus[source.id] ?? 0) }}</dd>
+        </dl>
+        {% if r.evidence %}
+        <details>
+          <summary>{{ t('sources.evidence', r.evidence|length) }}</summary>
+          <ul>
+            {% for e in r.evidence %}
+              <li><a href="{{ e.url }}" rel="noopener">{{ e.url }}</a><br>{{ e.note }}</li>
+            {% endfor %}
+          </ul>
+        </details>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+{% endblock %}
+
+{% block footer %}
+  <p class="enough">{{ t('sources.footer_title') }}</p>
+  <p>{{ t('sources.footer_text') }}</p>
+{% endblock %}

@@ -1,0 +1,223 @@
+# Global-South and international sources — the systematic inclusion of
+# these voices is the product's core differentiation. Ratings still use the
+# European spectrum axes because the product frames them for a DACH/European
+# audience, but state_influence and transparency carry extra weight here.
+
+- id: aljazeera
+  name: Al Jazeera English
+  wikidata: Q4296040
+  country: QA
+  languages: [en]
+  type: online
+  ownership: state
+  publisher: Al Jazeera Media Network
+  funding: [state-budget]
+  perspective: global-south
+  topics: [general]
+  homepage: https://www.aljazeera.com
+  feeds:
+    - https://www.aljazeera.com/xml/rss/all.xml
+  rating:
+    economic: -0.5
+    cultural: -0.5
+    eu_stance: 0.0
+    party_family: nonpartisan
+    reliability: 3
+    transparency: medium
+    state_influence: state-affiliated
+    confidence: high
+    evidence:
+      - url: https://www.aljazeera.com/about-us
+        note: Funded by the Qatari state — strong on Global-South and MENA coverage, systematic blind spot on Qatar and Gulf allies. Rated state-affiliated, reliability capped at 3 for that reason.
+
+- id: thehindu
+  name: The Hindu
+  wikidata: Q926175
+  country: IN
+  languages: [en]
+  type: newspaper
+  ownership: private
+  publisher: Kasturi & Sons
+  funding: [subscription, advertising]
+  perspective: global-south
+  topics: [general]
+  homepage: https://www.thehindu.com
+  feeds:
+    - https://www.thehindu.com/news/international/feeder/default.rss
+  rating:
+    economic: -1.0
+    cultural: -1.0
+    eu_stance: 0.0
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://www.thehindu.com/aboutus/
+        note: Family-owned (Kasturi & Sons) legacy paper; centre-left by Indian standards, independent of the Modi government — a perspective on trade, climate and geopolitics rarely visible in DACH media.
+
+- id: africasacountry
+  name: Africa Is a Country
+  wikidata: Q55691381
+  country: US
+  languages: [en]
+  type: online
+  ownership: community
+  publisher: Africa Is a Country
+  funding: [donations, grants]
+  perspective: global-south
+  topics: [general]
+  homepage: https://africasacountry.com
+  feeds:
+    - https://africasacountry.com/feed
+  rating:
+    economic: -2.5
+    cultural: -2.5
+    eu_stance: -0.5
+    party_family: left
+    reliability: 3
+    transparency: medium
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://africasacountry.com/about
+        note: Explicitly left, pan-Africanist commentary platform — opinion-forward, so reliability reflects analysis/opinion mix rather than factual errors. Mildly EU-critical from a postcolonial angle.
+
+- id: mongabay
+  name: Mongabay
+  wikidata: Q1944430
+  country: US
+  languages: [en]
+  type: ngo-media
+  ownership: foundation
+  publisher: Mongabay.org
+  funding: [grants, donations]
+  perspective: global-south
+  topics: [climate]
+  homepage: https://news.mongabay.com
+  feeds:
+    - https://news.mongabay.com/feed/
+  rating:
+    economic: -0.5
+    cultural: -1.0
+    eu_stance: 0.0
+    party_family: nonpartisan
+    reliability: 5
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://news.mongabay.com/about/
+        note: Non-profit environmental news with local correspondents across the tropics; rigorous sourcing, corrections policy, no paywall — classified global-south for its reporting network, not its HQ.
+
+- id: bhekisisa
+  name: Bhekisisa
+  country: ZA
+  languages: [en]
+  type: ngo-media
+  ownership: foundation
+  publisher: Bhekisisa Centre for Health Journalism
+  funding: [grants, sponsorship]
+  perspective: global-south
+  topics: [health]
+  homepage: https://bhekisisa.org
+  feeds:
+    - https://bhekisisa.org/feed/
+  rating:
+    economic: -1.0
+    cultural: -1.5
+    eu_stance: 0.0
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://bhekisisa.org/what-is-bhekisisa/
+        note: African health-journalism centre (spun off the Mail & Guardian in 2019), evidence-based solutions journalism with a declared social-justice lens; funders disclosed.
+      - url: https://en.wikipedia.org/wiki/Bhekisisa_Centre_for_Health_Journalism
+        note: Primary funder is the Gates Foundation — itself a major global-health actor Bhekisisa covers; the uncomfortable dependency is documented (Wits study on possible subtle donor influence) and priced into confidence, not hidden.
+
+- id: occrp
+  name: OCCRP
+  wikidata: Q7102061
+  country: US
+  languages: [en]
+  type: ngo-media
+  ownership: foundation
+  publisher: Journalism Development Network, Inc.
+  funding: [grants, government-grants]
+  perspective: international
+  topics: [democracy]
+  homepage: https://www.occrp.org
+  feeds:
+    - https://www.occrp.org/en/feed
+  rating:
+    economic: -0.5
+    cultural: -1.0
+    eu_stance: 1.0
+    party_family: nonpartisan
+    reliability: 4
+    transparency: medium
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://www.occrp.org/en/about-us
+        note: Cross-border investigative network (70+ member centres, strongest in Eastern Europe/Caucasus/Central Asia) with first-rate investigative standards; US non-profit, operationally run from Amsterdam.
+      - url: https://www.dropsitenews.com/p/occrp-budget-funding-us-government-usaid
+        note: NDR/Drop Site (2024) documented that ~52% of 2013–2024 spending came from the US government incl. reported approval rights over senior staff, which OCCRP's board disputes; the 2025 US aid freeze then cut ~29% of its budget. Transparency medium and confidence medium reflect this unresolved dispute, not the journalism itself.
+
+- id: thenewhumanitarian
+  name: The New Humanitarian
+  wikidata: Q1665444
+  country: CH
+  languages: [en]
+  type: ngo-media
+  ownership: community
+  publisher: The New Humanitarian
+  funding: [grants, donations]
+  perspective: global-south
+  topics: [migration]
+  homepage: https://www.thenewhumanitarian.org
+  feeds:
+    - https://www.thenewhumanitarian.org/rss.xml
+  rating:
+    economic: -1.0
+    cultural: -1.5
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://www.thenewhumanitarian.org/about-us/our-funding-and-reports
+        note: Ex-UN news service IRIN, independent Swiss association since 2016; funded by Western donor governments and foundations with a self-imposed 25% single-donor cap, all donors listed. News-first crisis reporting with an explicit humanitarian-advocacy mission and correspondents across the Global South.
+
+- id: ips
+  name: Inter Press Service
+  wikidata: Q1665834
+  country: IT
+  languages: [en]
+  type: agency
+  ownership: foundation
+  publisher: Inter Press Service International Association
+  funding: [grants, un-partnerships]
+  perspective: global-south
+  topics: [general]
+  homepage: https://www.ipsnews.net
+  feeds:
+    - https://www.ipsnews.net/feed/
+  rating:
+    economic: -1.5
+    cultural: -1.5
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 4
+    transparency: medium
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://www.ipsnews.net/about-us/
+        note: News agency founded to give the Global South a voice in international coverage; development-journalism tradition, close to UN institutions (reflected in mild pro-multilateral lean).

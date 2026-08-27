@@ -1,0 +1,110 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — {{ t('nav.publishers') }}{% endblock %}
+
+{% block style %}
+  .pubgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(23rem, 1fr)); gap: .8rem; }
+  .pubcard.group { border-color: var(--accent); }
+  .pubcard .head { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+  .pubcard .head h3 { margin: 0; font-size: 1.02rem; font-weight: 700; }
+  .pubcard .head .cc { font-size: .72rem; color: var(--muted); letter-spacing: .08em; }
+  .pubcard .head .pill { margin-left: auto; }
+  .pubcard .count-badge {
+    margin-left: auto; font-size: .66rem; font-weight: 600; color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .pubcard .meta { font-size: .74rem; color: var(--muted); }
+  .pubcard .meta b { color: var(--ink); font-weight: 600; }
+  .pubcard .outlets { list-style: none; margin: 0; padding: .55rem 0 0; border-top: 1px solid var(--line); display: grid; gap: .55rem; }
+  .pubcard .outlet { display: flex; flex-direction: column; gap: .28rem; }
+  .pubcard .outlet .line { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
+  .pubcard .outlet .line a { text-decoration: none; font-weight: 600; font-size: .86rem; }
+  .pubcard .outlet .line a:hover { color: var(--accent); text-decoration: underline; }
+  .pubcard .outlet .rel { margin-left: auto; font-size: .74rem; }
+  .pubcard dl {
+    margin: 0; display: grid; grid-template-columns: auto 1fr; gap: .15rem .8rem;
+    font-size: .74rem; border-top: 1px solid var(--line); padding-top: .5rem;
+  }
+  .pubcard dt { color: var(--muted); }
+  .pubcard dd { margin: 0; }
+  .band-dot {
+    display: inline-block; width: .55rem; height: .55rem; border-radius: 50%;
+    vertical-align: -1px; margin-right: .25rem;
+  }
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('publishers.kicker') }}</div>
+  <h1>{{ t('publishers.title', publisher_count, source_count) }}</h1>
+  <div class="meta-row">
+    <span class="stat"><b>{{ publisher_count }}</b> {{ t('publishers.stat_publishers') }}</span>
+    <span class="stat"><b>{{ group_count }}</b> {{ t('publishers.stat_groups') }}</span>
+    <span class="stat"><b>{{ source_count }}</b> {{ t('publishers.stat_outlets') }}</span>
+  </div>
+  <p class="promise">{{ t('publishers.intro') }}</p>
+</header>
+
+<main id="main">
+  <section>
+    <div class="sectionhead">
+      <h2>{{ t('publishers.list_title') }}</h2>
+      <span class="count">{{ t('publishers.list_sub') }}</span>
+    </div>
+    <div class="pubgrid">
+      {% for publisher in publishers %}
+      <article class="card pubcard {{ publisher.isGroup ? 'group' }}">
+        <div class="head">
+          <h3>{{ publisher.name }}</h3>
+          <span class="cc">{{ publisher.countries|join(' · ') }}</span>
+          {% if publisher.isGroup %}
+            <span class="pill">{{ t('publishers.group_badge', publisher.outletCount) }}</span>
+          {% else %}
+            <span class="count-badge">{{ t('publishers.single_badge') }}</span>
+          {% endif %}
+        </div>
+        <div class="tags">
+          {% for ownership in publisher.ownerships %}
+            <span class="tag">{{ t('ownership.' ~ ownership) }}</span>
+          {% endfor %}
+          <span class="tag">
+            <span class="band-dot" style="background: var(--econ-{{ band_of(publisher.averageEconomic) }})"></span>{{ label_economic(publisher.averageEconomic) }}
+          </span>
+          <span class="tag">
+            <span class="band-dot" style="background: var(--cult-{{ band_of(publisher.averageCultural) }})"></span>{{ label_cultural(publisher.averageCultural) }}
+          </span>
+        </div>
+        <ul class="outlets">
+          {% for outlet in publisher.outlets %}
+          {% set r = outlet.rating %}
+          <li class="outlet">
+            <div class="line">
+              <a href="{{ outlet.homepage }}" rel="noopener">{{ outlet.name }}</a>
+              <span class="pill">{{ label_perspective(outlet.perspective) }}</span>
+              <span class="rel">{{ reliability_dots(r.reliability) }}</span>
+            </div>
+            <div class="tags">
+              <span class="tag">{{ label_economic(r.economic) }}</span>
+              <span class="tag">{{ label_cultural(r.cultural) }}</span>
+              <span class="tag">{{ label_eu(r.euStance) }}</span>
+              <span class="tag">{{ label_state_influence(r.stateInfluence) }}</span>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        <dl>
+          <dt>{{ t('publishers.funding') }}</dt><dd>{% for f in publisher.fundings %}{{ t('funding.' ~ f) }}{% if not loop.last %}, {% endif %}{% endfor %}</dd>
+          <dt>{{ t('publishers.reliability') }}</dt>
+          <dd>{% if publisher.minReliability == publisher.maxReliability %}{{ publisher.minReliability }}/5{% else %}{{ publisher.minReliability }}–{{ publisher.maxReliability }}/5{% endif %}</dd>
+        </dl>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+{% endblock %}
+
+{% block footer %}
+  <p class="enough">{{ t('publishers.footer_title') }}</p>
+  <p>{{ t('publishers.footer_text') }}</p>
+{% endblock %}

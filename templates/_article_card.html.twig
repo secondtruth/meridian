@@ -1,0 +1,62 @@
+{# One article card. Expects: article, interactive (bool), read_urls,
+   saved_urls. Interactive mode adds read state, watchlist and report
+   actions — only for articles the edition itself resolves (see
+   docs/accounts.md); collection pages render read-only cards. #}
+{% import '_icons.html.twig' as ui %}
+{% set r = article.source.rating %}
+{% set is_read = interactive and read_urls[article.item.link] is defined %}
+<article class="card{{ is_read ? ' is-read' }}">
+  <div class="srcline">
+    {% if favicons[article.source.id] is defined %}
+      <img class="favicon" src="/favicons/{{ favicons[article.source.id] }}" alt="" width="14" height="14" loading="lazy">
+    {% endif %}
+    <span class="src">{{ article.source.name }}</span>
+    <span class="cc">{{ article.source.country }}</span>
+    <span class="pill">{{ label_perspective(article.source.perspective) }}</span>
+    {% if is_read %}<span class="readmark" title="{{ t('edition.read_title') }}">{{ ui.icon('check') }}</span>{% endif %}
+    <span class="time">{{ article.item.published|reltime }}</span>
+  </div>
+  <h3><a href="{{ article.item.link }}" rel="noopener" {% if interactive %}data-article="{{ article.item.link }}"{% endif %}>{{ article.item.title }}</a></h3>
+  {% if article.item.summary %}<p class="summary">{{ article.item.summary }}</p>{% endif %}
+  {% if article.alsoCoveredBy is not empty %}
+  <p class="alsoby">
+    <span class="label">{{ t('edition.also_covered') }}</span>
+    {% for telling in article.alsoCoveredBy %}<a href="{{ telling.item.link }}" rel="noopener" title="{{ telling.item.title }}" {% if interactive %}data-article="{{ telling.item.link }}"{% endif %}>{{ telling.source.name }}</a> <span class="lean">({{ label_economic(telling.source.rating.economic) }})</span>{{ not loop.last ? ' · ' }}{% endfor %}
+  </p>
+  {% endif %}
+  <div class="tags">
+    <span class="tag">{{ label_economic(r.economic) }}</span>
+    <span class="tag">{{ label_cultural(r.cultural) }}</span>
+    <span class="tag">{{ label_eu(r.euStance) }}</span>
+    {% if r.stateInfluence != 'none' %}<span class="tag">{{ label_state_influence(r.stateInfluence) }}</span>{% endif %}
+  </div>
+  <div class="instruments">
+    <span class="gauge" title="{{ t('axis.economic_title') }}: {{ label_economic(r.economic) }} ({{ r.economic|decimal }})">
+      <span class="name">{{ t('axis.econ_short') }}</span>
+      <span class="track"><span class="dot" style="left: {{ axis_percent(r.economic) }}%; background: var(--econ-{{ band_of(r.economic) }})"></span></span>
+    </span>
+    <span class="gauge" title="{{ t('axis.cultural_title') }}: {{ label_cultural(r.cultural) }} ({{ r.cultural|decimal }})">
+      <span class="name">{{ t('axis.galtan_short') }}</span>
+      <span class="track"><span class="dot" style="left: {{ axis_percent(r.cultural) }}%; background: var(--cult-{{ band_of(r.cultural) }})"></span></span>
+    </span>
+    <span class="rel" role="img"
+          aria-label="{{ t('reliability.title') }}: {{ r.reliability }}/5"
+          title="{{ t('reliability.title') }}: {{ r.reliability }}/5 · {{ t('party_family.label') }}: {{ label_party_family(r.partyFamily) }}">{{ reliability_dots(r.reliability) }}</span>
+  </div>
+  {% if interactive and viewer.isSignedIn %}
+  {% set is_saved = saved_urls[article.item.link] is defined %}
+  <div class="cardactions">
+    <form method="post" action="/watchlist">
+      <input type="hidden" name="_csrf" value="{{ viewer.csrfToken }}">
+      <input type="hidden" name="url" value="{{ article.item.link }}">
+      <input type="hidden" name="return" value="{{ current_path }}">
+      <input type="hidden" name="action" value="{{ is_saved ? 'remove' : 'add' }}">
+      <button class="btn quiet" type="submit">
+        {{ ui.icon(is_saved ? 'bookmark-check' : 'bookmark') }} {{ is_saved ? t('watchlist.saved') : t('watchlist.save') }}
+      </button>
+    </form>
+    <span class="spacer"></span>
+    <a class="btn quiet" href="/report?url={{ article.item.link|url_encode }}">{{ ui.icon('flag') }} {{ t('report.link') }}</a>
+  </div>
+  {% endif %}
+</article>

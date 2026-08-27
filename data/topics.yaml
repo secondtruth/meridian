@@ -1,0 +1,78 @@
+# Focus-topic vocabulary — every topic is a curated selection of IPTC
+# Media Topics subtrees. Semantics, precedence rules and the activation
+# checklist are specified in docs/classification.md §6.
+#
+# Codes are IPTC Media Topics NewsCodes (© IPTC, CC BY 4.0),
+# https://cv.iptc.org/newscodes/mediatopic/ — a code claims the concept
+# AND its narrower concepts. Comments give the German / English
+# prefLabels of the 2021 vocabulary release for human readers.
+#
+# status: active   — wired into Classifier::TOPIC_ORDER and Registry::TOPICS
+# status: proposed — agreed direction, not yet activated (see TODO.md)
+
+- id: climate
+  status: active
+  iptc:
+    - medtop:06000000   # Umwelt / environment (incl. Klimaveränderung medtop:20000418)
+    - medtop:20000423   # Umweltpolitik / environmental policy
+    - medtop:20000257   # Erneuerbare Energie / renewable energy (industry)
+
+- id: peace
+  status: active
+  iptc:
+    - medtop:16000000   # Krise, Krieg, Konflikte / conflict, war and peace
+    - medtop:20000598   # Verteidigung / national security
+    - medtop:20000642   # Wirtschaftliche Sanktion / economic sanction
+
+- id: digital-rights
+  status: active
+  iptc:
+    - medtop:20001300   # Datenschutz / privacy
+    - medtop:20000627   # Datenschutz (Regierungspolitik) / data protection policy
+    - medtop:20001299   # Überwachung / surveillance
+    - medtop:20000588   # Zensur / censorship and freedom of speech
+    - medtop:20000591   # Pressefreiheit / freedom of the press
+    - medtop:20001298   # Künstliche Intelligenz / artificial intelligence
+
+- id: accessibility
+  status: active
+  iptc:
+    - medtop:20000791   # Behinderung / disabilities
+    - medtop:20001373   # Diversität, Gerechtigkeit und Integration / diversity, equity and inclusion
+
+- id: health
+  status: active
+  iptc:
+    - medtop:07000000   # Medizin, Gesundheit / health (incl. Psychische Krankheit medtop:20000458)
+    - medtop:20000479   # Gesundheitspolitik / healthcare policy
+
+- id: economy
+  status: active
+  iptc:
+    - medtop:20000344   # Wirtschaft / economy
+    - medtop:09000000   # Arbeit, Soziales / labour
+    - medtop:20000345   # Wirtschaftspolitik / economic policy
+    - medtop:20000630   # Sozialpolitik / pension and welfare policy
+
+- id: democracy
+  status: active
+  iptc:
+    - medtop:20000654   # Demokratie / democracy
+    - medtop:20000574   # Wahl / election
+    - medtop:20000587   # Grundrechte / fundamental rights (ancestor of three digital-rights codes — §6 precedence)
+    - medtop:20000615   # Parlament / legislative body
+    - medtop:20000597   # Verfassung (Gesetz) / constitution (law)
+    - medtop:20000093   # Korruption / corruption
+    - medtop:20000106   # Justiz / judiciary
+
+- id: migration
+  status: active
+  iptc:
+    - medtop:20000771   # Einwanderung / immigration
+    - medtop:20000645   # Flüchtling / refugees and internally displaced people
+    - medtop:20000634   # Migration (Regierungspolitik) / immigration policy
+
+- id: science
+  status: active
+  iptc:
+    - medtop:13000000   # Wissenschaft, Technik, Forschung / science and technology (ancestor of the AI code in digital-rights — §6 precedence)

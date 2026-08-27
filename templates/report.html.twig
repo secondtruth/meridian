@@ -1,0 +1,64 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — {{ t('report.title_short') }}{% endblock %}
+
+{% block style %}
+  .subject { max-width: 46rem; }
+  .subject h3 { margin: 0 0 .35rem; font-size: 1rem; font-weight: 600; line-height: 1.4; }
+  .subject .meta { font-size: .78rem; color: var(--muted); }
+  .subject .meta b { color: var(--ink); font-weight: 600; }
+  form.reportform { max-width: 46rem; margin-top: 1.4rem; }
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('report.kicker') }}</div>
+  <h1>{{ t('report.title') }}</h1>
+  <p class="promise">{{ t('report.intro') }}</p>
+</header>
+
+<main id="main">
+  <section style="margin-top: 1rem">
+    <div class="sectionhead"><h2>{{ t('report.subject') }}</h2></div>
+    <div class="panel subject">
+      <h3>{{ article.item.title }}</h3>
+      <p class="meta">
+        <b>{{ article.source.name }}</b> · {{ label_perspective(article.source.perspective) }} ·
+        {{ rating_summary(article.source.rating) }}<br>
+        {{ t('report.current_topic') }} <b>{{ label_topic(article.topic) }}</b>
+      </p>
+    </div>
+
+    <form class="reportform" method="post" action="/report">
+      <input type="hidden" name="_csrf" value="{{ viewer.csrfToken }}">
+      <input type="hidden" name="url" value="{{ article.item.link }}">
+
+      <fieldset class="field">
+        <legend class="legend">{{ t('report.kind') }}</legend>
+        {% for kind in kinds %}
+          <label class="choice" style="margin-bottom: .35rem">
+            <input type="radio" name="kind" value="{{ kind }}" {{ loop.first ? 'checked' }}>
+            <span>{{ t('report.kind_' ~ kind) }}</span>
+          </label>
+        {% endfor %}
+      </fieldset>
+
+      <div class="field">
+        <label for="note">{{ t('report.note') }}</label>
+        <textarea id="note" name="note" maxlength="1000" placeholder="{{ t('report.note_placeholder') }}"></textarea>
+        <p class="hint">{{ t('report.note_hint') }}</p>
+      </div>
+
+      <div class="formactions">
+        <button class="btn primary" type="submit">{{ t('report.submit') }}</button>
+        <a class="btn quiet" href="/">{{ t('report.cancel') }}</a>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}
+
+{% block footer %}
+  <p class="enough">{{ t('report.footer_title') }}</p>
+  <p>{{ t('report.footer_text') }}</p>
+{% endblock %}

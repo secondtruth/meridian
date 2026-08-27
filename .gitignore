@@ -1,0 +1,9 @@
+/vendor/
+/data/cache/
+/data/archive/
+/data/accounts.sqlite*
+/config/oidc.php
+.claude/settings.local.json
+.DS_Store
+.phpunit.result.cache
+/public/favicons/

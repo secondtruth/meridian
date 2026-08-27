@@ -1,0 +1,97 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — {{ t('nav.methodology') }}{% endblock %}
+
+{% block style %}
+  .prose { max-width: 52rem; font-size: .92rem; }
+  .prose p { margin: 0 0 .8rem; }
+  .axistable { width: 100%; max-width: 52rem; border-collapse: collapse; font-size: .8rem; }
+  .axistable th, .axistable td { text-align: left; padding: .45rem .6rem; border-bottom: 1px solid var(--line); }
+  .axistable th { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .axistable td:first-child { font-weight: 600; white-space: nowrap; }
+  .axistable .bandcell { color: var(--muted); }
+  .glossary { max-width: 52rem; margin: 0; }
+  .glossary dt {
+    font-weight: 700; font-size: .88rem; margin-top: .9rem;
+    display: flex; align-items: baseline; gap: .5rem;
+  }
+  .glossary dd { margin: .15rem 0 0; font-size: .84rem; color: var(--muted); }
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('methodology.kicker') }}</div>
+  <h1>{{ t('methodology.title') }}</h1>
+  <p class="promise">{{ t('methodology.intro') }}</p>
+</header>
+
+<main id="main">
+  <section>
+    <div class="sectionhead"><h2>{{ t('methodology.why_title') }}</h2></div>
+    <div class="prose">
+      {% for paragraph in why %}<p>{{ paragraph }}</p>{% endfor %}
+    </div>
+  </section>
+
+  <section>
+    <div class="sectionhead"><h2>{{ t('methodology.axes_title') }}</h2></div>
+    <div class="prose"><p>{{ t('methodology.axes_note') }}</p></div>
+    <table class="axistable">
+      <thead>
+        <tr>
+          <th></th>
+          <th>−3 … −1,75</th>
+          <th>−1,75 … −0,5</th>
+          <th>−0,5 … +0,5</th>
+          <th>+0,5 … +1,75</th>
+          <th>+1,75 … +3</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for axis in axes %}
+        <tr>
+          <td>{{ axis.title }}</td>
+          {% for band in axis.bands %}<td class="bandcell">{{ band }}</td>{% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="sectionhead"><h2>{{ t('methodology.more_title') }}</h2></div>
+    <div class="prose">
+      {% for paragraph in more %}<p>{{ paragraph }}</p>{% endfor %}
+    </div>
+  </section>
+
+  <section>
+    <div class="sectionhead"><h2>{{ t('methodology.selection_title') }}</h2></div>
+    <div class="prose">
+      {% for paragraph in selection %}<p>{{ paragraph }}</p>{% endfor %}
+    </div>
+  </section>
+
+  <section>
+    <div class="sectionhead"><h2>{{ t('methodology.limits_title') }}</h2></div>
+    <div class="prose">
+      {% for paragraph in limits %}<p>{{ paragraph }}</p>{% endfor %}
+    </div>
+  </section>
+
+  <section id="glossary">
+    <div class="sectionhead"><h2>{{ t('methodology.glossary_title') }}</h2></div>
+    <dl class="glossary">
+      {% for entry in glossary %}
+        <dt>{{ entry.term }}</dt>
+        <dd>{{ entry.def }}</dd>
+      {% endfor %}
+    </dl>
+  </section>
+</main>
+{% endblock %}
+
+{% block footer %}
+  <p class="enough">{{ t('methodology.footer_title') }}</p>
+  <p>{{ t('methodology.footer_text') }}</p>
+{% endblock %}

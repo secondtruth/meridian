@@ -1,0 +1,584 @@
+# DACH sources — German-language media across the spectrum.
+# Axes follow the CHES convention: economic -3 (left) .. +3 (right),
+# cultural -3 (GAL) .. +3 (TAN), eu_stance -3 (eurosceptic) .. +3 (federalist).
+# Ratings are editorial judgements with stated confidence; see METHODOLOGY.md.
+
+- id: taz
+  name: taz — die tageszeitung
+  wikidata: Q161423
+  country: DE
+  languages: [de]
+  type: newspaper
+  ownership: cooperative
+  publisher: die tageszeitung Verlagsgenossenschaft eG
+  funding: [subscription, cooperative-shares, donations]
+  perspective: dach
+  topics: [climate, peace, digital-rights, general]
+  homepage: https://taz.de
+  feeds:
+    - https://taz.de/!p4608;rss/
+  rating:
+    economic: -2.0
+    cultural: -2.5
+    eu_stance: 0.5
+    party_family: green
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://taz.de/genossenschaft/
+        note: Cooperative ownership; editorial self-positioning as left-alternative daily since 1979.
+      - url: https://www.eurotopics.net/en/
+        note: eurotopics media profile places taz on the green-left of the German spectrum.
+
+- id: zeit
+  name: Die Zeit
+  wikidata: Q157142
+  country: DE
+  languages: [de]
+  type: newspaper
+  ownership: private
+  publisher: Zeitverlag Gerd Bucerius (DvH Medien)
+  funding: [subscription, advertising]
+  perspective: dach
+  topics: [general]
+  homepage: https://www.zeit.de
+  feeds:
+    - https://newsfeed.zeit.de/index
+  rating:
+    economic: 0.0
+    cultural: -1.5
+    eu_stance: 2.0
+    party_family: liberal
+    reliability: 5
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://www.zeit.de/impressum/index
+        note: Owned by DvH Medien (Holtzbrinck family); liberal weekly with strong pro-European line.
+
+- id: faz
+  name: Frankfurter Allgemeine Zeitung
+  wikidata: Q10184
+  country: DE
+  languages: [de]
+  type: newspaper
+  ownership: foundation
+  publisher: FAZIT-Stiftung
+  funding: [subscription, advertising]
+  perspective: dach
+  topics: [general]
+  homepage: https://www.faz.net
+  feeds:
+    - https://www.faz.net/rss/aktuell/
+  rating:
+    economic: 1.5
+    cultural: 0.5
+    eu_stance: 1.0
+    party_family: christian-democratic
+    reliability: 5
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://www.faz.net/ueber-uns/
+        note: Owned by the FAZIT-Stiftung; liberal-conservative editorial tradition, ordoliberal economics.
+
+- id: spiegel
+  name: Der Spiegel
+  wikidata: Q131478
+  country: DE
+  languages: [de]
+  type: magazine
+  ownership: private
+  publisher: Spiegel-Verlag Rudolf Augstein
+  funding: [subscription, advertising]
+  perspective: dach
+  topics: [general]
+  homepage: https://www.spiegel.de
+  feeds:
+    - https://www.spiegel.de/schlagzeilen/index.rss
+  rating:
+    economic: -0.5
+    cultural: -1.5
+    eu_stance: 1.5
+    party_family: social-democratic
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://www.spiegel.de/impressum
+        note: Majority employee-owned (KG beteiligungsgesellschaft); centre-left news magazine. Reliability 4 not 5 reflecting the Relotius affair and subsequent reforms.
+
+- id: nzz
+  name: Neue Zürcher Zeitung
+  wikidata: Q658945
+  country: CH
+  languages: [de]
+  type: newspaper
+  ownership: private
+  publisher: NZZ-Mediengruppe
+  funding: [subscription, advertising]
+  perspective: dach
+  topics: [general]
+  homepage: https://www.nzz.ch
+  feeds:
+    - https://www.nzz.ch/recent.rss
+  rating:
+    economic: 2.0
+    cultural: 1.0
+    eu_stance: -1.0
+    party_family: liberal
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://www.nzz.ch/impressum
+        note: Historically tied to the Swiss FDP milieu; market-liberal, increasingly culturally conservative in its Germany coverage; Swiss EU-scepticism.
+
+- id: derstandard
+  name: Der Standard
+  wikidata: Q128660
+  country: AT
+  languages: [de]
+  type: newspaper
+  ownership: private
+  publisher: STANDARD Medien AG
+  funding: [subscription, advertising]
+  perspective: dach
+  topics: [general]
+  homepage: https://www.derstandard.at
+  feeds:
+    - https://www.derstandard.at/rss
+  rating:
+    economic: -1.0
+    cultural: -2.0
+    eu_stance: 2.0
+    party_family: social-democratic
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://about.derstandard.at/
+        note: Founder-family owned; social-liberal editorial line, strongly pro-European.
+
+- id: dlf
+  name: Deutschlandfunk
+  wikidata: Q695328
+  country: DE
+  languages: [de]
+  type: public-broadcaster
+  ownership: public-service
+  publisher: Deutschlandradio
+  funding: [licence-fee]
+  perspective: dach
+  topics: [general]
+  homepage: https://www.deutschlandfunk.de
+  feeds:
+    - https://www.deutschlandfunk.de/die-nachrichten.353.de.rss
+  rating:
+    economic: 0.0
+    cultural: -0.5
+    eu_stance: 1.0
+    party_family: nonpartisan
+    reliability: 5
+    transparency: high
+    state_influence: indirect
+    confidence: high
+    evidence:
+      - url: https://www.deutschlandradio.de/
+        note: Public-service broadcaster governed by pluralistic councils — "indirect", not state-controlled; the distinction US rating systems often miss.
+
+- id: netzpolitik
+  name: netzpolitik.org
+  wikidata: Q1978935
+  country: DE
+  languages: [de]
+  type: ngo-media
+  ownership: community
+  publisher: netzpolitik.org e. V.
+  funding: [donations]
+  perspective: dach
+  topics: [digital-rights]
+  homepage: https://netzpolitik.org
+  feeds:
+    - https://netzpolitik.org/feed/
+  rating:
+    economic: -1.5
+    cultural: -2.5
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://netzpolitik.org/transparenz/
+        note: Donation-funded civil-society outlet; advocacy journalism for digital civil rights, transparent about its normative stance.
+
+- id: welt
+  name: Die Welt
+  wikidata: Q29872
+  country: DE
+  languages: [de]
+  type: newspaper
+  ownership: private
+  publisher: Axel Springer SE
+  funding: [subscription, advertising]
+  perspective: dach
+  topics: [general]
+  homepage: https://www.welt.de
+  feeds:
+    - https://www.welt.de/feeds/latest.rss
+  rating:
+    economic: 2.0
+    cultural: 1.5
+    eu_stance: -0.5
+    party_family: conservative
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://www.welt.de/services/article7893735/Impressum.html
+        note: Axel Springer flagship broadsheet; market-liberal economics with an increasingly national-conservative cultural line. Solid news desk despite the pronounced opinion section.
+
+- id: neue-norm
+  name: Die Neue Norm
+  country: DE
+  languages: [de]
+  type: magazine
+  ownership: community
+  publisher: SOZIALHELDEN e. V.
+  funding: [grants, donations]
+  perspective: dach
+  topics: [accessibility]
+  homepage: https://dieneuenorm.de
+  feeds:
+    - https://dieneuenorm.de/feed/
+  rating:
+    economic: -1.0
+    cultural: -2.0
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://dieneuenorm.de/ueber-uns/
+        note: Disability-led magazine by Sozialhelden e.V., funded i.a. by Aktion Mensch; advocacy journalism for inclusion, transparent about its normative stance.
+
+- id: aerzteblatt
+  name: Deutsches Ärzteblatt
+  wikidata: Q1206153
+  country: DE
+  languages: [de]
+  type: magazine
+  ownership: private
+  publisher: Deutscher Ärzteverlag GmbH (BÄK/KBV)
+  funding: [advertising, subscription]
+  perspective: dach
+  topics: [health]
+  homepage: https://www.aerzteblatt.de
+  feeds:
+    - https://www.aerzteblatt.de/rss/news
+  rating:
+    economic: 0.5
+    cultural: 0.0
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://www.aerzteblatt.de/impressum
+        note: Official organ of Bundesärztekammer and KBV, which own the publisher 50/50 — structural stakeholder lens on health policy and physician remuneration, plus reliance on pharma/industry advertising; scientific reporting itself is strong (peer-reviewed section).
+      - url: https://de.wikipedia.org/wiki/Deutscher_%C3%84rzteverlag
+        note: Documents the 50/50 ownership by the two public-law professional bodies and the advertising-based funding model.
+
+- id: spektrum
+  name: Spektrum der Wissenschaft
+  wikidata: Q1610770
+  country: DE
+  languages: [de]
+  type: magazine
+  ownership: private
+  publisher: Spektrum der Wissenschaft Verlagsgesellschaft (GeraNova Bruckmann)
+  funding: [subscription, advertising]
+  perspective: dach
+  topics: [science]
+  homepage: https://www.spektrum.de
+  feeds:
+    - https://www.spektrum.de/alias/rss/spektrum-de-rss-feed/996406
+  rating:
+    economic: 0.0
+    cultural: -0.5
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 5
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://www.spektrum.de/impressum/
+        note: German Scientific-American tradition since 1978; imprint names Verlagshaus GeraNova Bruckmann as owner after Springer Nature divested its consumer media in June 2026 — most external profiles still show the old Springer Nature/Holtzbrinck chain.
+      - url: https://kress.de/news/beitrag/153620-springer-nature-zieht-sich-aus-publikumsmedien-zurueck-spektrum-der-wissenschaft-geht-an-geranova-bruckmann.html
+        note: Trade-press report on the 2026 GeraNova Bruckmann takeover, confirming the ownership change.
+
+- id: makronom
+  name: Makronom
+  wikidata: Q111013305
+  country: DE
+  languages: [de]
+  type: online
+  ownership: private
+  publisher: Philipp Stachelsky (Einzelunternehmen)
+  funding: [subscription]
+  perspective: dach
+  topics: [economy]
+  homepage: https://makronom.de
+  feeds:
+    - https://makronom.de/feed
+  rating:
+    economic: -1.0
+    cultural: -0.5
+    eu_stance: 1.0
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://makronom.de/ueber-uns
+        note: Subscription-funded economic-policy magazine run as a sole proprietorship; expert analysis rather than original reporting, with a pluralist/heterodox-friendly line (focus series on pluralism in economics).
+      - url: https://www.fes.de/abteilung-analyse-planung-und-beratung/hans-matthoefer-preis-fuer-wirtschaftspublizistik/preistraeger-2025
+        note: Keynes-Preis 2020 and the FES's Hans-Matthöfer-Preis 2025 signal the progressive-Keynesian orbit the magazine is honoured in — the basis for the mild left-of-centre economic placement.
+
+- id: wirtschaftliche-freiheit
+  name: Wirtschaftliche Freiheit
+  country: DE
+  languages: [de]
+  type: online
+  ownership: community
+  publisher: Freunde der Ordnungsökonomik e. V.
+  funding: [volunteer]
+  perspective: dach
+  topics: [economy]
+  homepage: https://wirtschaftlichefreiheit.de
+  feeds:
+    - https://wirtschaftlichefreiheit.de/wordpress/?feed=rss2
+  rating:
+    economic: 2.5
+    cultural: 0.5
+    eu_stance: -1.0
+    party_family: liberal
+    reliability: 3
+    transparency: medium
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://wirtschaftlichefreiheit.de/wordpress/?page_id=2
+        note: Self-designated "ordnungspolitisches Journal" run by an association of ordoliberal academics around Norbert Berthold (Vaubel, van Suntum, Apolte et al.); pure opinion blog with no reporting desk, hence reliability 3 — the counterweight to Makronom/Social Europe on the economic axis.
+
+- id: leidmedien
+  name: Leidmedien
+  country: DE
+  languages: [de]
+  type: online
+  ownership: community
+  publisher: SOZIALHELDEN e. V.
+  funding: [grants, donations]
+  perspective: dach
+  topics: [accessibility]
+  homepage: https://leidmedien.de
+  feeds:
+    - https://leidmedien.de/feed/
+  rating:
+    economic: -1.0
+    cultural: -2.0
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://leidmedien.de/ueber-uns/
+        note: Sozialhelden project advising media on reporting about disability; publishes critique and guidance from a disability-rights perspective.
+
+# ── Collection-only sources (edition: false) ─────────────────────────
+# These feed the curated collections (docs/collections.md) and stay out
+# of the topic-classified daily edition by design.
+
+- id: squirrel-news
+  name: Squirrel News
+  country: DE
+  languages: [en, de]
+  type: online
+  ownership: community
+  publisher: Constructive News e. V.
+  funding: [donations]
+  perspective: dach
+  topics: [general]
+  edition: false
+  homepage: https://www.squirrel-news.net
+  feeds:
+    - https://squirrel-news.net/feed/
+  rating:
+    economic: -0.5
+    cultural: -1.0
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://www.squirrel-news.net/about
+        note: Donation-funded, ad-free solutions-journalism digest (Constructive News e.V., founded 2019 by Jonathan Widder) — hand-curated links to other outlets' reporting, no original journalism; selection criterion is documented (solution-oriented, relevant beyond a week).
+
+- id: goodnews-magazin
+  name: Good News Magazin
+  wikidata: Q124630607
+  country: DE
+  languages: [de]
+  type: magazine
+  ownership: private
+  publisher: David Gaedt (Einzelunternehmen)
+  funding: [subscription, advertising]
+  perspective: dach
+  topics: [general]
+  edition: false
+  homepage: https://goodnews-magazin.de
+  feeds:
+    - https://goodnews-magazin.de/feed/
+  rating:
+    economic: -0.5
+    cultural: -1.0
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 3
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://goodnews-magazin.de/ueber-uns/
+        note: Membership-funded constructive-journalism magazine with vetted "social impact" advertising; self-described "parteilos" while explicitly rejecting the pretence of political neutrality. Small, largely part-time newsroom — reliability 3 reflects capacity, not integrity.
+
+- id: logo
+  name: "logo!"
+  wikidata: Q1868079
+  country: DE
+  languages: [de]
+  type: public-broadcaster
+  ownership: public-service
+  publisher: ZDF
+  funding: [licence-fee]
+  perspective: dach
+  topics: [general]
+  edition: false
+  homepage: https://www.zdf.de/kinder/logo
+  feeds:
+    - https://www.zdf.de/rss/zdf/kinder/logo
+  rating:
+    economic: 0.0
+    cultural: -0.5
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 5
+    transparency: high
+    state_influence: indirect
+    confidence: high
+    evidence:
+      - url: https://www.zdf.de/unternehmen/dein-zdf/programm/public-value/logo-270.html
+        note: Germany's only daily children's TV news (since 1989, ZDF newsroom, target group 8–12); public-service mandate under pluralistic council governance.
+
+- id: duda
+  name: Duda.news
+  country: DE
+  languages: [de]
+  type: online
+  ownership: private
+  publisher: KStA Digitale Medien (M. DuMont Schauberg)
+  funding: [subscription]
+  perspective: dach
+  topics: [general]
+  edition: false
+  homepage: https://duda.news
+  feeds:
+    - https://duda.news/feed/
+  rating:
+    economic: 0.0
+    cultural: -0.5
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://duda.news/impressum/
+        note: Children's news site of the Kölner Stadt-Anzeiger (DuMont group, Cologne), produced by its Kindernachrichten desk for roughly ages 8–12; funded through the publisher and the paid weekly children's paper.
+
+- id: kindersache
+  name: Kindersache
+  country: DE
+  languages: [de]
+  type: ngo-media
+  ownership: community
+  publisher: Deutsches Kinderhilfswerk e. V.
+  funding: [donations]
+  perspective: dach
+  topics: [general]
+  edition: false
+  homepage: https://www.kindersache.de
+  feeds:
+    - https://www.kindersache.de/rss.xml
+  rating:
+    economic: -1.0
+    cultural: -1.5
+    eu_stance: 0.5
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://www.kindersache.de/impressum
+        note: Children's news and rights site of the Deutsches Kinderhilfswerk (online since 1998, ages 8–13); the parent is an advocacy organisation for children's rights, which the GAL-leaning cultural placement reflects.
+
+# Feed note: the "Wochenrückblick" podcast feed below carries the daily
+# nachrichtenleicht items; the site itself publishes no news RSS.
+- id: nachrichtenleicht
+  name: nachrichtenleicht
+  country: DE
+  languages: [de]
+  type: public-broadcaster
+  ownership: public-service
+  publisher: Deutschlandradio
+  funding: [licence-fee]
+  perspective: dach
+  topics: [general]
+  edition: false
+  homepage: https://www.nachrichtenleicht.de
+  feeds:
+    - https://www.deutschlandfunk.de/podcast-nachrichtenleicht-der-wochenrueckblick-in-einfacher-sprache-100.xml
+  rating:
+    economic: 0.0
+    cultural: -0.5
+    eu_stance: 1.0
+    party_family: nonpartisan
+    reliability: 5
+    transparency: high
+    state_influence: indirect
+    confidence: high
+    evidence:
+      - url: https://www.bpb.de/lernen/digitale-bildung/werkstatt/342937/nachrichtenleicht-nachrichten-in-einfacher-sprache/
+        note: Deutschlandfunk's news in Einfache Sprache (since 2013, documented language ruleset with integrated dictionary) — the DLF news agenda, simplified; rated like its parent newsroom.

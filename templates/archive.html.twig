@@ -1,0 +1,41 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — {{ t('archive.kicker') }}{% endblock %}
+
+{% block style %}
+  .daylist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .4rem; max-width: 30rem; }
+  .daylist a {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+    background: var(--surface); border: 1px solid var(--line); border-radius: .45rem;
+    padding: .55rem .9rem; text-decoration: none; font-size: .88rem;
+  }
+  .daylist a:hover { border-color: var(--accent); color: var(--accent); }
+  .daylist .iso { font-size: .72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .archive-empty { font-size: .84rem; color: var(--muted); max-width: 40rem; }
+  .archive-empty code { font-size: .78rem; }
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('archive.kicker') }}</div>
+  <h1>{{ t('archive.title') }}</h1>
+  <p class="promise">{{ t('archive.intro') }}</p>
+</header>
+
+<main id="main">
+  {% if days %}
+  <ul class="daylist">
+    {% for day in days %}
+      <li><a href="/archive/{{ day.date }}">{{ day.date_human }} <span class="iso">{{ day.date }}</span></a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="archive-empty">{{ t('archive.empty') }}</p>
+  {% endif %}
+</main>
+{% endblock %}
+
+{% block footer %}
+  <p class="enough">{{ t('archive.footer_title') }}</p>
+  <p>{{ t('archive.footer_text') }}</p>
+{% endblock %}

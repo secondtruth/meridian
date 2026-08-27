@@ -1,0 +1,3 @@
+# The Synology/Thor sync rewrites line endings — pin LF for everything.
+* text=auto eol=lf
+public/fonts/* -text

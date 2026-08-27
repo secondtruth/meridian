@@ -1,0 +1,177 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — {{ t('account.title') }}{% endblock %}
+
+{% block style %}
+  .cols { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.6rem; align-items: start; }
+  @media (max-width: 52rem) { .cols { grid-template-columns: 1fr; } }
+  .identity { font-size: .84rem; color: var(--muted); }
+  .identity b { color: var(--ink); font-weight: 600; }
+  .identity code { font-size: .78rem; word-break: break-all; }
+  .formactions { display: flex; gap: .6rem; align-items: center; margin-top: 1.4rem; }
+  .datarow {
+    display: flex; align-items: baseline; gap: .6rem; font-size: .84rem;
+    padding: .4rem 0; border-bottom: 1px solid var(--line);
+  }
+  .datarow:last-of-type { border-bottom: 0; }
+  .datarow .num { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .datarow .spacer { flex: 1; }
+  .dangerzone { margin-top: .8rem; }
+  .dangerzone summary { cursor: pointer; font-size: .82rem; color: var(--muted); }
+  .dangerzone summary:hover { color: var(--econ-0); }
+  .dangerzone .inner { margin-top: .7rem; }
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('account.kicker') }}</div>
+  <h1>{{ t('account.title_line', user.shortName) }}</h1>
+  <p class="promise">{{ t('account.intro') }}</p>
+</header>
+
+<main id="main">
+  {% if saved %}<div class="notice">{{ t('account.saved') }}</div>{% endif %}
+  {% if cleared %}<div class="notice">{{ t('account.cleared') }}</div>{% endif %}
+
+  <div class="cols">
+    <section style="margin-top: 0">
+      <div class="sectionhead"><h2>{{ t('account.settings_title') }}</h2></div>
+
+      <form method="post" action="/account">
+        <input type="hidden" name="_csrf" value="{{ viewer.csrfToken }}">
+
+        <div class="field">
+          <label for="locale">{{ t('account.language') }}</label>
+          <select id="locale" name="locale">
+            <option value="de" {{ preferences.locale == 'de' ? 'selected' }}>Deutsch</option>
+            <option value="en" {{ preferences.locale == 'en' ? 'selected' }}>English</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="mode">{{ t('account.mode') }}</label>
+          <select id="mode" name="mode">
+            <option value="compact" {{ preferences.mode.value == 'compact' ? 'selected' }}>{{ t('mode.compact') }}</option>
+            <option value="full" {{ preferences.mode.value == 'full' ? 'selected' }}>{{ t('mode.full') }}</option>
+          </select>
+          <p class="hint">{{ t('account.mode_hint') }}</p>
+        </div>
+
+        <fieldset class="field">
+          <legend class="legend">{{ t('account.topics') }}</legend>
+          <div class="choices">
+            {% for topic in topics %}
+              <label class="choice">
+                <input type="checkbox" name="muted_topics[]" value="{{ topic }}"
+                       {{ preferences.mutes(topic) ? 'checked' }}>
+                <span>{{ label_topic(topic) }}</span>
+              </label>
+            {% endfor %}
+          </div>
+          <p class="hint">{{ t('account.topics_hint') }}</p>
+        </fieldset>
+
+        <fieldset class="field">
+          <legend class="legend">{{ t('account.reading') }}</legend>
+          <label class="choice">
+            <input type="checkbox" name="track_reading" value="1" {{ preferences.trackReading ? 'checked' }}>
+            <span>{{ t('account.track_reading') }}</span>
+          </label>
+          <label class="choice" style="margin-top: .4rem">
+            <input type="checkbox" name="daily_limit" value="1" {{ preferences.dailyLimit ? 'checked' }}>
+            <span>{{ t('account.daily_limit') }}</span>
+          </label>
+          <p class="hint">{{ t('account.reading_hint') }}</p>
+        </fieldset>
+
+        <div class="field">
+          <label for="retention_days">{{ t('account.retention') }}</label>
+          <select id="retention_days" name="retention_days">
+            {% for choice in retention_choices %}
+              <option value="{{ choice }}" {{ preferences.retentionDays == choice ? 'selected' }}>
+                {{ t('account.retention_' ~ choice) }}
+              </option>
+            {% endfor %}
+          </select>
+          <p class="hint">{{ t('account.retention_hint') }}</p>
+        </div>
+
+        <div class="formactions">
+          <button class="btn primary" type="submit">{{ t('account.save') }}</button>
+        </div>
+      </form>
+    </section>
+
+    <section style="margin-top: 0">
+      <div class="sectionhead"><h2>{{ t('account.data_title') }}</h2></div>
+
+      <div class="panel">
+        <h3>{{ t('account.identity_title') }}</h3>
+        <p class="identity">
+          {% if user.email %}<b>{{ user.email }}</b><br>{% endif %}
+          {{ t('account.identity_provider') }} <code>{{ user.issuer }}</code><br>
+          {{ t('account.identity_since', user.createdAt|shortdate) }}
+        </p>
+        <p class="identity">{{ t('account.identity_note') }}</p>
+      </div>
+
+      <div class="panel">
+        <h3>{{ t('account.stored_title') }}</h3>
+        <div class="datarow">
+          <span>{{ t('account.stored_reads') }}</span><span class="spacer"></span>
+          <span class="num">{{ read_total }}</span>
+        </div>
+        <div class="datarow">
+          <span>{{ t('account.stored_today') }}</span><span class="spacer"></span>
+          <span class="num">{{ read_today }}</span>
+        </div>
+        <div class="datarow">
+          <span>{{ t('account.stored_watchlist') }}</span><span class="spacer"></span>
+          <span class="num">{{ watchlist_count }} / {{ watchlist_max }}</span>
+        </div>
+        <div class="formactions">
+          <a class="btn" href="/account/export">{{ t('account.export') }}</a>
+          <form method="post" action="/account/history">
+            <input type="hidden" name="_csrf" value="{{ viewer.csrfToken }}">
+            <button class="btn danger" type="submit">{{ t('account.clear_history') }}</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>{{ t('account.session_title') }}</h3>
+        <p>{{ t('account.session_text', session_days) }}</p>
+        <div class="formactions">
+          <form method="post" action="/logout">
+            <input type="hidden" name="_csrf" value="{{ viewer.csrfToken }}">
+            <button class="btn" type="submit">{{ t('auth.sign_out') }}</button>
+          </form>
+          {% if provider_logout %}
+            <a class="btn quiet" href="{{ provider_logout }}" rel="noopener">{{ t('auth.sign_out_provider') }}</a>
+          {% endif %}
+        </div>
+
+        <details class="dangerzone">
+          <summary>{{ t('account.delete_summary') }}</summary>
+          <div class="inner">
+            <p>{{ t('account.delete_text') }}</p>
+            <form method="post" action="/account/delete">
+              <input type="hidden" name="_csrf" value="{{ viewer.csrfToken }}">
+              <label class="choice" style="margin-bottom: .6rem">
+                <input type="checkbox" name="confirm" value="1" required>
+                <span>{{ t('account.delete_confirm') }}</span>
+              </label>
+              <button class="btn danger" type="submit">{{ t('account.delete_button') }}</button>
+            </form>
+          </div>
+        </details>
+      </div>
+    </section>
+  </div>
+</main>
+{% endblock %}
+
+{% block footer %}
+  <p class="enough">{{ t('account.footer_title') }}</p>
+  <p>{{ t('account.footer_text') }}</p>
+{% endblock %}

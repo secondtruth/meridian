@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Meridian\Console\AccountsPruneCommand;
+use Meridian\Console\EditionsArchiveCommand;
+use Meridian\Console\FaviconsFetchCommand;
+use Meridian\Console\FetchCommand;
+use Meridian\Console\ReportsListCommand;
+use Meridian\Console\SourcesListCommand;
+use Meridian\Console\SourcesValidateCommand;
+use Symfony\Component\Console\Application;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$rootDir = dirname(__DIR__);
+$dataDir = $rootDir . '/data';
+
+$app = new Application('meridian', '0.1.0');
+$app->addCommand(new FetchCommand($dataDir));
+$app->addCommand(new FaviconsFetchCommand($dataDir, $rootDir . '/public'));
+$app->addCommand(new EditionsArchiveCommand($dataDir));
+$app->addCommand(new SourcesListCommand($dataDir));
+$app->addCommand(new SourcesValidateCommand($dataDir));
+$app->addCommand(new AccountsPruneCommand($rootDir));
+$app->addCommand(new ReportsListCommand($rootDir));
+$app->run();

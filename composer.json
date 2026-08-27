@@ -1,0 +1,34 @@
+{
+    "name": "secondtruth/meridian",
+    "description": "Europe-focused, bias-aware news aggregator with doom-scrolling protection",
+    "type": "project",
+    "license": "AGPL-3.0-or-later",
+    "require": {
+        "php": ">=8.3",
+        "ext-simplexml": "*",
+        "ext-curl": "*",
+        "symfony/console": "^8.1",
+        "symfony/yaml": "^8.1",
+        "twig/twig": "^3.28",
+        "firebase/php-jwt": "^7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^13.2"
+    },
+    "suggest": {
+        "ext-pdo_sqlite": "Needed only for the optional accounts (see docs/accounts.md); the daily edition runs without it"
+    },
+    "autoload": {
+        "psr-4": {
+            "Meridian\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Meridian\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

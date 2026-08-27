@@ -1,0 +1,14 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — {{ title }}{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ kicker }}</div>
+  <h1>{{ title }}</h1>
+</header>
+<main id="main">
+  <p class="promise" style="margin-top: 0; padding: 0">{{ text }}</p>
+  <p class="promise" style="padding: 0"><a href="/">{{ t('ui.back_to_edition') }}</a></p>
+</main>
+{% endblock %}

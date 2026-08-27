@@ -1,0 +1,187 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — {{ t('balance.title_short') }}{% endblock %}
+
+{% block style %}
+  .rows { display: flex; flex-direction: column; gap: .55rem; }
+  .row { display: grid; grid-template-columns: 11rem 1fr 3.2rem; gap: .8rem; align-items: center; font-size: .82rem; }
+  @media (max-width: 40rem) { .row { grid-template-columns: 7.5rem 1fr 2.8rem; font-size: .78rem; } }
+  .row .name { color: var(--muted); }
+  .row .name.zero { color: var(--muted); font-style: italic; }
+  .row .track {
+    position: relative; height: 15px; border-radius: .2rem; background: var(--line); overflow: visible;
+  }
+  .row .fill { position: absolute; inset: 0 auto 0 0; border-radius: .2rem; min-width: 2px; }
+  .row .offer {
+    position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); opacity: .55;
+  }
+  .row .val { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .row .val small { font-weight: 400; color: var(--muted); }
+
+  .axisnote { font-size: .74rem; color: var(--muted); margin: .1rem 0 .8rem; }
+
+  .gridwrap { display: flex; align-items: flex-start; gap: 1.2rem; flex-wrap: wrap; }
+  .gridcaptions { display: flex; flex-direction: column; gap: .2rem; font-size: .72rem; color: var(--muted); }
+
+  .periodnav { display: flex; gap: .45rem; }
+  .periodnav a {
+    text-decoration: none; font-size: .78rem; font-weight: 600;
+    border: 1px solid var(--line-strong); border-radius: 999px;
+    padding: .25rem .75rem; color: var(--muted); background: var(--surface);
+  }
+  .periodnav a.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+  .spots { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .spot {
+    border: 1px solid var(--line-strong); border-left: 3px solid var(--econ-0);
+    background: var(--surface); border-radius: .35rem; padding: .45rem .75rem; font-size: .82rem;
+  }
+  .spot b { font-weight: 600; }
+  .spot span { color: var(--muted); font-size: .72rem; display: block; letter-spacing: .08em; text-transform: uppercase; }
+
+  .srcgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: .6rem; }
+  .srccard { display: flex; align-items: center; gap: .6rem; font-size: .84rem; }
+  .srccard .count {
+    font-variant-numeric: tabular-nums; font-weight: 600; min-width: 1.6rem; text-align: right;
+  }
+  .srccard .meta { color: var(--muted); font-size: .74rem; }
+  .empty { max-width: 42rem; margin: 2.5rem auto; text-align: center; color: var(--muted); font-size: .9rem; }
+  .empty a { color: var(--accent); }
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('balance.kicker') }}</div>
+  <h1>{{ t('balance.title') }}</h1>
+  <div class="meta-row">
+    <span class="stat"><b>{{ report.total }}</b> {{ t('balance.stat_read') }}</span>
+    <span class="stat"><b>{{ report.days }}</b> {{ t('balance.stat_days') }}</span>
+    {% if report.averageReliability %}
+      <span class="stat"><b>{{ report.averageReliability|decimal }}</b> {{ t('balance.stat_reliability') }}</span>
+    {% endif %}
+  </div>
+  <p class="promise">{{ t('balance.intro') }}</p>
+</header>
+
+<main id="main">
+  {% if not tracking %}
+    <div class="notice">
+      {{ t('balance.tracking_off') }} <a href="/account">{{ t('balance.tracking_link') }}</a>
+    </div>
+  {% endif %}
+
+  <section style="margin-top: 1.2rem">
+    <div class="sectionhead">
+      <h2>{{ t('balance.period') }}</h2>
+      <span class="spread" style="margin-left: auto">
+        <span class="periodnav">
+          {% for period in periods %}
+            <a href="/balance?days={{ period }}" class="{{ period == days ? 'active' }}">{{ t('balance.days', period) }}</a>
+          {% endfor %}
+        </span>
+      </span>
+    </div>
+
+    {% if report.isEmpty %}
+      <div class="empty">
+        {{ t('balance.empty') }}
+        <p><a href="/">{{ t('balance.empty_link') }}</a></p>
+      </div>
+    {% else %}
+
+      {% set spots = report.blindspots %}
+      {% if spots is not empty %}
+        <div class="sectionhead" style="margin-top: 1.6rem">
+          <h2>{{ t('balance.blindspots') }}</h2>
+          <span class="count">{{ t('balance.blindspots_count', spots|length) }}</span>
+        </div>
+        <p class="axisnote">{{ t('balance.blindspots_hint') }}</p>
+        <div class="spots">
+          {% for spot in spots %}
+            <div class="spot">
+              <span>{{ t('balance.axis_' ~ spot.axis) }}</span>
+              <b>{{ label_slice(spot.axis, spot.slice.key) }}</b>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% for distribution in report.distributions %}
+        <div class="sectionhead" style="margin-top: 1.8rem">
+          <h2>{{ t('balance.axis_' ~ distribution.axis) }}</h2>
+          {% set lean = distribution.mostOverweight %}
+          {% if lean %}
+            <span class="persp">{{ t('balance.leans_on') }}
+              <b>{{ label_slice(distribution.axis, lean.key) }}</b>
+              (+{{ lean.gap|round }} {{ t('balance.points') }})
+            </span>
+          {% endif %}
+        </div>
+        {% if loop.first or distribution.axis == 'topic' %}
+          <p class="axisnote">
+            {{ distribution.axis == 'topic' ? t('balance.note_topic') : t('balance.note_offer') }}
+          </p>
+        {% endif %}
+        <div class="rows">
+          {% for slice in distribution.slices %}
+            <div class="row">
+              <span class="name {{ slice.read == 0 ? 'zero' }}">{{ label_slice(distribution.axis, slice.key) }}</span>
+              <span class="track"
+                    title="{{ t('balance.bar_title', slice.read, slice.readShare|round) }}">
+                {% if slice.read > 0 %}
+                  <span class="fill" style="width: {{ slice.readShare|round(1) }}%; background: {{ slice_color(distribution.axis, slice.key) }}"></span>
+                {% endif %}
+                {% if slice.offerShare is not null %}
+                  <span class="offer" style="left: {{ slice.offerShare|round(1) }}%"
+                        title="{{ t('balance.offer_title', slice.offerShare|round) }}"></span>
+                {% endif %}
+              </span>
+              <span class="val">{{ slice.readShare|round }}<small>%</small></span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <div class="sectionhead" style="margin-top: 1.8rem">
+        <h2>{{ t('balance.grid_title') }}</h2>
+      </div>
+      <p class="axisnote">{{ t('balance.grid_hint') }}</p>
+      <div class="gridwrap">
+        {% include '_axis_grid.html.twig' with {
+          'grid': report.axisGrid,
+          'offer': report.axisGridOffer,
+          'large': true,
+          'aria': t('balance.grid_title'),
+        } only %}
+        <div class="gridcaptions">
+          <span>{{ t('balance.grid_x') }}</span>
+          <span>{{ t('balance.grid_y') }}</span>
+        </div>
+      </div>
+
+      <div class="sectionhead" style="margin-top: 1.8rem">
+        <h2>{{ t('balance.sources') }}</h2>
+        <span class="count">{{ t('balance.sources_count', report.sources|length, source_count) }}</span>
+      </div>
+      <div class="srcgrid">
+        {% for entry in report.topSources(6) %}
+          <div class="srccard">
+            <span class="count">{{ entry.count }}</span>
+            <span>
+              {{ entry.source ? entry.source.name : entry.id }}
+              {% if entry.source %}
+                <span class="meta">{{ label_perspective(entry.source.perspective) }} · {{ label_economic(entry.source.rating.economic) }}</span>
+              {% endif %}
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}
+
+{% block footer %}
+  <p class="enough">{{ t('balance.footer_title') }}</p>
+  <p>{{ t('balance.footer_text') }}</p>
+{% endblock %}

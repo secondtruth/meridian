@@ -1,0 +1,111 @@
+# European (non-DACH) sources with a pan-European or EU-affairs focus.
+
+- id: euractiv
+  name: Euractiv
+  wikidata: Q1310000
+  country: BE
+  languages: [en, de, fr]
+  type: online
+  ownership: private
+  publisher: Euractiv Media Network
+  funding: [advertising, sponsorship, eu-projects]
+  perspective: europe
+  topics: [general]
+  homepage: https://www.euractiv.com
+  feeds:
+    - https://www.euractiv.com/feed/
+  rating:
+    economic: 0.0
+    cultural: -0.5
+    eu_stance: 2.0
+    party_family: nonpartisan
+    reliability: 4
+    transparency: medium
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://www.euractiv.com/about-euractiv/
+        note: EU-affairs specialist; structurally pro-integration by audience and funding mix (incl. EU project money), which the eu_stance rating reflects.
+
+- id: verfassungsblog
+  name: Verfassungsblog
+  wikidata: Q97588182
+  country: DE
+  languages: [de, en]
+  type: online
+  ownership: private
+  publisher: Max Steinbeis Verfassungsblog gGmbH
+  funding: [donations, grants]
+  perspective: europe
+  topics: [democracy]
+  homepage: https://verfassungsblog.de
+  feeds:
+    - https://verfassungsblog.de/feed/
+  rating:
+    economic: -0.5
+    cultural: -1.5
+    eu_stance: 1.5
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://verfassungsblog.de/about/
+        note: Reader-funded open-access forum of ~4,500 European constitutional-law scholars (founded 2009 by Maximilian Steinbeis, charitable gGmbH); explicitly pro-rule-of-law mission ("ziviler Verfassungsschutz") — expert commentary, not news reporting, but rigorously attributed.
+      - url: https://verfassungsblog.de/imprint-privacy-policy/
+        note: Imprint names the gGmbH, both managing directors and the editor-in-chief; institutional partners are WZB and the MPI for Comparative Public Law.
+
+- id: social-europe
+  name: Social Europe
+  country: DE
+  languages: [en]
+  type: online
+  ownership: private
+  publisher: Social Europe Publishing & Consulting GmbH
+  funding: [donations, sponsorship]
+  perspective: europe
+  topics: [economy]
+  homepage: https://www.socialeurope.eu
+  feeds:
+    - https://www.socialeurope.eu/feed
+  rating:
+    economic: -2.0
+    cultural: -1.5
+    eu_stance: 2.5
+    party_family: social-democratic
+    reliability: 3
+    transparency: medium
+    state_influence: none
+    confidence: high
+    evidence:
+      - url: https://www.socialeurope.eu/mission
+        note: Explicitly social-democratic debate platform (partners include Friedrich-Ebert-Stiftung, Hans-Böckler-Stiftung, ETUI, FEPS and the S&D group); essentially all output is argumentative commentary by academics and politicians, hence reliability 3 despite high author calibre.
+      - url: https://www.socialeurope.eu/legal-disclosure
+        note: GmbH led by founder Henning Meyer; membership-funded without paywall, exact revenue split between memberships and foundation partnerships undisclosed — the reason transparency is medium.
+
+- id: climatehome
+  name: Climate Home News
+  country: GB
+  languages: [en]
+  type: online
+  ownership: private
+  publisher: Climate Home News
+  funding: [grants, donations]
+  perspective: europe
+  topics: [climate]
+  homepage: https://www.climatechangenews.com
+  feeds:
+    - https://www.climatechangenews.com/feed/
+  rating:
+    economic: -0.5
+    cultural: -1.0
+    eu_stance: 1.0
+    party_family: nonpartisan
+    reliability: 4
+    transparency: high
+    state_influence: none
+    confidence: medium
+    evidence:
+      - url: https://www.climatechangenews.com/about-us/
+        note: Grant-funded climate-diplomacy specialist with deliberate Global-South correspondent network; accepts the scientific consensus as baseline, hence mild GAL lean.

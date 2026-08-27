@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+// Copy to config/oidc.php to enable accounts, or set the equivalent
+// MERIDIAN_OIDC_* environment variables (those take precedence).
+// Without an issuer and a client ID, Meridian runs without accounts —
+// the anonymous daily edition is the product's baseline.
+// See docs/accounts.md.
+
+return [
+    'issuer' => 'https://id.example.org',
+    'client_id' => 'meridian',
+
+    // Omit for a public client; PKCE protects the code exchange either way.
+    'client_secret' => '',
+
+    // Defaults to <current origin>/auth/callback.
+    // 'redirect_uri' => 'https://meridian.example.org/auth/callback',
+
+    // Defaults to openid, profile, email.
+    // 'scopes' => ['openid', 'profile', 'email'],
+];

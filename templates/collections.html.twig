@@ -1,0 +1,123 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — {{ t('collections.kicker') }}{% endblock %}
+
+{% block style %}
+  .collectionhead { display: flex; flex-direction: column; gap: .2rem; margin-bottom: .9rem; }
+  .collectionhead .row {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem 1.2rem;
+    border-bottom: 1px solid var(--line-strong); padding-bottom: .45rem;
+  }
+  .collectionhead h2 {
+    font-size: .82rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin: 0;
+  }
+  .collectionhead .count { font-size: .76rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .collectionhead .criteria { font-size: .78rem; color: var(--muted); margin: .5rem 0 0; max-width: 52rem; }
+  .collectionhead .criteria b {
+    color: var(--ink); font-weight: 600; font-size: .68rem;
+    letter-spacing: .12em; text-transform: uppercase; margin-right: .35rem;
+  }
+  .collection-empty { font-size: .82rem; color: var(--muted); }
+
+  .duels { display: flex; flex-direction: column; gap: .8rem; }
+  .duelgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.4rem; }
+  @media (max-width: 40rem) { .duelgrid { grid-template-columns: 1fr; gap: .8rem 0; } }
+  .duelside { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+  .duelside:first-child { border-right: 1px solid var(--line); padding-right: 1.4rem; }
+  @media (max-width: 40rem) { .duelside:first-child { border-right: 0; padding-right: 0;
+    border-bottom: 1px solid var(--line); padding-bottom: .8rem; } }
+  .duelside h3 { margin: 0; font-size: .95rem; font-weight: 600; line-height: 1.4; }
+  .duelside h3 a { text-decoration: none; }
+  .duelside h3 a:hover { color: var(--accent); text-decoration: underline; }
+  .duelmeta {
+    display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: .68rem; color: var(--muted);
+    border-top: 1px solid var(--line); padding-top: .5rem; margin-top: .3rem;
+  }
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('collections.kicker') }}</div>
+  <h1>{{ t('collections.title') }}</h1>
+  <p class="promise">{{ t('collections.intro') }}</p>
+</header>
+
+<main id="main">
+  <section id="duel">
+    <div class="collectionhead">
+      <div class="row">
+        <h2>{{ t('collections.duel.label') }}</h2>
+        <span class="count">{{ duel|length == 1
+          ? t('collections.duel_count_one')
+          : t('collections.duel_count', duel|length, duel_cap) }}</span>
+      </div>
+      <p class="criteria">
+        <b>{{ t('collections.criteria_label') }}</b>
+        {{ t('collections.duel.criteria') }}
+      </p>
+    </div>
+    {% if duel %}
+    <div class="duels">
+      {% for row in duel %}
+      <article class="card duelcard">
+        <div class="duelgrid">
+          {% for side in [row.left, row.right] %}
+          <div class="duelside">
+            <div class="srcline">
+              {% if favicons[side.source.id] is defined %}
+                <img class="favicon" src="/favicons/{{ favicons[side.source.id] }}" alt="" width="14" height="14" loading="lazy">
+              {% endif %}
+              <span class="src">{{ side.source.name }}</span>
+              <span class="tag">{{ label_economic(side.source.rating.economic) }}</span>
+              <span class="time">{{ side.item.published|reltime }}</span>
+            </div>
+            <h3><a href="{{ side.item.link }}" rel="noopener">{{ side.item.title }}</a></h3>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="duelmeta">
+          <span>{{ label_topic(row.story.topic) }}</span>
+          {% if row.story.tellings|length > 2 %}
+            <span>{{ t('collections.duel_more', row.story.tellings|length) }}</span>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="collection-empty">{{ t('collections.duel_empty') }}</p>
+    {% endif %}
+  </section>
+
+  {% for entry in collections %}
+  <section id="{{ entry.collection.id }}">
+    <div class="collectionhead">
+      <div class="row">
+        <h2>{{ t('collections.' ~ entry.collection.id ~ '.label') }}</h2>
+        <span class="count">{{ entry.articles|length == 1
+          ? t('collections.count_one', entry.collection.windowDays)
+          : t('collections.count', entry.articles|length, entry.collection.windowDays) }}</span>
+      </div>
+      <p class="criteria">
+        <b>{{ t('collections.criteria_label') }}</b>
+        {{ t('collections.' ~ entry.collection.id ~ '.criteria') }}
+      </p>
+    </div>
+    {% if entry.articles %}
+    <div class="cards">
+      {% for article in entry.articles %}
+        {% include '_article_card.html.twig' with {'interactive': false, 'read_urls': {}, 'saved_urls': {}} %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="collection-empty">{{ t('collections.empty') }}</p>
+    {% endif %}
+  </section>
+  {% endfor %}
+</main>
+{% endblock %}
+
+{% block footer %}
+  <p class="enough">{{ t('collections.footer_title') }}</p>
+  <p>{{ t('collections.footer_text') }}</p>
+{% endblock %}

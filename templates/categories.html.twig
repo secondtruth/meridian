@@ -1,0 +1,108 @@
+{% extends 'layout.html.twig' %}
+{% import '_icons.html.twig' as ui %}
+
+{% block title %}Meridian — {{ t('nav.categories') }}{% endblock %}
+
+{% block style %}
+  .catgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(23rem, 1fr)); gap: .8rem; }
+  .catcard h2 {
+    margin: 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0; text-transform: none;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .catcard h2 .icon { width: 1.05em; height: 1.05em; vertical-align: 0; color: var(--accent); }
+  .catcard .desc { margin: 0; font-size: .82rem; color: var(--muted); }
+  .catcard .countrow { display: flex; align-items: baseline; gap: .6rem; font-size: .78rem; color: var(--muted); }
+  .catcard .countrow b { font-size: 1.3rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .catcard .countrow a { color: var(--accent); }
+  .catcard .latest { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .catcard .latest li { padding: .45rem 0; border-bottom: 1px solid var(--line); font-size: .82rem; }
+  .catcard .latest a { text-decoration: none; font-weight: 600; }
+  .catcard .latest a:hover { color: var(--accent); text-decoration: underline; }
+  .catcard .latest .who { display: block; font-size: .7rem; color: var(--muted); margin-top: .1rem; }
+  .catcard .grouplabel { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: .2rem; }
+  .catcard details { font-size: .74rem; color: var(--muted); }
+  .catcard details summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+  .catcard details .tags { margin-top: .45rem; }
+  .howto {
+    background: var(--surface); border: 1px solid var(--line); border-radius: .45rem;
+    padding: 1.1rem 1.25rem; font-size: .84rem; max-width: 52rem;
+  }
+  .howto ol { margin: 0; padding-left: 1.2rem; }
+  .howto li { margin-bottom: .35rem; }
+  .howto code { background: var(--accent-soft); border-radius: .25rem; padding: 0 .3rem; }
+  .howto a { color: var(--accent); }
+{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('categories.kicker') }}</div>
+  <h1>{{ t('categories.title') }}</h1>
+  <p class="promise">
+    {{ t('categories.intro_pre') }} <strong>{{ t('categories.intro_strong') }}</strong>{{ t('categories.intro_post') }}
+  </p>
+</header>
+
+<main id="main">
+  <section>
+    <div class="catgrid">
+      {% for topic in topics %}
+      <article class="card catcard" id="{{ topic.id }}">
+        <h2>{{ ui.icon('topic-' ~ topic.id) }} {{ label_topic(topic.id) }}</h2>
+        <p class="desc">{{ t('topics.' ~ topic.id ~ '.description') }}</p>
+        <div class="countrow">
+          <b>{{ topic.article_count }}</b> {{ t('categories.count_line') }}
+          · <a href="/?mode=full#{{ topic.id }}">{{ t('categories.view_all') }}</a>
+        </div>
+
+        {% if topic.latest %}
+        <div class="grouplabel">{{ t('categories.latest') }}</div>
+        <ul class="latest">
+          {% for article in topic.latest %}
+          <li>
+            <a href="{{ article.item.link }}" rel="noopener">{{ article.item.title }}</a>
+            <span class="who">{{ article.source.name }} · {{ label_perspective(article.source.perspective) }} · {{ article.item.published|reltime }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if topic.specialists %}
+        <div class="grouplabel">{{ t('categories.specialists') }}</div>
+        <div class="tags">
+          {% for s in topic.specialists %}<span class="pill">{{ s.name }}</span>{% endfor %}
+        </div>
+        {% endif %}
+
+        <details>
+          <summary>{{ t('categories.keywords', topic.keywords_de|length + topic.keywords_en|length) }}</summary>
+          <div class="grouplabel">{{ t('categories.keywords_de') }}</div>
+          <div class="tags">{% for kw in topic.keywords_de %}<span class="tag">{{ kw }}</span>{% endfor %}</div>
+          <div class="grouplabel">{{ t('categories.keywords_en') }}</div>
+          <div class="tags">{% for kw in topic.keywords_en %}<span class="tag">{{ kw }}</span>{% endfor %}</div>
+        </details>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section>
+    <div class="sectionhead">
+      <h2>{{ t('categories.how_title') }}</h2>
+    </div>
+    <div class="howto">
+      <ol>
+        <li>{{ t('categories.how_1', window_hours) }}</li>
+        <li>{{ t('categories.how_2') }}</li>
+        <li>{{ t('categories.how_3') }}</li>
+        <li>{{ t('categories.how_4') }}</li>
+      </ol>
+      <p style="margin: .6rem 0 0">{{ t('categories.how_docs') }} → <a href="/methodology">{{ t('nav.methodology') }}</a></p>
+    </div>
+  </section>
+</main>
+{% endblock %}
+
+{% block footer %}
+  <p class="enough">{{ t('categories.footer_title') }}</p>
+  <p>{{ t('categories.footer_text') }}</p>
+{% endblock %}
