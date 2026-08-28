@@ -120,6 +120,15 @@ php -S 127.0.0.1:8932 -t public     # dev server
   describe.
 - German product copy (web UI), English code/docs.
 
+## Deployment
+
+Server specifics (host, paths, deploy commands, cron) live in
+`DEPLOY.local.md` on the working machine — git-ignored so the public
+repository carries no infrastructure details. Portable rules: accounts
+are disabled in production (account-gated UI must degrade to absent,
+not broken), and the test suite plus `sources:validate` run before
+every deploy.
+
 ## Task tracking
 
 TODO.md holds active items, ideas and done log — keep it current.

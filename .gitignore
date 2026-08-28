@@ -7,3 +7,4 @@
 .DS_Store
 .phpunit.result.cache
 /public/favicons/
+/DEPLOY.local.md

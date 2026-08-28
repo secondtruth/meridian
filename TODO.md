@@ -14,8 +14,17 @@
       machine-translated lines visibly (Ground-News-style marker icon,
       tooltip with the original title) — never present MT as original
       wording
-- [ ] Euractiv feed is Cloudflare-flaky (works intermittently) — find a
-      stable EU-affairs feed or accept the gaps
+- [ ] Die Neue Norm and The Hindu return 403 from the production
+      server, so the live edition carries fewer sources than local runs.
+      Measured 2026-08-28, not inferred: identical User-Agent gives 200
+      from a residential IP and 403 from the server's datacenter IP, and a browser
+      User-Agent from the server stays 403 — this is the source IP, so
+      UA cosmetics cannot fix it. Realistic remedy is a different egress
+      for the fetch (proxy/relay outside the datacenter range), which
+      needs a decision on where that egress lives
+- [ ] Euractiv is a separate case from the two above: it 403s from every
+      IP tested, residential included, and across three User-Agents —
+      find a stable EU-affairs feed or accept the gaps
 - [ ] Read tracking needs JavaScript (`sendBeacon`); without it the
       balance page stays empty. A no-JS fallback would need link
       rewriting, which was rejected on privacy grounds — revisit only if
