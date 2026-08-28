@@ -4,7 +4,7 @@
     "type": "project",
     "license": "AGPL-3.0-or-later",
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4.1",
         "ext-simplexml": "*",
         "ext-curl": "*",
         "symfony/console": "^8.1",
