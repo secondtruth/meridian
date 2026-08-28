@@ -1,0 +1,31 @@
+# Standalone deployment. Meridian is a website: one PHP container serving
+# public/, plus scheduled commands. There is no queue and no worker.
+#
+#   docker compose run --rm composer install --no-dev --optimize-autoloader
+#   docker compose up -d
+#   docker compose exec app bin/meridian fetch
+#
+# Then schedule the daily jobs (host cron, systemd timer, whatever you use):
+#   fetch             feeds  → data/cache/items.json
+#   favicons:fetch    outlet icons → public/favicons (self-hosted, GDPR)
+#   editions:archive  freeze the day's edition → data/archive
+#   accounts:prune    expired sessions + reading-history retention
+services:
+  app:
+    image: dunglas/frankenphp:1-php8.4
+    restart: unless-stopped
+    environment:
+      # FrankenPHP serves /app/public; ":80" keeps TLS to the proxy in front.
+      SERVER_NAME: ":80"
+    volumes:
+      - .:/app
+    ports:
+      - "${MERIDIAN_PORT:-8080}:80"
+
+  # One-shot: docker compose run --rm composer <command>
+  composer:
+    image: composer:2
+    profiles: [tools]
+    working_dir: /app
+    volumes:
+      - .:/app

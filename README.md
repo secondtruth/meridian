@@ -118,6 +118,32 @@ tests/              PHPUnit suite
 - [docs/classification.md](docs/classification.md) — exact spec of
   category detection, matching strategies and keyword curation rules
 
+## Self-hosting
+
+Meridian needs PHP 8.4.1+ (`curl`, `simplexml`, and `pdo_sqlite` for the
+optional accounts) and a web server pointed at `public/`. The shipped
+[compose.yml](compose.yml) runs it as a single container:
+
+```sh
+docker compose run --rm composer install --no-dev --optimize-autoloader
+docker compose up -d
+docker compose exec app bin/meridian fetch
+```
+
+Four commands belong in a daily schedule — the edition is built from
+whatever the cache holds, so nothing else is needed:
+
+| Command | Purpose |
+|---|---|
+| `bin/meridian fetch` | pull all source feeds into the item cache |
+| `bin/meridian favicons:fetch` | mirror outlet icons locally (no third-party requests) |
+| `bin/meridian editions:archive` | freeze the day's edition for `/archive` |
+| `bin/meridian accounts:prune` | expire sessions and reading history per retention |
+
+Accounts are optional: without `config/oidc.php` every page works signed
+out, which is the normal state, not an error (see
+[docs/accounts.md](docs/accounts.md)).
+
 ## Status
 
 Prototype. Known limitations are tracked in [TODO.md](TODO.md).
