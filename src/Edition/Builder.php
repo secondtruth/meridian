@@ -106,7 +106,12 @@ final class Builder
             if ($state[$topic]['selected'] === []) {
                 continue;
             }
-            $sections[] = new Section($topic, $state[$topic]['selected'], $state[$topic]['diversity']);
+            $sections[] = new Section(
+                $topic,
+                $state[$topic]['selected'],
+                $state[$topic]['diversity'],
+                $this->candidatePerspectives($byTopic[$topic]),
+            );
         }
 
         return new Edition($now, Mode::Compact, $sections);
@@ -130,7 +135,7 @@ final class Builder
             foreach ($articles as $article) {
                 $diversity->add($article->source);
             }
-            $sections[] = new Section($topic, $articles, $diversity);
+            $sections[] = new Section($topic, $articles, $diversity, $this->candidatePerspectives($articles));
         }
 
         return new Edition($now, Mode::Full, $sections);
@@ -262,6 +267,28 @@ final class Builder
             ),
             $clusters,
         );
+    }
+
+    /**
+     * Perspectives with at least one fresh candidate telling for a topic —
+     * what blind-spot reporting measures the selection against
+     * (rating-system.md §5). Cluster members count: their perspective was
+     * available even where their telling did not lead.
+     *
+     * @param list<Article> $candidates
+     *
+     * @return list<string>
+     */
+    private function candidatePerspectives(array $candidates): array
+    {
+        $perspectives = [];
+        foreach ($candidates as $candidate) {
+            foreach ($candidate->tellings() as $telling) {
+                $perspectives[$telling->source->perspective] = true;
+            }
+        }
+
+        return array_keys($perspectives);
     }
 
     /** @return array<string, true> lowercased word tokens of a headline */

@@ -266,6 +266,43 @@ final class AccountRoutesTest extends TestCase
         self::assertSame('climate', $open[0]['topic']);
     }
 
+    public function testSourceAnchoredReportsResolveAgainstTheRegistry(): void
+    {
+        $form = $this->dispatch('GET', '/report', query: ['source' => 'mongabay']);
+        self::assertSame(200, $form->status);
+        self::assertStringContainsString('Mongabay', $form->body);
+
+        $unknown = $this->dispatch('GET', '/report', query: ['source' => 'invented']);
+        self::assertSame(404, $unknown->status);
+
+        $response = $this->dispatch('POST', '/report', body: [
+            '_csrf' => $this->csrf,
+            'source' => 'mongabay',
+            'kind' => 'rating',
+            'note' => 'CHES places the line further left',
+        ]);
+        self::assertSame(200, $response->status);
+
+        $open = $this->store->reports->open();
+        self::assertCount(1, $open);
+        self::assertSame('mongabay', $open[0]['source_id']);
+        self::assertSame('', $open[0]['url'], 'source-anchored rows carry no article');
+        self::assertSame('', $open[0]['topic']);
+        self::assertSame('rating', $open[0]['kind']);
+    }
+
+    public function testSourceAnchoredReportsHaveNoTopicKind(): void
+    {
+        $this->dispatch('POST', '/report', body: [
+            '_csrf' => $this->csrf,
+            'source' => 'mongabay',
+            'kind' => 'topic',
+            'note' => '',
+        ]);
+
+        self::assertSame('other', $this->store->reports->open()[0]['kind']);
+    }
+
     public function testTheExportIsDownloadableJson(): void
     {
         $response = $this->dispatch('GET', '/account/export');

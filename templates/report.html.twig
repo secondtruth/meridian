@@ -21,17 +21,29 @@
   <section style="margin-top: 1rem">
     <div class="sectionhead"><h2>{{ t('report.subject') }}</h2></div>
     <div class="panel subject">
-      <h3>{{ article.item.title }}</h3>
-      <p class="meta">
-        <b>{{ article.source.name }}</b> · {{ label_perspective(article.source.perspective) }} ·
-        {{ rating_summary(article.source.rating) }}<br>
-        {{ t('report.current_topic') }} <b>{{ label_topic(article.topic) }}</b>
-      </p>
+      {% if article %}
+        <h3>{{ article.item.title }}</h3>
+        <p class="meta">
+          <b>{{ article.source.name }}</b> · {{ label_perspective(article.source.perspective) }} ·
+          {{ rating_summary(article.source.rating) }}<br>
+          {{ t('report.current_topic') }} <b>{{ label_topic(article.topic) }}</b>
+        </p>
+      {% else %}
+        <h3>{{ source.name }}</h3>
+        <p class="meta">
+          {{ label_perspective(source.perspective) }} · {{ rating_summary(source.rating) }}<br>
+          {{ t('report.subject_source_hint') }}
+        </p>
+      {% endif %}
     </div>
 
     <form class="reportform" method="post" action="/report">
       <input type="hidden" name="_csrf" value="{{ viewer.csrfToken }}">
-      <input type="hidden" name="url" value="{{ article.item.link }}">
+      {% if article %}
+        <input type="hidden" name="url" value="{{ article.item.link }}">
+      {% else %}
+        <input type="hidden" name="source" value="{{ source.id }}">
+      {% endif %}
 
       <fieldset class="field">
         <legend class="legend">{{ t('report.kind') }}</legend>

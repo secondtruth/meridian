@@ -342,6 +342,22 @@ final class AccountRoutes
             return $denied;
         }
 
+        // Source-anchored dissent (accounts.md §11): the "disagree?" entry
+        // from a /sources card, no article involved.
+        if (($sourceId = $request->query('source')) !== null) {
+            $source = $this->registry->get($sourceId);
+            if ($source === null) {
+                return $this->message($view, 'report.gone_kicker', 'report.gone_source_title', 'report.gone_source_text', 404);
+            }
+
+            return $view->render('report.html.twig', [
+                'nav_active' => null,
+                'article' => null,
+                'source' => $source,
+                'kinds' => Reports::SOURCE_KINDS,
+            ]);
+        }
+
         $article = $this->findArticle($request->query('url') ?? '');
         if ($article === null) {
             return $this->message($view, 'report.gone_kicker', 'report.gone_title', 'report.gone_text', 404);
@@ -350,6 +366,7 @@ final class AccountRoutes
         return $view->render('report.html.twig', [
             'nav_active' => null,
             'article' => $article,
+            'source' => $article->source,
             'kinds' => Reports::KINDS,
         ]);
     }
@@ -366,6 +383,22 @@ final class AccountRoutes
         $now = new \DateTimeImmutable();
         if ($this->store->reports->countToday($viewer->user->id, $now) >= self::REPORTS_PER_DAY) {
             return $this->message($view, 'report.limit_kicker', 'report.limit_title', 'report.limit_text', 429);
+        }
+
+        if (($sourceId = $request->input('source')) !== null) {
+            $source = $this->registry->get($sourceId);
+            if ($source === null) {
+                return $this->message($view, 'report.gone_kicker', 'report.gone_source_title', 'report.gone_source_text', 404);
+            }
+            $this->store->reports->submitForSource(
+                $viewer->user->id,
+                $source,
+                $request->input('kind') ?? 'other',
+                $request->input('note') ?? '',
+                $now,
+            );
+
+            return $this->message($view, 'report.thanks_kicker', 'report.thanks_title', 'report.thanks_text');
         }
 
         $article = $this->findArticle($request->input('url') ?? '');

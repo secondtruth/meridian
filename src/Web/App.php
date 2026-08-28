@@ -18,6 +18,7 @@ use Meridian\Feed\Item;
 use Meridian\Feed\ItemCache;
 use Meridian\I18n\Translator;
 use Meridian\Registry\Registry;
+use Meridian\Spectrum\AxisGrid;
 
 /** Request-scoped wiring for all pages — Meridian is a website. */
 final class App
@@ -209,6 +210,7 @@ final class App
             'nav_active' => 'sources',
             'sources' => $this->registry->all(),
             'map_points' => $this->spectrumMapPoints(),
+            'dataset_grid' => AxisGrid::count($this->registry->all()),
             'in_focus' => $inFocus,
             'perspective_counts' => $perspectiveCounts,
             'window_hours' => Builder::MAX_ITEM_AGE_HOURS,

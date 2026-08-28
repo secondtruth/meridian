@@ -32,6 +32,11 @@
   .srccard details li { margin-bottom: .35rem; }
   .srccard details a { color: var(--accent); word-break: break-all; }
   .confidence-low { color: var(--econ-0); font-weight: 600; }
+  .sectionhead .gridwrap { margin-left: auto; display: flex; align-items: center; gap: .55rem; }
+  .gridwrap .gridlabel { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .srccard .dissent { border-top: 1px solid var(--line); padding-top: .5rem; font-size: .74rem; }
+  .srccard .dissent a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .srccard .dissent a:hover { text-decoration: underline; }
 {% endblock %}
 
 {% block content %}
@@ -51,6 +56,14 @@
     <div class="sectionhead">
       <h2>{{ t('sources.map_title') }}</h2>
       <span class="count">{{ t('sources.map_sub') }}</span>
+      <span class="gridwrap">
+        <span class="gridlabel">{{ t('sources.grid_label') }}</span>
+        {% include '_axis_grid.html.twig' with {
+          'grid': dataset_grid,
+          'aria': t('sources.grid_aria', sources|length),
+          'large': true,
+        } only %}
+      </span>
     </div>
     <div class="mapwrap">
       <svg viewBox="0 0 720 460" role="img" aria-label="{{ t('sources.map_aria') }}">
@@ -151,6 +164,9 @@
             {% endfor %}
           </ul>
         </details>
+        {% endif %}
+        {% if viewer.accountsEnabled %}
+        <p class="dissent"><a href="/report?source={{ source.id }}">{{ t('report.link_source') }}</a></p>
         {% endif %}
       </article>
       {% endfor %}

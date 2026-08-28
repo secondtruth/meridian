@@ -207,7 +207,10 @@ the article count; primaries only, the same accounting as
 `Section::economicDistribution()` (which still feeds the accessible
 summary). The balance page renders the same grid over a reader's
 period, with the dataset as reference: cells the dataset offers but the
-reader has not touched render dashed — a mirror, never a score.
+reader has not touched render dashed — a mirror, never a score. The
+source directory (`/sources`) shows the grid once more over the whole
+dataset, next to the spectrum map: the map places each outlet, the grid
+shows which band combinations the dataset covers at all.
 
 ### Edition blind spots
 
@@ -218,6 +221,18 @@ articles has no voice from the economic left (bands 0–1) or right
 articles report nothing — a single article always "misses" a side, and
 that signal would be noise. This is a mirror of the *edition*, the
 counterpart to the balance page's mirror of the reader.
+
+The same line names missing perspectives, measured **against the
+possible, never against the ideal**: `Section::missingPerspectives()`
+reports a perspective only when it had at least one fresh candidate
+telling for the topic (`Builder::candidatePerspectives()`, cluster
+members included) and still ends up invisible in the section. A
+perspective that published nothing on the topic is not a blind spot of
+the edition and is not reported. "Visible" also includes cluster
+members — a telling on the card's "also covered by" line is a voice,
+not a gap. The under-two guard applies as above; in full mode nothing
+is ever missing because every candidate is shown. Sections without
+candidate accounting (archived editions) report no perspective gaps.
 
 ## 6. Edition archive
 

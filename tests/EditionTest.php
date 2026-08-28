@@ -358,6 +358,63 @@ final class EditionTest extends TestCase
         self::assertSame([], $found->alsoCoveredBy);
     }
 
+    public function testMissingPerspectivesAreMeasuredAgainstTheCandidates(): void
+    {
+        $dachLeft = self::source('taz', 'dach', ['de'], -2.0, ['general']);
+        $dachRight = self::source('faz', 'dach', ['de'], 2.0, ['general']);
+        $south = self::source('mongabay', 'global-south', ['en'], 0.0, ['general']);
+
+        $articles = [
+            new Article(self::item('taz', 'x', 'https://x/1'), $dachLeft, 'climate'),
+            new Article(self::item('faz', 'y', 'https://x/2'), $dachRight, 'climate'),
+        ];
+        $diversity = new \Meridian\Spectrum\Diversity();
+
+        // A perspective with candidates that the selection squeezed out is a gap.
+        $squeezed = new Section('climate', $articles, $diversity, ['dach', 'global-south']);
+        self::assertSame(['global-south'], $squeezed->missingPerspectives());
+
+        // The possible, not the ideal: no candidate → no blind spot.
+        $silent = new Section('climate', $articles, $diversity, ['dach']);
+        self::assertSame([], $silent->missingPerspectives());
+
+        // A cluster member's telling is visible on the card — not a gap.
+        $clustered = new Section('climate', [
+            $articles[0],
+            new Article(self::item('faz', 'y', 'https://x/2'), $dachRight, 'climate', [
+                new Article(self::item('mongabay', 'z', 'https://x/3'), $south, 'climate'),
+            ]),
+        ], $diversity, ['dach', 'global-south']);
+        self::assertSame([], $clustered->missingPerspectives());
+
+        // Under-two guard and unknown candidate accounting report nothing.
+        $single = new Section('climate', [$articles[0]], $diversity, ['dach', 'global-south']);
+        self::assertSame([], $single->missingPerspectives());
+        self::assertSame([], (new Section('climate', $articles, $diversity))->missingPerspectives());
+    }
+
+    public function testCompactSectionsReportNoGapForSilentPerspectives(): void
+    {
+        // global-south sits in the dataset but published nothing on the
+        // topic — that is not a blind spot of the edition.
+        $registry = new Registry([
+            self::source('taz', 'dach', ['de'], -2.0, ['general']),
+            self::source('faz', 'dach', ['de'], 2.0, ['general']),
+            self::source('mongabay', 'global-south', ['en'], 0.0, ['general']),
+        ]);
+        $items = [
+            self::item('taz', 'Klimakrise verschärft Dürre in Europa', 'https://x/1'),
+            self::item('faz', 'Emissionshandel vor der Reform', 'https://x/2'),
+        ];
+
+        $edition = (new Builder())->build($registry, $items, new \DateTimeImmutable(), Mode::Compact);
+
+        self::assertNotSame([], $edition->sections);
+        foreach ($edition->sections as $section) {
+            self::assertSame([], $section->missingPerspectives());
+        }
+    }
+
     public function testSectionAxisGridCountsPrimariesOnBothAxes(): void
     {
         $left = new Article(self::item('a', 'x', 'https://x/1'), self::source('a', 'dach', ['de'], -2.0, ['general']), 'climate');

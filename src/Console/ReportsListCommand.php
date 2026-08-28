@@ -59,16 +59,19 @@ final class ReportsListCommand extends Command
         }
 
         foreach ($reports as $report) {
+            $sourceAnchored = $report['url'] === '';
             $output->writeln(sprintf(
-                "\n<info>#%d</info>  %s  <comment>%s</comment>  source: %s  topic: %s",
+                "\n<info>#%d</info>  %s  <comment>%s</comment>  source: %s%s",
                 $report['id'],
                 $report['created_at'],
                 $report['kind'],
                 $report['source_id'],
-                $report['topic'],
+                $sourceAnchored ? '  (source-anchored)' : '  topic: ' . $report['topic'],
             ));
-            $output->writeln('  ' . $report['title']);
-            $output->writeln('  ' . $report['url']);
+            if (!$sourceAnchored) {
+                $output->writeln('  ' . $report['title']);
+                $output->writeln('  ' . $report['url']);
+            }
             if (trim((string) $report['note']) !== '') {
                 $output->writeln('  note: ' . $report['note']);
             }

@@ -114,7 +114,10 @@ resolve, so no request can invent reading history or point a report at
 something that was never published.
 
 Consequence by design: only what is currently inside the 48-hour window
-can be saved, reported or recorded.
+can be saved, reported or recorded. The one deliberate exception is the
+source-anchored report (§11): it carries no article at all and resolves
+its subject against the registry instead — an unknown source id does
+not resolve, so the forgery property holds there too.
 
 ## 7. Preferences
 
@@ -189,7 +192,22 @@ what the list is asking about. No pagination, no autoload.
 Kinds: `topic`, `rating`, `source`, `other`, plus a free-text note capped
 at 1000 characters. At most 20 per reader per day. Nothing a reader
 submits changes the dataset by itself; review happens on the command
-line:
+line.
+
+A report anchors to one of two subjects:
+
+- **Article-anchored** (`/report?url=…`, the link on an edition card):
+  the classification of one article. Resolved via `Builder::findFresh()`
+  (§6); all four kinds apply.
+- **Source-anchored** (`/report?source=<id>`, the "contest this rating"
+  link on a `/sources` card): the rating of an outlet as a whole,
+  independent of any article — so a rating stays contestable after its
+  articles leave the 48-hour window. Resolved against the registry;
+  kinds are limited to `rating`, `source` and `other` (`topic` has no
+  meaning without an article). Stored with empty `url`, `title` and
+  `topic` — that emptiness is how `reports:list` tells the two apart.
+
+Both share the daily brake and the review flow:
 
 ```sh
 bin/meridian reports:list

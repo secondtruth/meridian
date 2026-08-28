@@ -33,15 +33,6 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
       it, the divide, the agreement — Ground News "Bias Comparison"
       pattern) via the OpenAI-compatible client, extending the
       translation/framing item; clusters exist since phase 1
-- [ ] Extend the edition blindspot line (shipped for economic sides)
-      to missing perspectives — needs a judgement call on which absences
-      are signal (Global South missing from a DACH-heavy topic?) and
-      which are noise
-- [ ] Source-level dissent entry: /sources already shows evidence links
-      and confidence per card; what is missing is a "disagree?" entry
-      point from the card into the report flow, which is article-anchored
-      today — needs a source-anchored report kind in docs/accounts.md
-      first
 - [ ] Good-news pool is thin (two sources): evaluate enorm Magazin
       (feed unreachable 2026-08-27) and Perspective Daily (no public
       feed) again, or an English constructive source (Reasons to be
@@ -67,6 +58,19 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Blindspot line extended to perspectives, measured against the
+      possible (decided 2026-08-28): Section::missingPerspectives reports
+      a perspective only when it had fresh candidates for the topic
+      (cluster members count as visible); rating-system.md §5
+- [x] Two-axis coverage grid completed on /sources: the dataset's band
+      shape next to the spectrum map (the map places outlets, the grid
+      shows which combinations exist at all) — section head and balance
+      overlay had shipped earlier
+- [x] Source-anchored dissent entry: "Bewertung anfechten" on every
+      /sources card → /report?source=<id>, kinds rating/source/other,
+      resolved against the registry (forgery property holds), stored
+      with empty url/title/topic; reports:list tells both kinds apart —
+      accounts.md §6/§11
 - [x] Story clustering phase 1 (rating-system.md §5): near-identical
       headlines within a topic cluster into one story instead of being
       dropped — the freshest telling leads, the others render as an

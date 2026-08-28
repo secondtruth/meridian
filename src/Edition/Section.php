@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Meridian\Edition;
 
+use Meridian\Registry\Registry;
 use Meridian\Spectrum\AxisGrid;
 use Meridian\Spectrum\Band;
 use Meridian\Spectrum\Diversity;
@@ -11,11 +12,19 @@ use Meridian\Spectrum\Diversity;
 /** The selected articles of one topic with their balance report. */
 final class Section
 {
-    /** @param list<Article> $articles */
+    /**
+     * @param list<Article>     $articles
+     * @param list<string>|null $candidatePerspectives perspectives that had at
+     *                                                 least one fresh candidate for this topic before
+     *                                                 selection — the "possible" that blind-spot
+     *                                                 reporting measures against; null when unknown
+     *                                                 (e.g. archived editions)
+     */
     public function __construct(
         public readonly string $topic,
         public array $articles,
         public readonly Diversity $diversity,
+        private readonly ?array $candidatePerspectives = null,
     ) {
     }
 
@@ -71,5 +80,34 @@ final class Section
         }
 
         return $missing;
+    }
+
+    /**
+     * Perspectives that published on this topic in the window but are not
+     * visible in the section — measured against the possible (the
+     * candidates), never against the ideal: a perspective that published
+     * nothing is not a blind spot of the edition. Cluster members count
+     * as visible; their telling is on the card. The under-two guard from
+     * missingEconomicSides() applies for the same reason.
+     *
+     * @return list<string> in Registry::PERSPECTIVES order
+     */
+    public function missingPerspectives(): array
+    {
+        if ($this->candidatePerspectives === null || count($this->articles) < 2) {
+            return [];
+        }
+
+        $visible = [];
+        foreach ($this->articles as $article) {
+            foreach ($article->tellings() as $telling) {
+                $visible[$telling->source->perspective] = true;
+            }
+        }
+
+        return array_values(array_filter(
+            Registry::PERSPECTIVES,
+            fn (string $p) => in_array($p, $this->candidatePerspectives, true) && !isset($visible[$p]),
+        ));
     }
 }

@@ -130,10 +130,14 @@
         } only %}
       </span>
     </div>
-    {% if section.missingEconomicSides %}
+    {% set blindspots = section.missingEconomicSides %}
+    {% for p in section.missingPerspectives %}
+      {% set blindspots = blindspots|merge([t('edition.blindspot_perspective', label_perspective(p))]) %}
+    {% endfor %}
+    {% if blindspots %}
     <p class="blindspot">
       <b>{{ t('edition.blindspot_intro') }}</b>
-      {% for side in section.missingEconomicSides %}{{ t('edition.blindspot_' ~ side) }}{% if not loop.last %} · {% endif %}{% endfor %}
+      {% for spot in blindspots %}{{ spot in ['left', 'right'] ? t('edition.blindspot_' ~ spot) : spot }}{% if not loop.last %} · {% endif %}{% endfor %}
     </p>
     {% endif %}
     <div class="cards">
