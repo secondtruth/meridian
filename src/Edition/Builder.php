@@ -6,6 +6,7 @@ namespace Meridian\Edition;
 
 use Meridian\Feed\Item;
 use Meridian\Registry\Registry;
+use Meridian\Spectrum\Band;
 use Meridian\Spectrum\Diversity;
 
 /**
@@ -53,8 +54,8 @@ final class Builder
      * Compact: greedy diverse selection under the hard caps, at most one
      * article per source per topic. Every non-empty topic first gets a
      * fair base quota (20 ÷ topics) so late topics in TOPIC_ORDER cannot
-     * be crowded out; leftover slots are then distributed round-robin up
-     * to the per-topic cap.
+     * be crowded out; leftover slots first go where they close a reported
+     * blind spot, then round-robin up to the per-topic cap.
      *
      * @param array<string, list<Article>> $byTopic
      */
@@ -70,6 +71,10 @@ final class Builder
 
         $globalDiversity = new Diversity();
         $quota = min(self::MAX_ITEMS_PER_TOPIC, intdiv(self::MAX_ITEMS_TOTAL, count($topics)));
+        $perspectives = [];
+        foreach ($topics as $topic) {
+            $perspectives[$topic] = $this->candidatePerspectives($byTopic[$topic]);
+        }
 
         /** @var array<string, array{selected: list<Article>, used: array<string, true>, diversity: Diversity}> $state */
         $state = [];
@@ -84,6 +89,29 @@ final class Builder
             }
         }
 
+        // Pass 2 — blindspot-directed surplus: spare capacity first goes
+        // where it closes a gap the edition would otherwise report
+        // (rating-system.md §5). Sections under two articles report no
+        // blind spots, so they are only topped up by the fallback pass.
+        $progress = true;
+        while ($total < self::MAX_ITEMS_TOTAL && $progress) {
+            $progress = false;
+            foreach ($topics as $topic) {
+                if ($total === self::MAX_ITEMS_TOTAL) {
+                    break;
+                }
+                if (count($state[$topic]['selected']) >= self::MAX_ITEMS_PER_TOPIC) {
+                    continue;
+                }
+                $closer = $this->blindspotCloser($topic, $state[$topic], $perspectives[$topic]);
+                if ($closer !== null && $this->selectOne($byTopic[$topic], $state[$topic], $globalDiversity, $closer)) {
+                    ++$total;
+                    $progress = true;
+                }
+            }
+        }
+
+        // Pass 3 — round-robin fallback for whatever capacity remains.
         $progress = true;
         while ($total < self::MAX_ITEMS_TOTAL && $progress) {
             $progress = false;
@@ -110,7 +138,7 @@ final class Builder
                 $topic,
                 $state[$topic]['selected'],
                 $state[$topic]['diversity'],
-                $this->candidatePerspectives($byTopic[$topic]),
+                $perspectives[$topic],
             );
         }
 
@@ -303,18 +331,24 @@ final class Builder
      * Picks the single best remaining candidate into the topic state:
      * highest diversity gain (locally and relative to the whole edition
      * so far), reliability breaks ties, fresher candidates win among
-     * equals. At most one article per source per topic. Returns false
-     * when no source-unique candidate is left.
+     * equals. At most one article per source per topic. An optional
+     * predicate narrows the field (the blindspot pass); scoring within
+     * the field is unchanged. Returns false when no source-unique
+     * candidate is left.
      *
      * @param list<Article>                                                        $candidates newest first
      * @param array{selected: list<Article>, used: array<string, true>, diversity: Diversity} $state
+     * @param null|callable(Article): bool                                         $eligible
      */
-    private function selectOne(array $candidates, array &$state, Diversity $global): bool
+    private function selectOne(array $candidates, array &$state, Diversity $global, ?callable $eligible = null): bool
     {
         $bestIndex = -1;
         $bestScore = -1;
         foreach ($candidates as $index => $candidate) {
             if (isset($state['used'][$candidate->source->id])) {
+                continue;
+            }
+            if ($eligible !== null && !$eligible($candidate)) {
                 continue;
             }
             $score = ($state['diversity']->gain($candidate->source) + $global->gain($candidate->source)) * 10
@@ -335,5 +369,30 @@ final class Builder
         $global->add($article->source);
 
         return true;
+    }
+
+    /**
+     * A predicate matching candidates that close one of the section's
+     * currently reported blind spots, or null when it reports none.
+     * Reuses Section's accounting so "reported" means exactly what the
+     * edition page would show — including the under-two guard.
+     *
+     * @param array{selected: list<Article>, used: array<string, true>, diversity: Diversity} $state
+     * @param list<string>                                                                    $candidatePerspectives
+     *
+     * @return null|callable(Article): bool
+     */
+    private function blindspotCloser(string $topic, array $state, array $candidatePerspectives): ?callable
+    {
+        $section = new Section($topic, $state['selected'], $state['diversity'], $candidatePerspectives);
+        $sides = $section->missingEconomicSides();
+        $missingPerspectives = $section->missingPerspectives();
+        if ($sides === [] && $missingPerspectives === []) {
+            return null;
+        }
+
+        return fn (Article $a): bool => (in_array('left', $sides, true) && Band::of($a->source->rating->economic)->value <= 1)
+            || (in_array('right', $sides, true) && Band::of($a->source->rating->economic)->value >= 3)
+            || in_array($a->source->perspective, $missingPerspectives, true);
     }
 }

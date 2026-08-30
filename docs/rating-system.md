@@ -188,15 +188,26 @@ squeeze out the later topics. Therefore:
 1. **Pass 1 — base quota:** every non-empty topic gets
    `min(4, ⌊20 / non-empty topics⌋)` slots (9 non-empty → 2 each;
    6 → 3 each; 5 → 4 each).
-2. **Pass 2 — round-robin top-up:** while total < 20, iterate topics in
-   `TOPIC_ORDER` and add one more article where candidates remain and
-   the per-topic cap (4) is not reached.
+2. **Pass 2 — blindspot-directed surplus:** while total < 20, walk
+   topics in `TOPIC_ORDER`; where the section built so far reports a
+   blind spot — a missing economic side or perspective, by exactly the
+   accounting the edition page shows (§ edition blind spots below,
+   under-two guard included) — and an unused fresh candidate can supply
+   it (economic band 0–1 for left, 3–4 for right, or the missing
+   perspective), select the best such candidate by the usual score.
+3. **Pass 3 — round-robin fallback:** while total < 20, iterate topics
+   in `TOPIC_ORDER` and add one more article where candidates remain
+   and the per-topic cap (4) is not reached.
 
 A topic that cannot fill its quota (few candidates) frees its slots for
-the others via pass 2. Because pass 2 walks `TOPIC_ORDER`, the four
-founding topics (climate, peace, digital-rights, accessibility) receive
-surplus slots first — a deliberate property, not an accident of
-iteration order.
+the others. Spare capacity is spent on closing reported gaps before
+anything else: the surplus over the base quota is the edition's
+self-repair capacity (decided 2026-08-30, replacing the earlier rule
+that gave surplus to the founding topics by `TOPIC_ORDER` position;
+the order now only breaks ties between equally closable sections and
+drives the fallback). A section that pass 3 lifts to two articles may
+start reporting a blind spot only after pass 2 has finished; capacity
+is not re-routed for it.
 
 ### Full mode
 

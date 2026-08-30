@@ -266,6 +266,57 @@ final class EditionTest extends TestCase
         }
     }
 
+    public function testSurplusSlotsCloseReportedBlindspotsFirst(): void
+    {
+        // Six topics, base quota 3 (⌊20/6⌋), two surplus slots. Climate
+        // and peace hold spare centrist candidates that close nothing;
+        // economy's base picks (europe/global-south/left win on
+        // diversity) leave a missing right side and an unused band-4
+        // candidate. Round-robin would spend both surplus slots on
+        // climate and peace; the blindspot pass must pick the right
+        // voice into economy instead.
+        $sources = [
+            self::source('c1', 'dach', ['de'], 0.0, ['general']),
+            self::source('c2', 'dach', ['de'], 0.0, ['general']),
+            self::source('c3', 'dach', ['de'], 0.0, ['general']),
+            self::source('c4', 'dach', ['de'], 2.0, ['general']),
+            self::source('econ-left', 'dach', ['de'], -2.0, ['general']),
+            self::source('econ-mid', 'europe', ['de'], -1.0, ['general']),
+            self::source('econ-gs', 'global-south', ['de'], 0.0, ['general']),
+            self::source('econ-right', 'dach', ['de'], 2.0, ['general']),
+        ];
+        $items = [];
+        foreach (['c1', 'c2', 'c3', 'c4'] as $id) {
+            $items[] = self::item($id, "Klimakrise {$id}Bericht {$id}Region {$id}Detail", "https://x/climate/{$id}");
+        }
+        $fillers = ['Krieg' => 'p', 'Datenschutz' => 'd', 'Inklusion' => 'a', 'Demenz' => 'h'];
+        foreach ($fillers as $word => $prefix) {
+            for ($i = 1; $i <= ($prefix === 'p' ? 4 : 3); ++$i) {
+                $id = "{$prefix}{$i}";
+                $sources[] = self::source($id, 'dach', ['de'], 0.0, ['general']);
+                $items[] = self::item($id, "{$word} {$id}Bericht {$id}Region {$id}Detail", "https://x/{$prefix}/{$i}");
+            }
+        }
+        foreach (['econ-left', 'econ-mid', 'econ-gs', 'econ-right'] as $id) {
+            $items[] = self::item($id, "Inflation {$id}Bericht {$id}Region {$id}Detail", "https://x/economy/{$id}");
+        }
+
+        $edition = (new Builder())->build(new Registry($sources), $items, new \DateTimeImmutable(), Mode::Compact);
+
+        self::assertSame(Builder::MAX_ITEMS_TOTAL, $edition->total());
+        $byTopic = [];
+        foreach ($edition->sections as $section) {
+            $byTopic[$section->topic] = $section;
+        }
+        self::assertContains('econ-right',
+            array_map(fn (Article $a) => $a->source->id, $byTopic['economy']->articles),
+            'a surplus slot must close economy\'s reported right-side blind spot');
+        self::assertSame([], $byTopic['economy']->missingEconomicSides(),
+            'the closed blind spot must no longer be reported');
+        self::assertCount(3, $byTopic['peace']->articles,
+            'round-robin surplus for peace must yield to the blindspot pass');
+    }
+
     public function testDuplicateSourceIdsAreReported(): void
     {
         $registry = new Registry([

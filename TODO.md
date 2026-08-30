@@ -60,13 +60,6 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 - [ ] Balance page: compare against what was actually *published* in the
       period, not only the dataset composition — needs a rolling archive
       of past editions (depends on the archive item above)
-- [ ] Blindspot-directed surplus: pass 2 currently walks TOPIC_ORDER
-      (the founding-topic preference); alternative decided worth
-      exploring 2026-08-30 — give the two surplus slots (20 − 9×2) to
-      sections whose reported blindspot (missing economic side or
-      perspective) has an available fresh candidate, fallback
-      TOPIC_ORDER. Replaces the founding-topic preference, so it is a
-      deliberate §5 decision with tests, not a tweak
 - [ ] Culture & media as tenth focus topic ("Kultur & Medien"):
       mission rationale is Global-South visibility (cultural coverage
       is heavily DACH/Western); quota math stays at base 2 with ten
@@ -80,6 +73,12 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Blindspot-directed surplus (2026-08-30): compact selection spends
+      spare capacity above the base quota on closing reported blind
+      spots first — a missing economic side or perspective with an
+      available fresh candidate — before the round-robin fallback;
+      replaces the founding-topic preference (rating-system.md §5,
+      regression test with a discriminating fixture)
 - [x] Compact cap raised 12 → 20 (2026-08-30): the 12 predated the topic
       expansion — at nine topics it pinned five sections to one article,
       where no balance, blindspot line or axis grid can exist; base
