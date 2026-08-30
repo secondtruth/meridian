@@ -335,7 +335,7 @@ return [
         'selection_title' => 'Wie die Tagesausgabe entsteht',
         'selection' => [
             'Beiträge der letzten 48 Stunden (Spezialquellen: bis zu zwei Wochen) werden neun Fokusthemen zugeordnet (sprachbewusste Signalwörter; Spezialquellen zählen auf ihr Fokusthema). Nahezu wortgleiche Schlagzeilen verschiedener Quellen werden zusammengeführt.',
-            'Der Kompakt-Modus wählt maximal 12 Beiträge: Jedes belegte Thema erhält zuerst eine faire Grundquote, dann werden Restplätze reihum verteilt (höchstens 4 pro Thema, eine Quelle pro Thema nur einmal). Ausgewählt wird, was die Abdeckung am stärksten erweitert: zuerst Perspektiven (Globaler Süden!), dann ökonomische Bandbreite, dann kulturelle; Verlässlichkeit entscheidet bei Gleichstand.',
+            'Der Kompakt-Modus wählt maximal 20 Beiträge: Jedes belegte Thema erhält zuerst eine faire Grundquote, dann werden Restplätze reihum verteilt (höchstens 4 pro Thema, eine Quelle pro Thema nur einmal). Ausgewählt wird, was die Abdeckung am stärksten erweitert: zuerst Perspektiven (Globaler Süden!), dann ökonomische Bandbreite, dann kulturelle; Verlässlichkeit entscheidet bei Gleichstand.',
             'Bewertungen schließen nie nach politischer Position aus — sie werden bei jedem Beitrag vollständig angezeigt. Der Voll-Modus zeigt alle zugeordneten Beiträge des Zeitfensters, als endliche Liste ohne Feed-Mechanik.',
         ],
         'limits_title' => 'Grenzen',
@@ -359,7 +359,7 @@ return [
             ['term' => 'Staatsnähe', 'def' => 'Vier Stufen: staatsfern · öffentlich-rechtlich (unabhängige Gremienaufsicht) · staatsnah (staatlich finanziert ohne Unabhängigkeitsgarantien) · staatlich kontrolliert (Regierung bestimmt die Linie).'],
             ['term' => 'Konfidenz', 'def' => 'Wie gut abgesichert die Einordnung selbst ist (niedrig / mittel / hoch). Ab „mittel“ sind Belege Pflicht.'],
             ['term' => 'Belege', 'def' => 'Links mit Begründungsnotiz, die eine Einordnung nachvollziehbar machen — auch die unbequemen Punkte (z. B. der Katar-Blindfleck von Al Jazeera).'],
-            ['term' => 'Kompakt / Voll', 'def' => 'Die zwei Lesemodi: Kompakt ist die kuratierte Tagesausgabe (max. 12 Beiträge, Standard). Voll zeigt alle zugeordneten Beiträge des Zeitfensters (48 Stunden, Spezialquellen bis zu zwei Wochen) — endlich, ohne Feed.'],
+            ['term' => 'Kompakt / Voll', 'def' => 'Die zwei Lesemodi: Kompakt ist die kuratierte Tagesausgabe (max. 20 Beiträge, Standard). Voll zeigt alle zugeordneten Beiträge des Zeitfensters (48 Stunden, Spezialquellen bis zu zwei Wochen) — endlich, ohne Feed.'],
             ['term' => 'Doom-Scrolling-Schutz', 'def' => 'Designprinzip: kein endloser Feed, keine Benachrichtigungen, harte Obergrenzen. Reichweite wird bewusst gegen psychische Hygiene getauscht.'],
         ],
         'footer_title' => 'Offenheit ist die Methode.',

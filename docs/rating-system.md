@@ -175,14 +175,17 @@ semantics above must not change with it.
 
 ### Fair topic quotas (compact mode)
 
-Caps: `MAX_ITEMS_TOTAL = 12`, `MAX_ITEMS_PER_TOPIC = 4`. Since nine
-topics × 4 = 36 > 12, naive in-order filling would permanently squeeze
-out the later topics. Therefore:
+Caps: `MAX_ITEMS_TOTAL = 20`, `MAX_ITEMS_PER_TOPIC = 4`. (The total was
+12 while the product had four topics; it was raised to 20 when nine
+topics left five of them stuck at a single article — a one-article
+section cannot be balanced, and the blindspot line needs two.) Since
+nine topics × 4 = 36 > 20, naive in-order filling would permanently
+squeeze out the later topics. Therefore:
 
 1. **Pass 1 — base quota:** every non-empty topic gets
-   `min(4, ⌊12 / non-empty topics⌋)` slots (9 non-empty → 1 each;
-   4 → 3 each; 3 → 4 each).
-2. **Pass 2 — round-robin top-up:** while total < 12, iterate topics in
+   `min(4, ⌊20 / non-empty topics⌋)` slots (9 non-empty → 2 each;
+   6 → 3 each; 5 → 4 each).
+2. **Pass 2 — round-robin top-up:** while total < 20, iterate topics in
    `TOPIC_ORDER` and add one more article where candidates remain and
    the per-topic cap (4) is not reached.
 

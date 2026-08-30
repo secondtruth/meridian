@@ -232,31 +232,35 @@ final class EditionTest extends TestCase
 
     public function testCompactModeGivesEveryTopicAFairQuota(): void
     {
-        // Three generalist DACH sources plus one accessibility specialist:
-        // without quotas, climate/peace/digital-rights (4+4+4) exhaust the
-        // total cap and accessibility never appears.
+        // Three generalist DACH sources across seven topics plus one
+        // science specialist: 7 × 3 = 21 candidates saturate the total
+        // cap, so without quotas the earlier TOPIC_ORDER entries would
+        // exhaust it and science — the last topic — never appears.
         $registry = new Registry([
             self::source('a', 'dach', ['de'], -2.0, ['general']),
             self::source('b', 'dach', ['de'], 0.0, ['general']),
             self::source('c', 'dach', ['de'], 2.0, ['general']),
-            self::source('spec', 'dach', ['de'], -1.0, ['accessibility']),
+            self::source('spec', 'dach', ['de'], -1.0, ['science']),
         ]);
 
+        $words = ['Klimakrise', 'Krieg', 'Datenschutz', 'Demenz', 'Inflation', 'Wahlen', 'Abschiebung'];
         $items = [];
         foreach (['a', 'b', 'c'] as $id) {
-            foreach (['Klimakrise', 'Krieg', 'Datenschutz'] as $n => $word) {
-                for ($i = 0; $i < 5; ++$i) {
-                    $items[] = self::item($id, "{$word} Bericht {$id}: Ereignis{$i} Region{$i} Detail{$i}", "https://x/{$id}/{$n}/{$i}");
+            foreach ($words as $n => $word) {
+                for ($i = 0; $i < 2; ++$i) {
+                    // titles share only the topic keyword across sources, so
+                    // they stay distinct stories instead of clustering
+                    $items[] = self::item($id, "{$word} {$id}Bericht{$i} {$id}Ereignis{$i} {$id}Region{$i} {$id}Detail{$i}", "https://x/{$id}/{$n}/{$i}");
                 }
             }
         }
-        $items[] = self::item('spec', 'Neues Angebot für Assistenz im Alltag', 'https://x/spec/1');
+        $items[] = self::item('spec', 'Neue Studie im Fachjournal erschienen', 'https://x/spec/1');
 
         $edition = (new Builder())->build($registry, $items, new \DateTimeImmutable(), Mode::Compact);
 
         $topics = array_map(fn ($s) => $s->topic, $edition->sections);
-        self::assertContains('accessibility', $topics, 'fair quota must reserve room for every non-empty topic');
-        self::assertLessThanOrEqual(Builder::MAX_ITEMS_TOTAL, $edition->total());
+        self::assertContains('science', $topics, 'fair quota must reserve room for every non-empty topic');
+        self::assertSame(Builder::MAX_ITEMS_TOTAL, $edition->total(), 'fixture must saturate the cap, or the squeeze-out premise is gone');
         foreach ($edition->sections as $section) {
             self::assertLessThanOrEqual(Builder::MAX_ITEMS_PER_TOPIC, count($section->articles));
         }

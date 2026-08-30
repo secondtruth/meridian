@@ -67,6 +67,14 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Compact cap raised 12 → 20 (2026-08-30): the 12 predated the topic
+      expansion — at nine topics it pinned five sections to one article,
+      where no balance, blindspot line or axis grid can exist; base
+      quota is now 2 per topic. Fair-quota test rebuilt: squeezed topic
+      is now science (last in TOPIC_ORDER), titles share only the topic
+      keyword so story clustering no longer collapses the fixture (that
+      had silently defanged the old test), and saturation is pinned via
+      total() === MAX_ITEMS_TOTAL
 - [x] Blindspot line extended to perspectives, measured against the
       possible (decided 2026-08-28): Section::missingPerspectives reports
       a perspective only when it had fresh candidates for the topic

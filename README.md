@@ -18,7 +18,7 @@ bias-aware)"; successor of the Go prototype `quellenkompass`.
   law, migration, science — each defined as a curated selection of IPTC
   Media Topics subtrees (`data/topics.yaml`).
 - Renders a server-side **daily edition** in two reading modes:
-  - **Compact** (default, prioritised): hard cap of 12 articles, at most
+  - **Compact** (default, prioritised): hard cap of 20 articles, at most
     4 per topic, one per source per topic, perspective-balanced with fair
     per-topic quotas, near-duplicate headlines merged. No feed, no
     notifications, no infinite scroll.

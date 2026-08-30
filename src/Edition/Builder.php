@@ -16,7 +16,7 @@ use Meridian\Spectrum\Diversity;
  */
 final class Builder
 {
-    public const MAX_ITEMS_TOTAL = 12;
+    public const MAX_ITEMS_TOTAL = 20;
     public const MAX_ITEMS_PER_TOPIC = 4;
     public const MAX_ITEM_AGE_HOURS = 48;
     public const SPECIALIST_MAX_ITEM_AGE_HOURS = 336;
@@ -52,7 +52,7 @@ final class Builder
     /**
      * Compact: greedy diverse selection under the hard caps, at most one
      * article per source per topic. Every non-empty topic first gets a
-     * fair base quota (12 ÷ topics) so late topics in TOPIC_ORDER cannot
+     * fair base quota (20 ÷ topics) so late topics in TOPIC_ORDER cannot
      * be crowded out; leftover slots are then distributed round-robin up
      * to the per-topic cap.
      *

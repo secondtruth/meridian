@@ -335,7 +335,7 @@ return [
         'selection_title' => 'How the daily edition is built',
         'selection' => [
             'Articles from the last 48 hours (specialist sources: up to two weeks) are assigned to nine focus topics (language-aware keywords; specialist sources count towards their focus topic). Near-identical headlines from different sources are merged.',
-            'Compact mode selects at most 12 articles: every populated topic first receives a fair base quota, then remaining slots are distributed round-robin (at most 4 per topic, each source once per topic). Selection favours whatever widens coverage most: perspectives first (Global South!), then economic range, then cultural; reliability breaks ties.',
+            'Compact mode selects at most 20 articles: every populated topic first receives a fair base quota, then remaining slots are distributed round-robin (at most 4 per topic, each source once per topic). Selection favours whatever widens coverage most: perspectives first (Global South!), then economic range, then cultural; reliability breaks ties.',
             'Ratings never exclude by political position — they are shown in full on every article. Full mode lists every assigned article of the time window, as a finite list without feed mechanics.',
         ],
         'limits_title' => 'Limits',
@@ -359,7 +359,7 @@ return [
             ['term' => 'State influence', 'def' => 'Four levels: independent · public service (independent council oversight) · state-affiliated (state-funded without independence guarantees) · state-controlled (the government sets the line).'],
             ['term' => 'Confidence', 'def' => 'How well grounded the classification itself is (low / medium / high). From “medium” upwards, evidence is mandatory.'],
             ['term' => 'Evidence', 'def' => 'Links with a reasoning note that make a classification traceable — including the uncomfortable parts (e.g. Al Jazeera’s Qatar blind spot).'],
-            ['term' => 'Compact / Full', 'def' => 'The two reading modes: Compact is the curated daily edition (max. 12 articles, default). Full shows every assigned article of the window (48 hours, specialist sources up to two weeks) — finite, without a feed.'],
+            ['term' => 'Compact / Full', 'def' => 'The two reading modes: Compact is the curated daily edition (max. 20 articles, default). Full shows every assigned article of the window (48 hours, specialist sources up to two weeks) — finite, without a feed.'],
             ['term' => 'Doom-scrolling protection', 'def' => 'Design principle: no infinite feed, no notifications, hard caps. Reach is deliberately traded for psychological hygiene.'],
         ],
         'footer_title' => 'Openness is the method.',

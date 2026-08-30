@@ -87,7 +87,7 @@ php -S 127.0.0.1:8932 -t public     # dev server
 ## Design invariants (do not "improve" away)
 
 - **Compact mode is the default and the product's priority.** Its hard
-  caps (12 total / 4 per topic / 1 per source per topic) and the absence
+  caps (20 total / 4 per topic / 1 per source per topic) and the absence
   of feeds/notifications are the doom-scrolling protection. Full mode is
   a deliberate opt-in and must stay a finite list without engagement
   mechanics (no pagination-as-feed, no autoload).

@@ -144,8 +144,8 @@ classification — tracked in TODO.md as an open concept question.
   `topic-<id>` icon in `templates/_icons.html.twig` (official Lucide
   path — fetch it, do not write it from memory), and
   flip the vocabulary entry to `status: active`;
-  note that quota math (12 total) gives 9 non-empty topics a base quota
-  of 1, with round-robin top-up favouring earlier `TOPIC_ORDER` entries.
+  note that quota math (20 total) gives 9 non-empty topics a base quota
+  of 2, with round-robin top-up favouring earlier `TOPIC_ORDER` entries.
 - New language: add a keyword map and a routing rule in
   `Classifier::classify()`; decide the matching strategy from the
   language's morphology, not by copying either existing one.
