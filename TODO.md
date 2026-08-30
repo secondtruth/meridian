@@ -193,3 +193,11 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
       added (Die Neue Norm, Leidmedien) — 18 sources
 - [x] Near-duplicate headline dedup across sources (token Jaccard ≥ 0.6)
 - [x] Fonts self-hosted (GDPR) — no third-party requests
+- [x] Legal pages: /impressum + /privacy (Twig, bilingual privacy, German
+      authoritative), /datenschutz → 301, footer links on every page,
+      draft guard (TODO in rendered output ⇒ banner), OIDC provider named
+      dynamically from config (LegalPagesTest)
+- [ ] Before any public deployment: fill the hosting/server-log section in
+      templates/legal/privacy.html.twig (the TODO keeps the draft banner
+      on), set the Stand/version date, and have the § 18 MStV framing
+      (news aggregator = journalistic-editorial?) sanity-checked

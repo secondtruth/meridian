@@ -1,0 +1,49 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Meridian — Impressum{% endblock %}
+
+{% block content %}
+<header class="masthead">
+  <div class="kicker">{{ t('legal.kicker') }}</div>
+  <h1>Impressum</h1>
+</header>
+<main id="main" class="legal">
+  {% if is_draft %}
+  <div class="draft-note" role="alert">{{ t('legal.draft') }}</div>
+  {% endif %}
+
+  {% if locale != 'de' %}
+  <p class="muted-note">This provider identification is required by German
+  law (§ 5 DDG) and is therefore published in German.</p>
+  {% endif %}
+
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <p>
+    Christian Neff<br>
+    Edelweißweg 20<br>
+    70374 Stuttgart<br>
+    Deutschland
+  </p>
+
+  <h2>Kontakt</h2>
+  <p>
+    Telefon: +49&nbsp;711&nbsp;5302460<br>
+    E-Mail: <a href="mailto:hallo@secondtruth.de">hallo@secondtruth.de</a>
+  </p>
+
+  <h2>Redaktionell verantwortlich (§ 18 Abs. 2 MStV)</h2>
+  <p>Christian Neff, Edelweißweg 20, 70374 Stuttgart</p>
+
+  <h2>Verbraucherstreitbeilegung (§ 36 VSBG)</h2>
+  <p>Wir sind nicht bereit und nicht verpflichtet, an
+  Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle
+  teilzunehmen.</p>
+
+  <h2>Hinweis zum Angebot</h2>
+  <p>Meridian ist ein nicht-kommerzielles, unentgeltliches Open-Source-Angebot
+  (AGPL-3.0-or-later). Es aggregiert und klassifiziert Nachrichtenquellen
+  nach der unter <a href="/methodology">Methodik</a> offengelegten
+  Systematik; die verlinkten Artikel bleiben Angebote der jeweiligen
+  Herausgeber.</p>
+</main>
+{% endblock %}

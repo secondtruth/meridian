@@ -54,6 +54,8 @@ return [
         'footer_tagline' => 'Meridian — bias-bewusster Nachrichtenüberblick mit europäischem Kompass.',
         'back_to_edition' => 'Zurück zur Tagesausgabe',
         'skip_to_content' => 'Zum Inhalt springen',
+        'footer_imprint' => 'Impressum',
+        'footer_privacy' => 'Datenschutz',
     ],
     'axis' => [
         'economic' => ['links', 'mitte-links', 'mitte', 'mitte-rechts', 'rechts'],
@@ -516,6 +518,10 @@ return [
         'limit_text' => 'Mehr als zwanzig Meldungen pro Tag nimmt Meridian nicht an. Morgen geht es weiter.',
         'footer_title' => 'Widerspruch ist vorgesehen.',
         'footer_text' => 'Jede Einordnung nennt ihre Belege und ihre Konfidenz. Wer sie für falsch hält, widerspricht mit besseren Belegen.',
+    ],
+    'legal' => [
+        'kicker' => 'Rechtliches',
+        'draft' => 'Entwurf — dieses Dokument enthält noch Platzhalter (TODO) und ist nicht veröffentlichungsreif.',
     ],
     'notfound' => [
         'kicker' => '404',

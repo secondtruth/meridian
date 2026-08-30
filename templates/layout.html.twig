@@ -323,6 +323,18 @@
   footer .enough { font-size: 1rem; font-weight: 600; margin: 0 0 .3rem; }
   footer p { font-size: .8rem; color: var(--muted); margin: .25rem 0; }
   footer a { color: var(--accent); }
+  footer .legal-links { margin-top: .6rem; }
+  .legal h2 { font-size: 1.05rem; margin: 1.6rem 0 .4rem; }
+  .legal p, .legal li { font-size: .9rem; line-height: 1.55; }
+  .legal .muted-note { color: var(--muted); font-style: italic; }
+  .legal .draft-note {
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: .6rem .9rem;
+    margin: 0 0 1.2rem;
+    font-weight: 600;
+    font-size: .9rem;
+  }
 
   {% block style %}{% endblock %}
 </style>
@@ -380,6 +392,10 @@
   {% block footer %}
     <p>{{ t('ui.footer_tagline') }}</p>
   {% endblock %}
+  <p class="legal-links">
+    <a href="/impressum">{{ t('ui.footer_imprint') }}</a> ·
+    <a href="/privacy">{{ t('ui.footer_privacy') }}</a>
+  </p>
 </footer>
 
 {% if viewer.isSignedIn and viewer.preferences.trackReading %}

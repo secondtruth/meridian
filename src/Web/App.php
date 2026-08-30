@@ -93,6 +93,11 @@ final class App
             return $response;
         }
 
+        $response = new LegalPages($this->oidc)->handle($request, $view);
+        if ($response !== null) {
+            return $response;
+        }
+
         if ($request->isPost()) {
             return $this->renderNotFound($view);
         }

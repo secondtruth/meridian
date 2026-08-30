@@ -53,6 +53,8 @@ return [
         'lang_switch' => 'Auf Deutsch wechseln',
         'footer_tagline' => 'Meridian — bias-aware news digest with a European compass.',
         'back_to_edition' => 'Back to the daily edition',
+        'footer_imprint' => 'Imprint',
+        'footer_privacy' => 'Privacy',
         'skip_to_content' => 'Skip to content',
     ],
     'axis' => [
@@ -516,6 +518,10 @@ return [
         'limit_text' => 'Meridian accepts no more than twenty reports per day. Tomorrow is another day.',
         'footer_title' => 'Objection is part of the method.',
         'footer_text' => 'Every classification states its evidence and its confidence. Whoever thinks it is wrong contradicts it with better evidence.',
+    ],
+    'legal' => [
+        'kicker' => 'Legal',
+        'draft' => 'Draft — this document still contains placeholders (TODO) and is not ready for publication.',
     ],
     'notfound' => [
         'kicker' => '404',
