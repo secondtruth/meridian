@@ -1,4 +1,4 @@
-/vendor/
+/vendor
 /data/cache/
 /data/archive/
 /data/accounts.sqlite*
