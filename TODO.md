@@ -60,6 +60,19 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 - [ ] Balance page: compare against what was actually *published* in the
       period, not only the dataset composition — needs a rolling archive
       of past editions (depends on the archive item above)
+- [ ] Blindspot-directed surplus: pass 2 currently walks TOPIC_ORDER
+      (the founding-topic preference); alternative decided worth
+      exploring 2026-08-30 — give the two surplus slots (20 − 9×2) to
+      sections whose reported blindspot (missing economic side or
+      perspective) has an available fresh candidate, fallback
+      TOPIC_ORDER. Replaces the founding-topic preference, so it is a
+      deliberate §5 decision with tests, not a tweak
+- [ ] Culture & media as tenth focus topic ("Kultur & Medien"):
+      mission rationale is Global-South visibility (cultural coverage
+      is heavily DACH/Western); quota math stays at base 2 with ten
+      topics. Gate on LLM-assisted classification (item above) —
+      culture vocabulary (film, musik, theater) is the most
+      false-positive-prone yet for substring matching
 - [ ] Publish `data/sources/` as standalone open dataset with JSON export
 - [ ] Browser-extension form: overlay classification on news sites
 - [ ] More locales (fr, es) — infrastructure is ready, catalogs +

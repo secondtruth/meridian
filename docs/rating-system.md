@@ -178,7 +178,10 @@ semantics above must not change with it.
 Caps: `MAX_ITEMS_TOTAL = 20`, `MAX_ITEMS_PER_TOPIC = 4`. (The total was
 12 while the product had four topics; it was raised to 20 when nine
 topics left five of them stuck at a single article — a one-article
-section cannot be balanced, and the blindspot line needs two.) Since
+section cannot be balanced, and the blindspot line needs two. 20 rather
+than 18 keeps the base quota at 2 even with a tenth topic
+(⌊20/10⌋ = 2), where 18 would fall back to 1 at the next topic
+addition — the same cliff that obsoleted the 12.) Since
 nine topics × 4 = 36 > 20, naive in-order filling would permanently
 squeeze out the later topics. Therefore:
 
