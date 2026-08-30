@@ -4,7 +4,15 @@ declare(strict_types=1);
 
 namespace Meridian\Web;
 
-/** An outgoing HTTP response — built by the app, emitted by the front controller. */
+use Symfony\Component\HttpFoundation\Cookie as HttpCookie;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+
+/**
+ * An outgoing HTTP response — built by the app, emitted by the front
+ * controller. The value object stays Meridian's own; the actual emission
+ * (status line, header normalization, cookie serialization) is delegated
+ * to symfony/http-foundation in {@see send()}.
+ */
 final class Response
 {
     /**
@@ -78,14 +86,18 @@ final class Response
 
     public function send(): void
     {
-        http_response_code($this->status);
-        foreach ($this->headers as $name => $value) {
-            header("{$name}: {$value}");
-        }
+        $response = new HttpResponse($this->body, $this->status, $this->headers);
         foreach ($this->cookies as $cookie) {
-            setcookie($cookie->name, $cookie->value, $cookie->options());
+            $response->headers->setCookie(new HttpCookie(
+                name: $cookie->name,
+                value: $cookie->value,
+                expire: $cookie->expires,
+                path: '/',
+                secure: $cookie->secure,
+                httpOnly: $cookie->httpOnly,
+                sameSite: strtolower($cookie->sameSite),
+            ));
         }
-
-        echo $this->body;
+        $response->send();
     }
 }

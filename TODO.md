@@ -197,7 +197,26 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
       authoritative), /datenschutz → 301, footer links on every page,
       draft guard (TODO in rendered output ⇒ banner), OIDC provider named
       dynamically from config (LegalPagesTest)
-- [ ] Before any public deployment: fill the hosting/server-log section in
-      templates/legal/privacy.html.twig (the TODO keeps the draft banner
-      on), set the Stand/version date, and have the § 18 MStV framing
-      (news aggregator = journalistic-editorial?) sanity-checked
+- [x] Hosting/server-log section filled (deployed on own Hetzner server (Hetzner
+      Online GmbH, EU) — no third-country transfer) and Stand/version date
+      set; draft banner cleared
+- [ ] Have the § 18 MStV framing (news aggregator = journalistic-
+      editorial?) sanity-checked by counsel at the next legal touchpoint
+- [ ] Confirm the Hetzner data processing agreement (AVV) is concluded in
+      the Hetzner account panel; the privacy policy §3 references it
+- [x] http-foundation as the HTTP boundary: Request::fromGlobals() parses
+      via Symfony (trusted proxies, MERIDIAN_TRUSTED_PROXIES env),
+      Response::send() emits via Symfony (headers, cookie serialization);
+      the app-facing value objects stay Meridian's own
+- [ ] symfony/routing instead of the match() in App::route — only when the
+      route table outgrows ~20 entries or needs more parameterized routes;
+      until then the match expression is the more readable form
+- [ ] symfony/translation instead of I18n\Translator — only when plural
+      rules or ICU message formatting become necessary; the PHP array
+      catalogs carry two locales fine
+- [ ] Full Symfony switch when the time is ripe — triggers: security
+      needs beyond the OIDC session (roles, 2FA), growing form/CSRF
+      surface, a route table past ~20 entries, or additional contributors
+      expecting standard structure. The component steps (http-foundation
+      done, routing and translation above) shorten that path; migrate in
+      instalments, not big-bang.

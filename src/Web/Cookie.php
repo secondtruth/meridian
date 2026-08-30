@@ -21,16 +21,4 @@ final readonly class Cookie
     {
         return new self($name, '', time() - 3600);
     }
-
-    /** @return array<string, mixed> options accepted by setcookie() */
-    public function options(): array
-    {
-        return [
-            'expires' => $this->expires,
-            'path' => '/',
-            'secure' => $this->secure,
-            'httponly' => $this->httpOnly,
-            'samesite' => $this->sameSite,
-        ];
-    }
 }

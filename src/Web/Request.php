@@ -4,7 +4,16 @@ declare(strict_types=1);
 
 namespace Meridian\Web;
 
-/** One incoming HTTP request, decoupled from PHP's superglobals. */
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
+
+/**
+ * One incoming HTTP request, decoupled from PHP's superglobals.
+ *
+ * The value object the handlers see stays Meridian's own; the parsing of
+ * the raw request (method, path, scheme, host, forwarded headers) is
+ * delegated to symfony/http-foundation in {@see fromGlobals()}, which
+ * handles the edge cases a hand-rolled parser gets wrong.
+ */
 final readonly class Request
 {
     /**
@@ -25,18 +34,32 @@ final readonly class Request
 
     public static function fromGlobals(): self
     {
-        $uri = (string) ($_SERVER['REQUEST_URI'] ?? '/');
-        $secure = ($_SERVER['HTTPS'] ?? '') !== ''
-            || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+        // Forwarded headers (X-Forwarded-Proto/-Host/-For) are only honored
+        // when they come from a trusted peer. Default: the immediate client
+        // (REMOTE_ADDR), which matches a reverse-proxy-in-front deployment;
+        // a hardened setup pins explicit proxy addresses via
+        // MERIDIAN_TRUSTED_PROXIES (comma-separated IPs/CIDRs).
+        $proxies = getenv('MERIDIAN_TRUSTED_PROXIES');
+        HttpRequest::setTrustedProxies(
+            is_string($proxies) && $proxies !== ''
+                ? array_map(trim(...), explode(',', $proxies))
+                : ['REMOTE_ADDR'],
+            HttpRequest::HEADER_X_FORWARDED_FOR
+                | HttpRequest::HEADER_X_FORWARDED_HOST
+                | HttpRequest::HEADER_X_FORWARDED_PROTO
+                | HttpRequest::HEADER_X_FORWARDED_PORT,
+        );
+
+        $http = HttpRequest::createFromGlobals();
 
         return new self(
-            method: strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET')),
-            path: parse_url($uri, PHP_URL_PATH) ?: '/',
-            query: $_GET,
-            body: $_POST,
-            cookies: array_map(strval(...), $_COOKIE),
-            host: (string) ($_SERVER['HTTP_HOST'] ?? 'localhost'),
-            secure: $secure,
+            method: $http->getMethod(),
+            path: $http->getPathInfo(),
+            query: $http->query->all(),
+            body: $http->request->all(),
+            cookies: array_map(strval(...), $http->cookies->all()),
+            host: $http->getHttpHost(),
+            secure: $http->isSecure(),
         );
     }
 
