@@ -24,6 +24,7 @@ use Meridian\Spectrum\AxisGrid;
 final class App
 {
     private const LANG_COOKIE = 'meridian-lang';
+    private const WELCOME_COOKIE = 'meridian-welcome';
 
     private readonly Registry $registry;
     private readonly ItemCache $cache;
@@ -173,7 +174,12 @@ final class App
                 : 0;
         }
 
-        return $view->render('edition.html.twig', [
+        // First-visit welcome: shown until dismissed via /?welcome=off,
+        // which persists a cookie — no account and no JavaScript needed.
+        // Signed-in readers are past their first visit by definition.
+        $welcomeOff = $request->query('welcome') === 'off';
+
+        $response = $view->render('edition.html.twig', [
             'nav_active' => 'edition',
             'edition' => $edition,
             'mode' => $mode,
@@ -191,7 +197,20 @@ final class App
             'daily_limit_reached' => $viewer->preferences->dailyLimit
                 && $readToday >= Builder::MAX_ITEMS_TOTAL,
             'muted_topics' => $viewer->preferences->mutedTopics,
+            'show_welcome' => !$welcomeOff && !$viewer->isSignedIn()
+                && $request->cookie(self::WELCOME_COOKIE) === null,
         ]);
+
+        if ($welcomeOff) {
+            $response = $response->withCookie(new Cookie(
+                name: self::WELCOME_COOKIE,
+                value: 'seen',
+                expires: time() + 31536000,
+                secure: $request->secure,
+            ));
+        }
+
+        return $response;
     }
 
     private function renderSources(View $view): Response

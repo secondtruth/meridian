@@ -73,6 +73,12 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] First-visit welcome box on the edition page (2026-08-31): what
+      Meridian is and why, the three axes with GAL–TAN/DACH spelled
+      out, what the spectrum grid shows, link to /methodology; both
+      catalogs under welcome.*; dismiss via /?welcome=off persists the
+      meridian-welcome cookie — no JS, no account, signed-in viewers
+      never see it
 - [x] Blindspot-directed surplus (2026-08-30): compact selection spends
       spare capacity above the base quota on closing reported blind
       spots first — a missing economic side or perspective with an

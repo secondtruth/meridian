@@ -4,6 +4,22 @@
 {% block title %}Meridian — {{ t('edition.kicker') }} {{ date_human }}{% endblock %}
 
 {% block style %}
+  .welcome { max-width: 76rem; margin: 0 auto; padding: .9rem clamp(1rem, 4vw, 2.5rem) 0; }
+  .welcome .inner {
+    border: 1px solid var(--line-strong); border-left: 3px solid var(--accent);
+    background: var(--accent-soft); border-radius: .4rem;
+    padding: 1rem 1.2rem; font-size: .84rem; line-height: 1.55;
+  }
+  .welcome .head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+  .welcome h2 { margin: 0 0 .4rem; font-size: .95rem; }
+  .welcome p { margin: .35rem 0; }
+  .welcome .dismiss {
+    color: var(--muted); font-size: .74rem; text-decoration: none; white-space: nowrap;
+    border: 1px solid var(--line-strong); border-radius: 999px; padding: .2rem .7rem;
+  }
+  .welcome .dismiss:hover { color: var(--ink); border-color: var(--accent); }
+  .welcome .more a { color: var(--accent); font-weight: 600; }
+
   .fullnotice { max-width: 76rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); }
   .fullnotice .inner {
     border: 1px solid var(--line-strong); border-left: 3px solid var(--accent);
@@ -74,6 +90,21 @@
     {% endif %}
   </p>
 </header>
+
+{% if show_welcome %}
+<section class="welcome" aria-label="{{ t('welcome.aria') }}">
+  <div class="inner">
+    <div class="head">
+      <h2>{{ t('welcome.title') }}</h2>
+      <a class="dismiss" href="/?welcome=off" rel="nofollow">{{ t('welcome.dismiss') }}</a>
+    </div>
+    <p>{{ t('welcome.what') }}</p>
+    <p>{{ t('welcome.scales') }}</p>
+    <p>{{ t('welcome.grid') }}</p>
+    <p class="more"><a href="/methodology">{{ t('welcome.more') }}</a></p>
+  </div>
+</section>
+{% endif %}
 
 {% if mode.value == 'full' %}
 <div class="fullnotice">

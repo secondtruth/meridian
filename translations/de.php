@@ -15,6 +15,15 @@ return [
         'balance' => 'Balance',
         'watchlist' => 'Merkliste',
     ],
+    'welcome' => [
+        'aria' => 'Einführung für Erstbesucher',
+        'title' => 'Willkommen bei Meridian',
+        'what' => 'Meridian ist ein europäisch ausgerichteter, einordnender Nachrichtenüberblick: eine endliche Tagesausgabe aus kuratierten, offen bewerteten Quellen. Sie ist dafür da, Sichtweisen nebeneinander zu zeigen — ausdrücklich auch die des Globalen Südens — statt nach politischer Richtung zu filtern. Einen Feed, Benachrichtigungen oder endloses Scrollen gibt es bewusst nicht.',
+        'scales' => 'Jede Quelle trägt eine offene Einordnung auf drei Achsen von −3 bis +3: ökonomisch (umverteilend links ↔ marktliberal rechts), kulturell nach GAL–TAN (grün-alternativ-libertär ↔ traditionell-autoritär-nationalistisch) und in der EU-Haltung (euroskeptisch ↔ föderalistisch). Dazu kommen die Verlässlichkeit (1–5, unabhängig von der politischen Linie), der Staatseinfluss und die Perspektive der Redaktion: DACH (Deutschland, Österreich, Schweiz), Europa, Globaler Süden oder international.',
+        'grid' => 'Das Spektrum-Raster legt die ökonomische und die kulturelle Achse übereinander: Jede Zelle steht für eine Kombination aus beiden, ihre Füllung zeigt, wie viele Beiträge dort liegen. So wird sichtbar, welche Teile des Spektrums eine Ausgabe abdeckt — und wo sie Lücken benennt.',
+        'more' => 'Wie die Bewertungen entstehen, wie sie angefochten werden können und was jeder Begriff bedeutet, erklärt die Methodik-Seite.',
+        'dismiss' => 'Ausblenden',
+    ],
     'ownership' => [
         'public-service' => 'öffentlich-rechtlich',
         'cooperative' => 'Genossenschaft',

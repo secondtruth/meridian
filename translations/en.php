@@ -15,6 +15,15 @@ return [
         'balance' => 'Balance',
         'watchlist' => 'Watchlist',
     ],
+    'welcome' => [
+        'aria' => 'Introduction for first-time visitors',
+        'title' => 'Welcome to Meridian',
+        'what' => 'Meridian is a Europe-focused, bias-aware news digest: one finite daily edition drawn from curated, openly rated sources. It exists to put viewpoints side by side — expressly including the Global South — instead of filtering by political direction. There is deliberately no feed, no notifications, no endless scrolling.',
+        'scales' => 'Every source carries an open classification on three axes from −3 to +3: economic (redistributive left ↔ market-liberal right), cultural along GAL–TAN (green–alternative–libertarian ↔ traditional–authoritarian–nationalist), and EU stance (eurosceptic ↔ federalist). Added to that are reliability (1–5, independent of the political line), state influence, and the newsroom’s perspective: DACH (Germany, Austria, Switzerland), Europe, Global South, or international.',
+        'grid' => 'The spectrum grid overlays the economic and the cultural axis: each cell stands for one combination of the two, and its fill shows how many articles sit there. That makes visible which parts of the spectrum an edition covers — and where it names its gaps.',
+        'more' => 'How the ratings are made, how they can be contested, and what every term means is explained on the methodology page.',
+        'dismiss' => 'Dismiss',
+    ],
     'ownership' => [
         'public-service' => 'public service',
         'cooperative' => 'cooperative',
