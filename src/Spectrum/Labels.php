@@ -68,6 +68,16 @@ final readonly class Labels
     }
 
     /** The label of a band by its own value, e.g. for distribution charts. */
+    /** Label of one distribution bucket (a Slice), whichever dimension it belongs to. */
+    public function slice(string $axis, string $key): string
+    {
+        return match ($axis) {
+            'perspective' => $this->perspective($key),
+            'topic' => $this->topic($key),
+            default => $this->band($axis, (int) $key),
+        };
+    }
+
     public function band(string $axis, int $band): string
     {
         $labels = $this->translator->get("axis.{$axis}");
