@@ -68,6 +68,7 @@ return [
         'skip_to_content' => 'Zum Inhalt springen',
         'footer_imprint' => 'Impressum',
         'footer_privacy' => 'Datenschutz',
+        'close' => 'Schließen',
     ],
     'axis' => [
         'economic' => ['links', 'mitte-links', 'mitte', 'mitte-rechts', 'rechts'],

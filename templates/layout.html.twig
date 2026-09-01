@@ -253,6 +253,26 @@
     background: var(--surface); border: 1px solid var(--line); border-radius: .45rem;
     padding: 1.1rem 1.2rem;
   }
+
+  /* Card details (evidence, keywords) open in one shared dialog when
+     JavaScript is available; the <details> stays the no-JS fallback. */
+  .detaildialog {
+    border: 1px solid var(--line-strong); border-radius: .5rem; padding: 0;
+    background: var(--surface); color: var(--ink); box-shadow: var(--shadow-panel);
+    width: min(38rem, calc(100vw - 2rem));
+  }
+  .detaildialog::backdrop { background: #0007; backdrop-filter: blur(2px); }
+  .detaildialog .head {
+    display: flex; align-items: center; gap: 1rem;
+    padding: .8rem .8rem .8rem 1.1rem; border-bottom: 1px solid var(--line);
+  }
+  .detaildialog .head .kicker {
+    font-size: .68rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--accent);
+  }
+  .detaildialog .head h3 { margin: .15rem 0 0; font-size: 1rem; font-weight: 700; }
+  .detaildialog .head .close { margin-left: auto; padding: .35rem; }
+  .detaildialog .head .close .icon { width: 1.05rem; height: 1.05rem; vertical-align: 0; }
+  .detaildialog .body { padding: 1rem 1.1rem 1.2rem; font-size: .84rem; max-height: 70vh; overflow: auto; }
   .panel + .panel { margin-top: .8rem; }
   .panel h3 { margin: 0 0 .5rem; font-size: .9rem; font-weight: 600; }
   .panel p { margin: .3rem 0; font-size: .84rem; color: var(--muted); }
@@ -560,6 +580,48 @@
     if (!more) return;
     document.addEventListener('click', function (event) {
       if (more.open && !more.contains(event.target)) more.open = false;
+    });
+  })();
+</script>
+<template id="icon-x">{{ ui.icon('x') }}</template>
+<script>
+  // Lift details.modal into a shared <dialog>: the details' content moves
+  // into the dialog while it is open and back afterwards, so forms and
+  // links keep working and nothing is duplicated.
+  (function () {
+    var items = document.querySelectorAll('details.modal');
+    if (!items.length || typeof HTMLDialogElement !== 'function') return;
+    var dialog = document.createElement('dialog');
+    dialog.className = 'detaildialog';
+    dialog.innerHTML = '<div class="head"><div><div class="kicker"></div><h3></h3></div>'
+      + '<button type="button" class="btn quiet close" aria-label="{{ t('ui.close')|e('js') }}">'
+      + document.getElementById('icon-x').innerHTML + '</button></div><div class="body"></div>';
+    document.body.appendChild(dialog);
+    var body = dialog.querySelector('.body'), kicker = dialog.querySelector('.kicker'), title = dialog.querySelector('h3');
+    var current = null;
+
+    var close = function () { if (dialog.open) dialog.close(); };
+    dialog.querySelector('.close').addEventListener('click', close);
+    dialog.addEventListener('click', function (event) { if (event.target === dialog) close(); });
+    dialog.addEventListener('close', function () {
+      if (!current) return;
+      while (body.firstChild) current.appendChild(body.firstChild);
+      current.querySelector('summary').focus();
+      current = null;
+    });
+
+    Array.prototype.forEach.call(items, function (details) {
+      var summary = details.querySelector('summary');
+      summary.setAttribute('aria-haspopup', 'dialog');
+      summary.addEventListener('click', function (event) {
+        event.preventDefault();
+        current = details;
+        kicker.textContent = summary.textContent.trim();
+        title.textContent = details.dataset.title || '';
+        var node = summary.nextSibling;
+        while (node) { var next = node.nextSibling; body.appendChild(node); node = next; }
+        dialog.showModal();
+      });
     });
   })();
 </script>

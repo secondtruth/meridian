@@ -54,9 +54,10 @@
   .srccard dd { margin: 0; }
   .srccard details { font-size: .74rem; color: var(--muted); }
   .srccard details summary { cursor: pointer; color: var(--accent); font-weight: 600; }
-  .srccard details ul { margin: .4rem 0 0; padding-left: 1.1rem; }
-  .srccard details li { margin-bottom: .35rem; }
-  .srccard details a { color: var(--accent); word-break: break-all; }
+  .evidence { margin: .4rem 0 0; padding-left: 1.1rem; }
+  .evidence li { margin-bottom: .45rem; }
+  .evidence a { color: var(--accent); word-break: break-all; }
+  .detaildialog .evidence { margin: 0; color: var(--ink); }
   .confidence-low { color: var(--econ-0); font-weight: 600; }
   .srccard .dissent { border-top: 1px solid var(--line); padding-top: .5rem; font-size: .74rem; }
   .srccard .dissent a { color: var(--accent); font-weight: 600; text-decoration: none; }
@@ -198,9 +199,9 @@
           <dt>{{ t('sources.in_focus') }}</dt><dd>{{ (in_focus[source.id] ?? 0) == 1 ? t('sources.in_focus_value_one') : t('sources.in_focus_value', in_focus[source.id] ?? 0) }}</dd>
         </dl>
         {% if r.evidence %}
-        <details>
+        <details class="modal" data-title="{{ source.name }}">
           <summary>{{ t('sources.evidence', r.evidence|length) }}</summary>
-          <ul>
+          <ul class="evidence">
             {% for e in r.evidence %}
               <li><a href="{{ e.url }}" rel="noopener">{{ e.url }}</a><br>{{ e.note }}</li>
             {% endfor %}

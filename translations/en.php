@@ -68,6 +68,7 @@ return [
         'footer_imprint' => 'Imprint',
         'footer_privacy' => 'Privacy',
         'skip_to_content' => 'Skip to content',
+        'close' => 'Close',
     ],
     'axis' => [
         'economic' => ['left', 'centre-left', 'centre', 'centre-right', 'right'],

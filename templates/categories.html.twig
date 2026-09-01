@@ -20,10 +20,11 @@
   .catcard .latest a { text-decoration: none; font-weight: 600; }
   .catcard .latest a:hover { color: var(--accent); text-decoration: underline; }
   .catcard .latest .who { display: block; font-size: .7rem; color: var(--muted); margin-top: .1rem; }
-  .catcard .grouplabel { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: .2rem; }
+  .grouplabel { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: .2rem; }
   .catcard details { font-size: .74rem; color: var(--muted); }
   .catcard details summary { cursor: pointer; color: var(--accent); font-weight: 600; }
-  .catcard details .tags { margin-top: .45rem; }
+  .keywords .tags { margin: .45rem 0 .8rem; }
+  .detaildialog .keywords .tag { font-size: .74rem; }
   .howto {
     background: var(--surface); border: 1px solid var(--line); border-radius: .45rem;
     padding: 1.1rem 1.25rem; font-size: .84rem; max-width: 52rem;
@@ -82,12 +83,14 @@
         </div>
         {% endif %}
 
-        <details>
+        <details class="modal" data-title="{{ label_topic(topic.id) }}">
           <summary>{{ t('categories.keywords', topic.keywords_de|length + topic.keywords_en|length) }}</summary>
-          <div class="grouplabel">{{ t('categories.keywords_de') }}</div>
-          <div class="tags">{% for kw in topic.keywords_de %}<span class="tag">{{ kw }}</span>{% endfor %}</div>
-          <div class="grouplabel">{{ t('categories.keywords_en') }}</div>
-          <div class="tags">{% for kw in topic.keywords_en %}<span class="tag">{{ kw }}</span>{% endfor %}</div>
+          <div class="keywords">
+            <div class="grouplabel">{{ t('categories.keywords_de') }}</div>
+            <div class="tags">{% for kw in topic.keywords_de %}<span class="tag">{{ kw }}</span>{% endfor %}</div>
+            <div class="grouplabel">{{ t('categories.keywords_en') }}</div>
+            <div class="tags">{% for kw in topic.keywords_en %}<span class="tag">{{ kw }}</span>{% endfor %}</div>
+          </div>
         </details>
       </article>
       {% endfor %}

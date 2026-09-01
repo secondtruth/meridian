@@ -73,6 +73,12 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Evidence and keyword lists open in a modal (2026-09-01): one
+      shared native `<dialog>` in the layout lifts every
+      `details.modal` — the details' content moves into the dialog and
+      back on close, so the card grid never reflows; Escape, backdrop
+      click and the close button close it, focus returns to the
+      summary; without JavaScript the `<details>` opens inline as before
 - [x] Spectrum map section (2026-09-01): head in the edition's two-line
       form with the small grid (titling/context/spread now live in the
       layout), the whole section a `<details>` whose collapsed state is
