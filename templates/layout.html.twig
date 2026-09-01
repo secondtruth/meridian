@@ -297,6 +297,15 @@
     font-size: .82rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin: 0;
   }
   .sectionhead .count { font-size: .76rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  /* Two-line section head: title over a context line, an instrument
+     (axis grid) on the right — edition sections and the spectrum map. */
+  .sectionhead:has(.titling) { align-items: center; }
+  .sectionhead .titling { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+  .sectionhead .context { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem 1.1rem; }
+  .sectionhead .spread { margin-left: auto; display: flex; align-items: center; gap: .55rem; }
+  .spread .label { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .sectionhead .persp { font-size: .74rem; color: var(--muted); }
+  .sectionhead .persp b { color: var(--persp, var(--ink)); font-weight: 600; }
 
   .pill {
     border: 1px solid var(--accent); color: var(--accent); border-radius: 999px;
@@ -554,6 +563,7 @@
     });
   })();
 </script>
+{% block script %}{% endblock %}
 <script>
   document.getElementById('themebtn').addEventListener('click', function () {
     var root = document.documentElement;

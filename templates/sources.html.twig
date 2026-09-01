@@ -1,14 +1,29 @@
 {% extends 'layout.html.twig' %}
 {% import '_gauge.html.twig' as gauge %}
+{% import '_icons.html.twig' as ui %}
 
 {% block title %}Meridian — {{ t('nav.sources') }}{% endblock %}
 
 {% block style %}
+  /* The map section is a <details>: the section head is its summary. */
+  .mapsection { margin-top: 2rem; }
+  .mapsection > summary { list-style: none; cursor: pointer; }
+  .mapsection > summary::-webkit-details-marker { display: none; }
+  .mapsection > summary .toggle { color: var(--muted); display: inline-flex; align-self: center; }
+  .mapsection > summary .toggle .icon { width: 1rem; height: 1rem; vertical-align: 0; transition: transform .15s ease; }
+  .mapsection[open] > summary .toggle .icon { transform: rotate(90deg); }
+  .mapsection > summary:hover .toggle { color: var(--accent); }
   .mapwrap {
     background: var(--surface); border: 1px solid var(--line); border-radius: .45rem;
     padding: 1rem; overflow-x: auto;
   }
   .mapwrap svg { display: block; width: 100%; height: auto; min-width: 560px; }
+  .mapwrap .axislabel { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; fill: var(--muted); }
+  .mapwrap .bandline { stroke: var(--line); stroke-dasharray: 2 5; }
+  .mapwrap .point text { font-size: 11px; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+  .mapwrap .point text.n { stroke: none; fill: var(--surface); }
+  .mapwrap .point:hover circle { stroke: var(--accent); stroke-width: 2.5; }
+  .mapwrap .point:hover text { fill: var(--accent); font-weight: 600; }
   .maplegend { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; margin-top: .7rem; font-size: .74rem; color: var(--muted); }
   .maplegend .sw { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: .3rem; }
   .mapindex { margin: .7rem 0 0; padding-top: .6rem; border-top: 1px solid var(--line); font-size: .74rem; color: var(--muted); }
@@ -43,8 +58,6 @@
   .srccard details li { margin-bottom: .35rem; }
   .srccard details a { color: var(--accent); word-break: break-all; }
   .confidence-low { color: var(--econ-0); font-weight: 600; }
-  .sectionhead .gridwrap { margin-left: auto; display: flex; align-items: center; gap: .55rem; }
-  .gridwrap .gridlabel { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
   .srccard .dissent { border-top: 1px solid var(--line); padding-top: .5rem; font-size: .74rem; }
   .srccard .dissent a { color: var(--accent); font-weight: 600; text-decoration: none; }
   .srccard .dissent a:hover { text-decoration: underline; }
@@ -63,48 +76,58 @@
 </header>
 
 <main id="main">
-  <section>
-    <div class="sectionhead">
-      <h2>{{ t('sources.map_title') }}</h2>
-      <span class="count">{{ t('sources.map_sub') }}</span>
-      <span class="gridwrap">
-        <span class="gridlabel">{{ t('sources.grid_label') }}</span>
+  <details class="mapsection" id="map" open>
+    <summary class="sectionhead">
+      <span class="titling">
+        <h2>{{ t('sources.map_title') }}</h2>
+        <span class="context"><span class="count">{{ t('sources.map_sub') }}</span></span>
+      </span>
+      <span class="spread">
+        <span class="label">{{ t('sources.grid_label') }}</span>
         {% include '_axis_grid.html.twig' with {
           'grid': dataset_grid,
           'aria': t('sources.grid_aria', sources|length),
-          'large': true,
         } only %}
+        <span class="toggle">{{ ui.icon('chevron-right') }}</span>
       </span>
-    </div>
+    </summary>
     <div class="mapwrap">
+      {# Band edges follow Spectrum\Band: ±0.5 and ±1.75 on the -3..+3 axes. #}
+      {% set xb = [50, 183.3, 316.7, 423.3, 556.7, 690] %}
+      {% set yb = [30, 109.2, 188.3, 251.7, 330.8, 410] %}
       <svg viewBox="0 0 720 460" role="img" aria-label="{{ t('sources.map_aria') }}">
-        <line x1="50" y1="220" x2="690" y2="220" stroke="var(--line-strong)" stroke-width="1"/>
-        <line x1="370" y1="30" x2="370" y2="410" stroke="var(--line-strong)" stroke-width="1"/>
-        <line x1="50" y1="30" x2="50" y2="410" stroke="var(--line)" stroke-width="1"/>
-        <line x1="690" y1="30" x2="690" y2="410" stroke="var(--line)" stroke-width="1"/>
-        <line x1="50" y1="30" x2="690" y2="30" stroke="var(--line)" stroke-width="1"/>
-        <line x1="50" y1="410" x2="690" y2="410" stroke="var(--line)" stroke-width="1"/>
+        {# Band strips in the gauge colours: economic along the bottom, GAL–TAN up the left. #}
+        {% for i in 0..4 %}
+          <rect x="{{ xb[i] }}" y="414" width="{{ (xb[i + 1] - xb[i])|number_format(1, '.', '') }}" height="5" rx="1.5" fill="var(--econ-{{ i }})" fill-opacity=".6"/>
+          <rect x="41" y="{{ yb[i] }}" width="5" height="{{ (yb[i + 1] - yb[i])|number_format(1, '.', '') }}" rx="1.5" fill="var(--cult-{{ 4 - i }})" fill-opacity=".6"/>
+        {% endfor %}
+        {% for i in 1..4 %}
+          <line class="bandline" x1="{{ xb[i] }}" y1="30" x2="{{ xb[i] }}" y2="410"/>
+          <line class="bandline" x1="50" y1="{{ yb[i] }}" x2="690" y2="{{ yb[i] }}"/>
+        {% endfor %}
+        <rect x="50" y="30" width="640" height="380" rx="3" fill="none" stroke="var(--line)"/>
+        <line x1="50" y1="220" x2="690" y2="220" stroke="var(--line-strong)"/>
+        <line x1="370" y1="30" x2="370" y2="410" stroke="var(--line-strong)"/>
 
-        <text x="55" y="442" font-size="12" fill="var(--muted)">{{ t('sources.map_left') }}</text>
-        <text x="360" y="442" font-size="12" fill="var(--muted)">{{ t('sources.map_centre') }}</text>
-        <text x="655" y="442" font-size="12" fill="var(--muted)">{{ t('sources.map_right') }}</text>
-        <text x="14" y="40" font-size="12" fill="var(--muted)">TAN</text>
-        <text x="14" y="226" font-size="12" fill="var(--muted)">0</text>
-        <text x="14" y="408" font-size="12" fill="var(--muted)">GAL</text>
+        <text class="axislabel" x="50" y="437">{{ t('sources.map_left') }}</text>
+        <text class="axislabel" x="370" y="437" text-anchor="middle">{{ t('sources.map_centre') }}</text>
+        <text class="axislabel" x="690" y="437" text-anchor="end">{{ t('sources.map_right') }}</text>
+        <text class="axislabel" x="34" y="40" text-anchor="end">TAN</text>
+        <text class="axislabel" x="34" y="410" text-anchor="end">GAL</text>
 
         {% for point in map_points %}
           {% set r = point.source.rating %}
-          <g role="img" aria-label="{{ point.source.name }} — {{ rating_summary(r) }}">
+          <g class="point" role="img" aria-label="{{ point.source.name }} — {{ rating_summary(r) }}">
             <title>{{ point.source.name }} — {{ rating_summary(r) }} · {{ t('sources.reliability_summary', r.reliability) }} · {{ t('sources.confidence_summary', t('grade.' ~ r.confidence)) }}</title>
             <circle cx="{{ point.cx|number_format(1, '.', '') }}" cy="{{ point.cy|number_format(1, '.', '') }}" r="{{ point.r }}"
                     fill="var(--persp-{{ point.source.perspective }})" fill-opacity="0.85"
                     stroke="var(--surface)" stroke-width="1.5"/>
             {% if point.number is null %}
-            <text x="{{ point.lx|number_format(1, '.', '') }}" y="{{ point.ly|number_format(1, '.', '') }}" font-size="11" fill="var(--ink)"
+            <text x="{{ point.lx|number_format(1, '.', '') }}" y="{{ point.ly|number_format(1, '.', '') }}"
                   text-anchor="{{ point.anchor }}">{{ point.source.name }}</text>
             {% else %}
-            <text x="{{ point.cx|number_format(1, '.', '') }}" y="{{ (point.cy + 2.6)|number_format(1, '.', '') }}" font-size="{{ point.number < 10 ? 8 : 7 }}" font-weight="700"
-                  fill="var(--surface)" text-anchor="middle">{{ point.number }}</text>
+            <text class="n" x="{{ point.cx|number_format(1, '.', '') }}" y="{{ (point.cy + 2.6)|number_format(1, '.', '') }}" font-size="{{ point.number < 10 ? 8 : 7 }}" font-weight="700"
+                  text-anchor="middle">{{ point.number }}</text>
             {% endif %}
           </g>
         {% endfor %}
@@ -130,7 +153,7 @@
       </div>
       {% endif %}
     </div>
-  </section>
+  </details>
 
   <section>
     <div class="sectionhead">
@@ -192,6 +215,22 @@
     </div>
   </section>
 </main>
+{% endblock %}
+
+{% block script %}
+<script>
+  // Remember a collapsed map per browser; the page renders it open.
+  (function () {
+    var map = document.getElementById('map');
+    if (!map) return;
+    try {
+      if (localStorage.getItem('meridian-map') === 'closed') map.open = false;
+      map.addEventListener('toggle', function () {
+        localStorage.setItem('meridian-map', map.open ? 'open' : 'closed');
+      });
+    } catch (e) {}
+  })();
+</script>
 {% endblock %}
 
 {% block footer %}

@@ -73,6 +73,13 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Spectrum map section (2026-09-01): head in the edition's two-line
+      form with the small grid (titling/context/spread now live in the
+      layout), the whole section a `<details>` whose collapsed state is
+      remembered in localStorage (renders open, no-JS stays open); map
+      gets band strips in the gauge colours along both axes, dashed
+      band boundaries matching Spectrum\Band, uppercase axis labels,
+      label halos and a hover accent per dot
 - [x] Design pass after the category bar (2026-09-01): priority+ topbar
       (all pages inline from 76 rem, Kategorien/Archiv/Methodik in the
       ellipsis below, mode switch drops to its own row below 60 rem);
