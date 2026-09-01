@@ -14,6 +14,16 @@
   .card.gone .note { font-size: .7rem; color: var(--muted); font-style: italic; }
 {% endblock %}
 
+{% block subnav %}
+  {% if sections %}
+  <nav class="catbar" aria-label="{{ t('nav.topics_aria') }}">
+    {% for section in sections %}
+      <a href="#{{ section.topic }}">{{ ui.icon('topic-' ~ section.topic) }} {{ label_topic(section.topic) }} <b>{{ section.entries|length }}</b></a>
+    {% endfor %}
+  </nav>
+  {% endif %}
+{% endblock %}
+
 {% block content %}
 <header class="masthead">
   <div class="kicker">{{ t('archive.day_kicker') }}</div>

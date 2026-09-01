@@ -73,6 +73,11 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Category bar under the topbar, Ground-News-style (2026-09-01):
+      the edition's topic pill row became a shared `subnav` rail in the
+      layout (`.catbar`); edition, /categories and /archive/<date> fill
+      it with icon + label + count anchors; scrolls horizontally inside
+      itself on narrow viewports (375 px measured, no page overflow)
 - [x] Section head split into two lines (2026-09-01): the axis grid
       already gives the row its height, so article count and
       perspectives moved below the topic title; grid stays right,

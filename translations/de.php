@@ -14,6 +14,7 @@ return [
         'more' => 'Weitere Seiten',
         'balance' => 'Balance',
         'watchlist' => 'Merkliste',
+        'topics_aria' => 'Themen',
     ],
     'welcome' => [
         'aria' => 'Einführung für Erstbesucher',
@@ -172,7 +173,6 @@ return [
         'full_notice_mid' => '. Der empfohlene Weg ist die',
         'full_notice_link' => 'kompakte Tagesausgabe',
         'full_notice_post' => '— kuratiert, ausgewogen, in fünf Minuten gelesen.',
-        'topics_aria' => 'Themen',
         'articles_count' => '%d Beiträge',
         'articles_count_one' => '1 Beitrag',
         'coverage_summary' => '%d links · %d mitte · %d rechts',

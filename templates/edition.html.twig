@@ -28,20 +28,6 @@
   }
   .fullnotice a { color: var(--accent); font-weight: 600; }
 
-  .topicnav {
-    max-width: 76rem; margin: 0 auto; padding: .9rem clamp(1rem, 4vw, 2.5rem) 0;
-    display: flex; flex-wrap: wrap; gap: .45rem;
-  }
-  .topicnav a {
-    display: inline-flex; align-items: center; gap: .4rem;
-    text-decoration: none; font-size: .78rem; font-weight: 600;
-    border: 1px solid var(--line-strong); border-radius: 999px;
-    padding: .3rem .8rem; color: var(--muted); background: var(--surface);
-  }
-  .topicnav .icon { width: .95em; height: .95em; vertical-align: 0; }
-  .topicnav a:hover { color: var(--ink); border-color: var(--accent); }
-  .topicnav a b { color: var(--accent); font-variant-numeric: tabular-nums; }
-
   .sectionhead { align-items: center; }
   .sectionhead .titling { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
   .sectionhead .context { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem 1.1rem; }
@@ -64,6 +50,16 @@
   }
   .legend a { color: var(--accent); }
   .legend .sw { display: inline-block; width: .55rem; height: .55rem; border-radius: 2px; margin: 0 .2rem 0 .6rem; vertical-align: baseline; }
+{% endblock %}
+
+{% block subnav %}
+  {% if edition.sections %}
+  <nav class="catbar" aria-label="{{ t('nav.topics_aria') }}">
+    {% for section in edition.sections %}
+      <a href="#{{ section.topic }}">{{ ui.icon('topic-' ~ section.topic) }} {{ label_topic(section.topic) }} <b>{{ section.articles|length }}</b></a>
+    {% endfor %}
+  </nav>
+  {% endif %}
 {% endblock %}
 
 {% block topbar_extra %}
@@ -136,14 +132,6 @@
     <a href="/account">{{ t('edition.muted_link') }}</a>
   </div>
 </div>
-{% endif %}
-
-{% if edition.sections %}
-<nav class="topicnav" aria-label="{{ t('edition.topics_aria') }}">
-  {% for section in edition.sections %}
-    <a href="#{{ section.topic }}">{{ ui.icon('topic-' ~ section.topic) }} {{ label_topic(section.topic) }} <b>{{ section.articles|length }}</b></a>
-  {% endfor %}
-</nav>
 {% endif %}
 
 <main id="main">

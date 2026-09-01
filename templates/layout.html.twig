@@ -149,6 +149,22 @@
     .modeswitch { order: 11; }
   }
 
+  /* ── Category bar: second rail under the topbar on topic-bearing pages ── */
+  .catbar {
+    display: flex; align-items: center; gap: .2rem;
+    padding: .35rem clamp(1rem, 4vw, 2.5rem);
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    overflow-x: auto; scrollbar-width: thin;
+  }
+  .catbar a {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: .4rem;
+    text-decoration: none; font-size: .76rem; font-weight: 600; color: var(--muted);
+    padding: .26rem .7rem; border-radius: 999px; white-space: nowrap;
+  }
+  .catbar a:hover { color: var(--ink); background: var(--accent-soft); }
+  .catbar a b { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 600; }
+  .catbar .icon { width: .95em; height: .95em; vertical-align: -.12em; }
+
   .skiplink {
     position: absolute; left: -100vw; top: 0; z-index: 30;
     background: var(--accent); color: var(--on-accent); font-size: .8rem; font-weight: 600;
@@ -384,6 +400,7 @@
   <a class="langbtn" href="{{ lang_url(other_locale) }}" title="{{ t('ui.lang_switch') }}">{{ other_locale|upper }}</a>
   <button class="themebtn" id="themebtn" aria-label="{{ t('ui.theme_toggle') }}" title="{{ t('ui.theme_toggle') }}">{{ ui.icon('sun-moon') }}</button>
 </nav>
+{% block subnav %}{% endblock %}
 <div class="ruler" aria-hidden="true"></div>
 
 {% block content %}{% endblock %}

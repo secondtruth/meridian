@@ -14,6 +14,7 @@ return [
         'more' => 'More pages',
         'balance' => 'Balance',
         'watchlist' => 'Watchlist',
+        'topics_aria' => 'Topics',
     ],
     'welcome' => [
         'aria' => 'Introduction for first-time visitors',
@@ -172,7 +173,6 @@ return [
         'full_notice_mid' => '. The recommended way is the',
         'full_notice_link' => 'compact daily edition',
         'full_notice_post' => '— curated, balanced, read in five minutes.',
-        'topics_aria' => 'Topics',
         'articles_count' => '%d articles',
         'articles_count_one' => '1 article',
         'coverage_summary' => '%d left · %d centre · %d right',

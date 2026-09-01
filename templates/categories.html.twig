@@ -5,6 +5,7 @@
 
 {% block style %}
   .catgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(23rem, 1fr)); gap: .8rem; }
+  .catcard[id] { scroll-margin-top: 4.2rem; }
   .catcard h2 {
     margin: 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0; text-transform: none;
     display: flex; align-items: center; gap: .5rem;
@@ -31,6 +32,14 @@
   .howto li { margin-bottom: .35rem; }
   .howto code { background: var(--accent-soft); border-radius: .25rem; padding: 0 .3rem; }
   .howto a { color: var(--accent); }
+{% endblock %}
+
+{% block subnav %}
+<nav class="catbar" aria-label="{{ t('nav.topics_aria') }}">
+  {% for topic in topics %}
+    <a href="#{{ topic.id }}">{{ ui.icon('topic-' ~ topic.id) }} {{ label_topic(topic.id) }} <b>{{ topic.article_count }}</b></a>
+  {% endfor %}
+</nav>
 {% endblock %}
 
 {% block content %}
