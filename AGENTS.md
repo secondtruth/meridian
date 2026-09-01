@@ -58,8 +58,15 @@ php -S 127.0.0.1:8932 -t public     # dev server
 - `src/Spectrum/Balance` — the same accounting applied to a reader:
   `Distribution`/`Slice` (read share vs. the dataset's composition,
   blind spots, leans) → `BalanceReport` for `/balance`.
-- `src/Web` — `App` wires services, resolves the viewer and locale, and
-  hands the request down a chain of route groups; each owns a set of
+- `src/Services.php` — the composition root: builds Registry, ItemCache,
+  Builder, Archive, Store and the optional OIDC client once per process
+  from the project root. Only the two entry points (`Web\App`,
+  `bin/meridian`) hold one; everything else takes its collaborators
+  through the constructor, so it never becomes a service locator.
+  `Web\Request::$now` is the request's single clock — every age,
+  window and timestamp derives from it, tests pick the moment.
+- `src/Web` — `App` resolves the viewer and locale, and hands the
+  request down a chain of route groups; each owns a set of
   paths and returns null for the rest, the first non-null response wins,
   and what nobody claims is the 404. The groups: `SignInRoutes` (the OIDC
   handshake), `AccountRoutes` (settings, export, deletion), `ReadingRoutes`
@@ -74,8 +81,9 @@ php -S 127.0.0.1:8932 -t public     # dev server
   `/sources` map (coincident dots spread apart, labels only where they
   collide with nothing, the rest numbered). `Request`/`Response`/`Cookie`
   keep handlers free of superglobals and `header()`; `View` is the
-  per-request Twig environment, `Viewer` is who is reading (anonymous is
-  a first-class case). `templates/layout.html.twig` holds the shared UI (editorial
+  per-request Twig environment (formatting and label helpers live in
+  `Web\Twig\FormatExtension` and `LabelExtension`), `Viewer` is who is
+  reading (anonymous is a first-class case). `templates/layout.html.twig` holds the shared UI (editorial
   header, sober utilitarian content area, light/dark via `data-theme` +
   `prefers-color-scheme`), pages extend it.
 - `src/Account` + `src/Auth` — optional accounts: OIDC authorization-code

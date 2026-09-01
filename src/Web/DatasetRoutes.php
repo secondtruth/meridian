@@ -24,7 +24,7 @@ final readonly class DatasetRoutes
         private Registry $registry,
         private Builder $builder,
         private ItemCache $cache,
-        private string $collectionsFile,
+        private Collections $collections,
     ) {
     }
 
@@ -87,13 +87,12 @@ final readonly class DatasetRoutes
 
     private function collections(Request $request, View $view): Response
     {
-        $collections = Collections::load($this->collectionsFile);
         $selector = new Selector();
         $now = $request->now;
         $items = $this->cache->loadOrEmpty();
 
         $entries = [];
-        foreach ($collections->all() as $collection) {
+        foreach ($this->collections->all() as $collection) {
             $entries[] = [
                 'collection' => $collection,
                 'articles' => $selector->select($collection, $this->registry, $items, $now),

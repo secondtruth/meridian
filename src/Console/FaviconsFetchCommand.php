@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Meridian\Console;
 
 use Meridian\Feed\FaviconMirror;
-use Meridian\Registry\Registry;
+use Meridian\Services;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,10 +18,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class FaviconsFetchCommand extends Command
 {
-    public function __construct(
-        private readonly string $dataDir,
-        private readonly string $publicDir,
-    ) {
+    public function __construct(private readonly Services $services)
+    {
         parent::__construct();
     }
 
@@ -32,9 +30,9 @@ final class FaviconsFetchCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $registry = Registry::load($this->dataDir . '/sources');
+        $registry = $this->services->registry();
         $mirror = new FaviconMirror();
-        $dir = $this->publicDir . '/favicons';
+        $dir = $this->services->publicDir() . '/favicons';
         $refresh = (bool) $input->getOption('refresh');
 
         $stored = 0;

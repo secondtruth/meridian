@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Meridian\Console;
 
-use Meridian\Collection\Collections;
-use Meridian\Registry\Registry;
-use Meridian\Registry\Topics;
+use Meridian\Services;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,16 +13,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'sources:validate', description: 'Validate the dataset against the classification rules')]
 final class SourcesValidateCommand extends Command
 {
-    public function __construct(private readonly string $dataDir)
+    public function __construct(private readonly Services $services)
     {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $registry = Registry::load($this->dataDir . '/sources');
-        $topics = Topics::load($this->dataDir . '/topics.yaml');
-        $collections = Collections::load($this->dataDir . '/collections.yaml');
+        $registry = $this->services->registry();
+        $topics = $this->services->topics();
+        $collections = $this->services->collections();
         $problems = [
             ...$registry->validate(),
             ...$topics->validate(),

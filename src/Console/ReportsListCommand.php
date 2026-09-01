@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Meridian\Console;
 
-use Meridian\Account\Store;
+use Meridian\Services;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class ReportsListCommand extends Command
 {
-    public function __construct(private readonly string $rootDir)
+    public function __construct(private readonly Services $services)
     {
         parent::__construct();
     }
@@ -34,7 +34,7 @@ final class ReportsListCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $store = Store::at($this->rootDir);
+        $store = $this->services->store();
         if (!$store->db->exists()) {
             $output->writeln('no account store — no reports');
 

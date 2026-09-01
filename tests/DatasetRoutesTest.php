@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Meridian\Tests;
 
+use Meridian\Collection\Collections;
 use Meridian\Edition\Builder;
 use Meridian\Feed\Item;
 use Meridian\Feed\ItemCache;
@@ -80,7 +81,7 @@ final class DatasetRoutesTest extends TestCase
             $registry,
             new Builder(),
             new ItemCache($this->dir . '/items.json'),
-            $this->dir . '/collections.yaml',
+            Collections::load($this->dir . '/collections.yaml'),
         );
 
         return $routes->handle($request, $view);

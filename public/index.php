@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Meridian\Services;
 use Meridian\Web\App;
 use Meridian\Web\Request;
 
@@ -16,4 +17,4 @@ if (PHP_SAPI === 'cli-server') {
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-(new App(dirname(__DIR__)))->handle(Request::fromGlobals())->send();
+(new App(new Services(dirname(__DIR__))))->handle(Request::fromGlobals())->send();

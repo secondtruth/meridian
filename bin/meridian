@@ -10,19 +10,19 @@ use Meridian\Console\FetchCommand;
 use Meridian\Console\ReportsListCommand;
 use Meridian\Console\SourcesListCommand;
 use Meridian\Console\SourcesValidateCommand;
+use Meridian\Services;
 use Symfony\Component\Console\Application;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-$rootDir = dirname(__DIR__);
-$dataDir = $rootDir . '/data';
+$services = new Services(dirname(__DIR__));
 
 $app = new Application('meridian', '0.1.0');
-$app->addCommand(new FetchCommand($dataDir));
-$app->addCommand(new FaviconsFetchCommand($dataDir, $rootDir . '/public'));
-$app->addCommand(new EditionsArchiveCommand($dataDir));
-$app->addCommand(new SourcesListCommand($dataDir));
-$app->addCommand(new SourcesValidateCommand($dataDir));
-$app->addCommand(new AccountsPruneCommand($rootDir));
-$app->addCommand(new ReportsListCommand($rootDir));
+$app->addCommand(new FetchCommand($services));
+$app->addCommand(new FaviconsFetchCommand($services));
+$app->addCommand(new EditionsArchiveCommand($services));
+$app->addCommand(new SourcesListCommand($services));
+$app->addCommand(new SourcesValidateCommand($services));
+$app->addCommand(new AccountsPruneCommand($services));
+$app->addCommand(new ReportsListCommand($services));
 $app->run();

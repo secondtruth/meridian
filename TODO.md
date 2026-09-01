@@ -73,6 +73,13 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Composition root, request clock and Twig extensions (2026-09-02):
+      `Services` builds the collaborators for App and bin/meridian, the
+      console commands take it instead of path strings; `Request::$now`
+      replaces thirteen `new DateTimeImmutable()` calls in the web layer;
+      View's formatters and label functions moved into
+      `Web\Twig\FormatExtension` and `LabelExtension`, `Labels::slice()`
+      took the bucket labelling
 - [x] Split AccountRoutes into SignInRoutes, AccountRoutes and
       ReadingRoutes (2026-09-02); the guards moved to `AccountGuard`, the
       one-message page to `View::message()`, and App builds the

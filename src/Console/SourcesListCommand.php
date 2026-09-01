@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Meridian\Console;
 
 use Meridian\I18n\Translator;
-use Meridian\Registry\Registry;
+use Meridian\Services;
 use Meridian\Spectrum\Labels;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -16,15 +16,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand(name: 'sources:list', description: 'List all sources with their spectrum ratings')]
 final class SourcesListCommand extends Command
 {
-    public function __construct(private readonly string $dataDir)
+    public function __construct(private readonly Services $services)
     {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $registry = Registry::load($this->dataDir . '/sources');
-        $labels = new Labels(new Translator(Translator::DEFAULT, dirname($this->dataDir) . '/translations'));
+        $registry = $this->services->registry();
+        $labels = new Labels($this->services->translator(Translator::DEFAULT));
 
         $table = new Table($output);
         $table->setHeaders(['Quelle', 'Land', 'Perspektive', 'Einordnung', 'Parteifamilie', 'Staat', 'Verlässl.', 'Konfidenz']);
