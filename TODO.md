@@ -73,6 +73,11 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Split AccountRoutes into SignInRoutes, AccountRoutes and
+      ReadingRoutes (2026-09-02); the guards moved to `AccountGuard`, the
+      one-message page to `View::message()`, and App builds the
+      `OidcClient` once for both groups that need it. Story clustering
+      left the Builder for `StoryClusterer` with its own tests
 - [x] Split App into route groups (2026-09-01): `EditionRoutes`,
       `DatasetRoutes` and `ContentPages` (the renamed `LegalPages`, now
       also `/methodology`) take Request and View and return null for

@@ -33,7 +33,7 @@ For every cached feed item, in order:
    Jaccard similarity ≥ 0.6 against a cluster's primary counts as the
    same story. The freshest telling leads the cluster; the others become
    its `alsoCoveredBy` members instead of being dropped
-   (`Builder::clusterNearDuplicates`, semantics in
+   (`StoryClusterer::cluster`, semantics in
    docs/rating-system.md §5).
 3. **Edition filter.** Items from sources marked `edition: false`
    (collection-only sources, see docs/collections.md §4) are skipped —

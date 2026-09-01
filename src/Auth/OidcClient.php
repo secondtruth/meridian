@@ -28,6 +28,12 @@ final class OidcClient
     ) {
     }
 
+    /** Where the provider sends the reader back to: the configured URI, or this deployment's origin. */
+    public function redirectUri(string $origin): string
+    {
+        return $this->config->redirectUri($origin);
+    }
+
     /** Where to send the reader to authenticate. */
     public function authorizationUrl(PendingLogin $login, string $redirectUri): string
     {

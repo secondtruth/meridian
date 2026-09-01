@@ -69,6 +69,16 @@ final class View
         return $this->translator->t($key, ...$args);
     }
 
+    /** A one-message page: every refusal, thank-you and farewell shares this shape. */
+    public function message(string $kicker, string $title, string $text, int $status = 200): Response
+    {
+        return $this->render('message.html.twig', [
+            'kicker' => $this->t($kicker),
+            'title' => $this->t($title),
+            'text' => $this->t($text),
+        ], $status);
+    }
+
     public function localizedDate(\DateTimeImmutable $date): string
     {
         $weekdays = $this->translator->get('date.weekdays');

@@ -157,7 +157,7 @@ score(candidate) = (gain_local + gain_global) · 10 + reliability
 Within a topic, near-identical headlines from different sources are one
 story: titles are compared as token sets against a cluster's primary,
 Jaccard similarity ≥ 0.6 joins the cluster
-(`Builder::clusterNearDuplicates`, matching rule in
+(`StoryClusterer::cluster`, matching rule in
 docs/classification.md §1). The freshest telling is the **primary** and
 is what selection, caps, diversity accounting and the coverage grid
 count; the other tellings hang off the primary as `Article::alsoCoveredBy`

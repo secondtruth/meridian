@@ -6,6 +6,7 @@ namespace Meridian\Web;
 
 use Meridian\Account\Sessions;
 use Meridian\Account\Store;
+use Meridian\Auth\OidcClient;
 use Meridian\Auth\OidcConfig;
 use Meridian\Edition\Archive;
 use Meridian\Edition\Builder;
@@ -80,14 +81,12 @@ final class App
 
     private function route(Request $request, View $view, Viewer $viewer): Response
     {
-        return new AccountRoutes(
-            $this->store,
-            $this->registry,
-            $this->builder,
-            $this->cache,
-            $this->oidc,
-            $this->rootDir . '/data/cache',
-        )->handle($request, $view, $viewer)
+        $client = $this->oidc === null ? null : new OidcClient($this->oidc, $this->rootDir . '/data/cache');
+
+        return new SignInRoutes($this->store, $client)->handle($request, $view, $viewer)
+            ?? new AccountRoutes($this->store, $client)->handle($request, $view, $viewer)
+            ?? new ReadingRoutes($this->store, $this->registry, $this->builder, $this->cache)
+                ->handle($request, $view, $viewer)
             ?? new ContentPages($this->oidc)->handle($request, $view)
             ?? new EditionRoutes(
                 $this->registry,

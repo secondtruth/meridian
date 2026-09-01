@@ -8,6 +8,7 @@ use Meridian\Account\Database;
 use Meridian\Account\Sessions;
 use Meridian\Account\Store;
 use Meridian\Account\User;
+use Meridian\Auth\OidcClient;
 use Meridian\Auth\OidcConfig;
 use Meridian\Edition\Builder;
 use Meridian\Feed\Item;
@@ -17,17 +18,20 @@ use Meridian\Registry\Rating;
 use Meridian\Registry\Registry;
 use Meridian\Registry\Source;
 use Meridian\Web\AccountRoutes;
+use Meridian\Web\ReadingRoutes;
+use Meridian\Web\SignInRoutes;
 use Meridian\Web\Request;
 use Meridian\Web\View;
 use Meridian\Web\Viewer;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Route-level checks: the guards that stand in front of every account
- * action, plus a render pass over the new templates so a missing message
- * key fails the build rather than the page.
+ * Route-level checks across the three account groups (sign-in, account,
+ * reading): the guards that stand in front of every account action, plus
+ * a render pass over the templates so a missing message key fails the
+ * build rather than the page. Dispatch chains the groups the way App does.
  */
-final class AccountRoutesTest extends TestCase
+final class AccountAreaTest extends TestCase
 {
     private const ARTICLE_URL = 'https://example.org/climate/story';
     private const ROOT = __DIR__ . '/..';
@@ -71,16 +75,24 @@ final class AccountRoutesTest extends TestCase
         )]);
     }
 
-    private function routes(bool $accountsConfigured = true): AccountRoutes
+    /**  callable(Request, View, Viewer): ?\Meridian\Web\Response */
+    private function routes(bool $accountsConfigured = true): callable
     {
-        return new AccountRoutes(
+        $client = $accountsConfigured
+            ? new OidcClient(new OidcConfig('https://id.example', 'meridian', 'secret'), $this->cacheDir)
+            : null;
+        $signIn = new SignInRoutes($this->store, $client);
+        $account = new AccountRoutes($this->store, $client);
+        $reading = new ReadingRoutes(
             $this->store,
             $this->registry(),
             new Builder(),
             new ItemCache($this->cacheDir . '/items.json'),
-            $accountsConfigured ? new OidcConfig('https://id.example', 'meridian', 'secret') : null,
-            $this->cacheDir,
         );
+
+        return fn (Request $request, View $view, Viewer $viewer) => $signIn->handle($request, $view, $viewer)
+            ?? $account->handle($request, $view, $viewer)
+            ?? $reading->handle($request, $view, $viewer);
     }
 
     private function viewer(bool $signedIn, bool $accountsEnabled = true): Viewer
@@ -121,7 +133,7 @@ final class AccountRoutesTest extends TestCase
             $viewer,
         );
 
-        return $this->routes($accountsConfigured)->handle($request, $view, $viewer);
+        return $this->routes($accountsConfigured)($request, $view, $viewer);
     }
 
     public function testPathsOutsideTheAccountAreaAreNotClaimed(): void
