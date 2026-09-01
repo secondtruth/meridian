@@ -75,7 +75,11 @@ final class EditionRoutesTest extends TestCase
     /** @param array<string, string> $cookies */
     private function dispatch(string $path, array $query = [], array $cookies = [], string $method = 'GET'): ?Response
     {
-        $request = new Request($method, $path, $query, cookies: $cookies);
+        return $this->handle(new Request($method, $path, $query, cookies: $cookies));
+    }
+
+    private function handle(Request $request): ?Response
+    {
         $viewer = Viewer::anonymous(false);
         $view = new View(
             self::ROOT . '/templates',
@@ -102,6 +106,16 @@ final class EditionRoutesTest extends TestCase
         self::assertNotNull($response);
         self::assertSame(200, $response->status);
         self::assertStringContainsString('Rainforest story', $response->body);
+    }
+
+    public function testTheRequestsNowDecidesWhatCountsAsFresh(): void
+    {
+        $this->cacheItems();
+
+        $request = new Request('GET', '/', now: new \DateTimeImmutable('+3 weeks'));
+        $body = $this->handle($request)->body;
+
+        self::assertStringNotContainsString('Rainforest story', $body, 'even the specialist window (14 days) has passed three weeks later');
     }
 
     public function testEditionRendersItsEmptyStateBeforeTheFirstFetch(): void

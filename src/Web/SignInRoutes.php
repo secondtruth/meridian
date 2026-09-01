@@ -57,7 +57,7 @@ final readonly class SignInRoutes
             return $this->failed($view, 'discovery', $error);
         }
 
-        $this->pendingLogins->remember($login, new \DateTimeImmutable());
+        $this->pendingLogins->remember($login, $request->now);
 
         return Response::redirect($url, 302);
     }
@@ -71,7 +71,7 @@ final readonly class SignInRoutes
             return $this->failed($view, 'provider');
         }
 
-        $now = new \DateTimeImmutable();
+        $now = $request->now;
         $code = $request->query('code');
         $login = $this->pendingLogins->take($request->query('state') ?? '', $now);
         if ($code === null || $login === null) {

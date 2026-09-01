@@ -20,6 +20,9 @@ final readonly class Request
      * @param array<string, mixed>  $query
      * @param array<string, mixed>  $body
      * @param array<string, string> $cookies
+     * @param \DateTimeImmutable    $now     the request's single "now" — every age, window and
+     *                                      timestamp below derives from it, so a test can
+     *                                      pick the moment
      */
     public function __construct(
         public string $method,
@@ -29,6 +32,7 @@ final readonly class Request
         public array $cookies = [],
         public string $host = 'localhost',
         public bool $secure = false,
+        public \DateTimeImmutable $now = new \DateTimeImmutable(),
     ) {
     }
 

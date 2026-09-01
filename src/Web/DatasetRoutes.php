@@ -35,17 +35,17 @@ final readonly class DatasetRoutes
         }
 
         return match ($request->normalizedPath()) {
-            '/sources' => $this->sources($view),
+            '/sources' => $this->sources($request, $view),
             '/publishers' => $this->publishers($view),
-            '/collections' => $this->collections($view),
-            '/categories' => $this->categories($view),
+            '/collections' => $this->collections($request, $view),
+            '/categories' => $this->categories($request, $view),
             default => null,
         };
     }
 
-    private function sources(View $view): Response
+    private function sources(Request $request, View $view): Response
     {
-        $now = new \DateTimeImmutable();
+        $now = $request->now;
         $byTopic = $this->builder->classifyFresh($this->registry, $this->cache->loadOrEmpty(), $now);
 
         $inFocus = [];
@@ -85,11 +85,11 @@ final readonly class DatasetRoutes
         ]);
     }
 
-    private function collections(View $view): Response
+    private function collections(Request $request, View $view): Response
     {
         $collections = Collections::load($this->collectionsFile);
         $selector = new Selector();
-        $now = new \DateTimeImmutable();
+        $now = $request->now;
         $items = $this->cache->loadOrEmpty();
 
         $entries = [];
@@ -108,9 +108,9 @@ final readonly class DatasetRoutes
         ]);
     }
 
-    private function categories(View $view): Response
+    private function categories(Request $request, View $view): Response
     {
-        $now = new \DateTimeImmutable();
+        $now = $request->now;
         $byTopic = $this->builder->classifyFresh($this->registry, $this->cache->loadOrEmpty(), $now);
 
         $topics = [];

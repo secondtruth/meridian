@@ -117,7 +117,7 @@ final class App
             return Viewer::anonymous($enabled);
         }
 
-        $session = $this->store->sessions->lookup($token, new \DateTimeImmutable());
+        $session = $this->store->sessions->lookup($token, $request->now);
         $user = $session === null ? null : $this->store->accounts->find($session->userId);
         if ($session === null || $user === null) {
             return Viewer::anonymous($enabled);

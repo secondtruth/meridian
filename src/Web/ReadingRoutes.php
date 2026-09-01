@@ -62,7 +62,7 @@ final readonly class ReadingRoutes
 
         $days = (int) ($request->query('days') ?? 30);
         $days = in_array($days, self::BALANCE_PERIODS, true) ? $days : 30;
-        $now = new \DateTimeImmutable();
+        $now = $request->now;
         $reads = $this->store->reads->since($viewer->user->id, $now->modify("-{$days} days"));
 
         return $view->render('balance.html.twig', [
@@ -114,12 +114,12 @@ final readonly class ReadingRoutes
             return Response::redirect($back);
         }
 
-        $article = $this->findArticle($url);
+        $article = $this->findArticle($url, $request->now);
         if ($article === null) {
             return Response::redirect($back);
         }
 
-        $added = $this->store->watchlist->add($viewer->user->id, $article, new \DateTimeImmutable());
+        $added = $this->store->watchlist->add($viewer->user->id, $article, $request->now);
 
         return Response::redirect($added ? $back : '/watchlist?full=1');
     }
@@ -138,9 +138,9 @@ final readonly class ReadingRoutes
             return Response::noContent();
         }
 
-        $article = $this->findArticle($request->input('url') ?? '');
+        $article = $this->findArticle($request->input('url') ?? '', $request->now);
         if ($article !== null) {
-            $this->store->reads->record($viewer->user->id, $article, new \DateTimeImmutable());
+            $this->store->reads->record($viewer->user->id, $article, $request->now);
         }
 
         return Response::noContent();
@@ -170,7 +170,7 @@ final readonly class ReadingRoutes
             ]);
         }
 
-        $article = $this->findArticle($request->query('url') ?? '');
+        $article = $this->findArticle($request->query('url') ?? '', $request->now);
         if ($article === null) {
             return $view->message('report.gone_kicker', 'report.gone_title', 'report.gone_text', 404);
         }
@@ -192,7 +192,7 @@ final readonly class ReadingRoutes
             return $denied;
         }
 
-        $now = new \DateTimeImmutable();
+        $now = $request->now;
         if ($this->store->reports->countToday($viewer->user->id, $now) >= self::REPORTS_PER_DAY) {
             return $view->message('report.limit_kicker', 'report.limit_title', 'report.limit_text', 429);
         }
@@ -213,7 +213,7 @@ final readonly class ReadingRoutes
             return $view->message('report.thanks_kicker', 'report.thanks_title', 'report.thanks_text');
         }
 
-        $article = $this->findArticle($request->input('url') ?? '');
+        $article = $this->findArticle($request->input('url') ?? '', $request->now);
         if ($article === null) {
             return $view->message('report.gone_kicker', 'report.gone_title', 'report.gone_text', 404);
         }
@@ -229,12 +229,12 @@ final readonly class ReadingRoutes
         return $view->message('report.thanks_kicker', 'report.thanks_title', 'report.thanks_text');
     }
 
-    private function findArticle(string $url): ?Article
+    private function findArticle(string $url, \DateTimeImmutable $now): ?Article
     {
         if ($url === '') {
             return null;
         }
 
-        return $this->builder->findFresh($this->registry, $this->cache->loadOrEmpty(), new \DateTimeImmutable(), $url);
+        return $this->builder->findFresh($this->registry, $this->cache->loadOrEmpty(), $now, $url);
     }
 }

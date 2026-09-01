@@ -52,7 +52,7 @@ final readonly class EditionRoutes
     private function edition(Request $request, View $view, Viewer $viewer): Response
     {
         $mode = Mode::fromQuery($request->query('mode') ?? $viewer->preferences->mode->value);
-        $now = new \DateTimeImmutable();
+        $now = $request->now;
         $items = $this->cache->loadOrEmpty();
         $edition = $this->builder->build($this->registry, $items, $now, $mode, $viewer->preferences->mutedTopics);
 

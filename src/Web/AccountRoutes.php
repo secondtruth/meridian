@@ -46,7 +46,7 @@ final readonly class AccountRoutes
         }
 
         $userId = $viewer->user->id;
-        $now = new \DateTimeImmutable();
+        $now = $request->now;
 
         return $view->render('account.html.twig', [
             'nav_active' => 'account',
