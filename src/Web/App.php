@@ -4,27 +4,26 @@ declare(strict_types=1);
 
 namespace Meridian\Web;
 
+use Meridian\Account\Sessions;
 use Meridian\Account\Store;
 use Meridian\Auth\OidcConfig;
-use Meridian\Collection\Collections;
-use Meridian\Collection\Duel;
-use Meridian\Collection\Selector;
 use Meridian\Edition\Archive;
-use Meridian\Edition\Article;
 use Meridian\Edition\Builder;
-use Meridian\Edition\Classifier;
-use Meridian\Edition\Mode;
-use Meridian\Feed\Item;
 use Meridian\Feed\ItemCache;
 use Meridian\I18n\Translator;
 use Meridian\Registry\Registry;
-use Meridian\Spectrum\AxisGrid;
 
-/** Request-scoped wiring for all pages — Meridian is a website. */
+/**
+ * Request-scoped wiring for all pages — Meridian is a website.
+ *
+ * App resolves who is reading and in which language, then hands the
+ * request down a chain of route groups; each owns a set of paths and
+ * returns null for the rest, so the first non-null response wins and
+ * whatever nobody claims is a 404.
+ */
 final class App
 {
     private const LANG_COOKIE = 'meridian-lang';
-    private const WELCOME_COOKIE = 'meridian-welcome';
 
     private readonly Registry $registry;
     private readonly ItemCache $cache;
@@ -81,42 +80,29 @@ final class App
 
     private function route(Request $request, View $view, Viewer $viewer): Response
     {
-        $accountRoutes = new AccountRoutes(
+        return new AccountRoutes(
             $this->store,
             $this->registry,
             $this->builder,
             $this->cache,
             $this->oidc,
             $this->rootDir . '/data/cache',
-        );
-        $response = $accountRoutes->handle($request, $view, $viewer);
-        if ($response !== null) {
-            return $response;
-        }
-
-        $response = new LegalPages($this->oidc)->handle($request, $view);
-        if ($response !== null) {
-            return $response;
-        }
-
-        if ($request->isPost()) {
-            return $this->renderNotFound($view);
-        }
-
-        if (preg_match('#\A/archive/(\d{4}-\d{2}-\d{2})\z#', $request->normalizedPath(), $m) === 1) {
-            return $this->renderArchiveDay($view, $m[1]);
-        }
-
-        return match ($request->normalizedPath()) {
-            '/' => $this->renderEdition($request, $view, $viewer),
-            '/sources' => $this->renderSources($view),
-            '/publishers' => $this->renderPublishers($view),
-            '/collections' => $this->renderCollections($view),
-            '/categories' => $this->renderCategories($view),
-            '/archive' => $this->renderArchiveIndex($view),
-            '/methodology' => $this->renderMethodology($view),
-            default => $this->renderNotFound($view),
-        };
+        )->handle($request, $view, $viewer)
+            ?? new ContentPages($this->oidc)->handle($request, $view)
+            ?? new EditionRoutes(
+                $this->registry,
+                $this->builder,
+                $this->cache,
+                new Archive($this->rootDir . '/data/archive'),
+                $this->store,
+            )->handle($request, $view, $viewer)
+            ?? new DatasetRoutes(
+                $this->registry,
+                $this->builder,
+                $this->cache,
+                $this->rootDir . '/data/collections.yaml',
+            )->handle($request, $view)
+            ?? $view->render('notfound.html.twig', [], 404);
     }
 
     /**
@@ -127,7 +113,7 @@ final class App
     private function resolveViewer(Request $request): Viewer
     {
         $enabled = $this->oidc !== null;
-        $token = $request->cookie(\Meridian\Account\Sessions::COOKIE);
+        $token = $request->cookie(Sessions::COOKIE);
         if (!$enabled || $token === null || !$this->store->db->exists()) {
             return Viewer::anonymous($enabled);
         }
@@ -146,270 +132,6 @@ final class App
         );
     }
 
-    private function renderEdition(Request $request, View $view, Viewer $viewer): Response
-    {
-        $mode = Mode::fromQuery($request->query('mode') ?? $viewer->preferences->mode->value);
-        $now = new \DateTimeImmutable();
-        $items = $this->cachedItems();
-        $edition = $this->builder->build($this->registry, $items, $now, $mode, $viewer->preferences->mutedTopics);
-
-        $links = [];
-        foreach ($edition->sections as $section) {
-            foreach ($section->articles as $article) {
-                $links[] = $article->item->link;
-            }
-        }
-
-        $read = [];
-        $saved = [];
-        $readToday = 0;
-        if ($viewer->isSignedIn()) {
-            $userId = $viewer->user->id;
-            $read = $viewer->preferences->trackReading
-                ? $this->store->reads->readAmong($userId, $links)
-                : [];
-            $saved = $this->store->watchlist->savedAmong($userId, $links);
-            $readToday = $viewer->preferences->trackReading
-                ? $this->store->reads->countSince($userId, $now->setTime(0, 0))
-                : 0;
-        }
-
-        // First-visit welcome: shown until dismissed via /?welcome=off,
-        // which persists a cookie — no account and no JavaScript needed.
-        // Signed-in readers are past their first visit by definition.
-        $welcomeOff = $request->query('welcome') === 'off';
-
-        $response = $view->render('edition.html.twig', [
-            'nav_active' => 'edition',
-            'edition' => $edition,
-            'mode' => $mode,
-            'modes' => Mode::cases(),
-            'date_human' => $view->localizedDate($now),
-            'fetched_at' => $this->cache->lastFetchedAt(),
-            'source_count' => count($edition->sourceIds()),
-            'perspective_count' => count($edition->perspectives()),
-            'max_total' => Builder::MAX_ITEMS_TOTAL,
-            'window_hours' => Builder::MAX_ITEM_AGE_HOURS,
-            'no_data' => $items === [],
-            'read_urls' => $read,
-            'saved_urls' => $saved,
-            'read_today' => $readToday,
-            'daily_limit_reached' => $viewer->preferences->dailyLimit
-                && $readToday >= Builder::MAX_ITEMS_TOTAL,
-            'muted_topics' => $viewer->preferences->mutedTopics,
-            'show_welcome' => !$welcomeOff && !$viewer->isSignedIn()
-                && $request->cookie(self::WELCOME_COOKIE) === null,
-        ]);
-
-        if ($welcomeOff) {
-            $response = $response->withCookie(new Cookie(
-                name: self::WELCOME_COOKIE,
-                value: 'seen',
-                expires: time() + 31536000,
-                secure: $request->secure,
-            ));
-        }
-
-        return $response;
-    }
-
-    private function renderSources(View $view): Response
-    {
-        $now = new \DateTimeImmutable();
-        $byTopic = $this->builder->classifyFresh($this->registry, $this->cachedItems(), $now);
-
-        $inFocus = [];
-        foreach ($byTopic as $articles) {
-            foreach ($articles as $article) {
-                $inFocus[$article->source->id] = ($inFocus[$article->source->id] ?? 0) + 1;
-            }
-        }
-
-        $perspectiveCounts = [];
-        foreach ($this->registry->all() as $source) {
-            $perspectiveCounts[$source->perspective] = ($perspectiveCounts[$source->perspective] ?? 0) + 1;
-        }
-
-        return $view->render('sources.html.twig', [
-            'nav_active' => 'sources',
-            'sources' => $this->registry->all(),
-            'map_points' => SpectrumMap::points($this->registry->all()),
-            'dataset_grid' => AxisGrid::count($this->registry->all()),
-            'in_focus' => $inFocus,
-            'perspective_counts' => $perspectiveCounts,
-            'window_hours' => Builder::MAX_ITEM_AGE_HOURS,
-        ]);
-    }
-
-    private function renderPublishers(View $view): Response
-    {
-        $publishers = $this->registry->publishers();
-        $groups = array_values(array_filter($publishers, fn ($p) => $p->isGroup()));
-
-        return $view->render('publishers.html.twig', [
-            'nav_active' => 'publishers',
-            'publishers' => $publishers,
-            'publisher_count' => count($publishers),
-            'source_count' => $this->registry->count(),
-            'group_count' => count($groups),
-        ]);
-    }
-
-    private function renderArchiveIndex(View $view): Response
-    {
-        $archive = new Archive($this->rootDir . '/data/archive');
-
-        $days = [];
-        foreach ($archive->dates() as $date) {
-            $days[] = [
-                'date' => $date,
-                'date_human' => $view->localizedDate(new \DateTimeImmutable($date)),
-            ];
-        }
-
-        return $view->render('archive.html.twig', [
-            'nav_active' => 'archive',
-            'days' => $days,
-        ]);
-    }
-
-    /**
-     * A frozen edition. Articles whose source is still in the dataset
-     * render as full cards (with the *current* rating — labelled as
-     * such); articles from since-removed sources render plainly.
-     */
-    private function renderArchiveDay(View $view, string $date): Response
-    {
-        $data = (new Archive($this->rootDir . '/data/archive'))->load($date);
-        if ($data === null) {
-            return $this->renderNotFound($view);
-        }
-
-        $sections = [];
-        foreach ($data['sections'] as $section) {
-            $entries = [];
-            foreach ($section['articles'] as $stored) {
-                $source = $this->registry->get($stored['source_id']);
-                $tellings = [];
-                foreach ($stored['also_covered_by'] ?? [] as $member) {
-                    $memberSource = $this->registry->get($member['source_id']);
-                    if ($memberSource === null) {
-                        continue;
-                    }
-                    $tellings[] = new Article(
-                        new Item(
-                            sourceId: $member['source_id'],
-                            title: $member['title'],
-                            link: $member['link'],
-                            summary: '',
-                            published: new \DateTimeImmutable($member['published']),
-                        ),
-                        $memberSource,
-                        $section['topic'],
-                    );
-                }
-                $entries[] = [
-                    'stored' => $stored,
-                    'article' => $source === null ? null : new Article(
-                        new Item(
-                            sourceId: $stored['source_id'],
-                            title: $stored['title'],
-                            link: $stored['link'],
-                            summary: $stored['summary'],
-                            published: new \DateTimeImmutable($stored['published']),
-                        ),
-                        $source,
-                        $section['topic'],
-                        $tellings,
-                    ),
-                ];
-            }
-            $sections[] = ['topic' => $section['topic'], 'entries' => $entries];
-        }
-
-        return $view->render('archive_day.html.twig', [
-            'nav_active' => 'archive',
-            'date' => $date,
-            'date_human' => $view->localizedDate(new \DateTimeImmutable($date)),
-            'sections' => $sections,
-        ]);
-    }
-
-    private function renderCollections(View $view): Response
-    {
-        $collections = Collections::load($this->rootDir . '/data/collections.yaml');
-        $selector = new Selector();
-        $now = new \DateTimeImmutable();
-        $items = $this->cachedItems();
-
-        $entries = [];
-        foreach ($collections->all() as $collection) {
-            $entries[] = [
-                'collection' => $collection,
-                'articles' => $selector->select($collection, $this->registry, $items, $now),
-            ];
-        }
-
-        return $view->render('collections.html.twig', [
-            'nav_active' => 'collections',
-            'collections' => $entries,
-            'duel' => Duel::select($this->builder->classifyFresh($this->registry, $items, $now)),
-            'duel_cap' => Duel::CAP,
-        ]);
-    }
-
-    private function renderCategories(View $view): Response
-    {
-        $now = new \DateTimeImmutable();
-        $byTopic = $this->builder->classifyFresh($this->registry, $this->cachedItems(), $now);
-
-        $topics = [];
-        foreach (Classifier::TOPIC_ORDER as $topic) {
-            $specialists = array_values(array_filter(
-                $this->registry->all(),
-                fn ($s) => $s->specialistTopic() === $topic,
-            ));
-            $topics[] = [
-                'id' => $topic,
-                'article_count' => count($byTopic[$topic] ?? []),
-                'latest' => array_slice($byTopic[$topic] ?? [], 0, 3),
-                'specialists' => $specialists,
-                'keywords_de' => Classifier::KEYWORDS_DE[$topic],
-                'keywords_en' => Classifier::KEYWORDS_EN[$topic],
-            ];
-        }
-
-        return $view->render('categories.html.twig', [
-            'nav_active' => 'categories',
-            'topics' => $topics,
-            'window_hours' => Builder::MAX_ITEM_AGE_HOURS,
-        ]);
-    }
-
-    private function renderMethodology(View $view): Response
-    {
-        $translator = $view->translator;
-
-        return $view->render('methodology.html.twig', [
-            'nav_active' => 'methodology',
-            'why' => $translator->get('methodology.why'),
-            'more' => $translator->get('methodology.more'),
-            'selection' => $translator->get('methodology.selection'),
-            'limits' => $translator->get('methodology.limits'),
-            'glossary' => $translator->get('methodology.glossary'),
-            'axes' => [
-                ['key' => 'economic', 'title' => $translator->t('axis.economic_title'), 'bands' => $translator->get('axis.economic')],
-                ['key' => 'cultural', 'title' => $translator->t('axis.cultural_title'), 'bands' => $translator->get('axis.cultural')],
-                ['key' => 'eu', 'title' => $translator->t('axis.eu_title'), 'bands' => $translator->get('axis.eu')],
-            ],
-        ]);
-    }
-
-    private function renderNotFound(View $view): Response
-    {
-        return $view->render('notfound.html.twig', [], 404);
-    }
-
     /**
      * Icons mirrored by `favicons:fetch` — self-hosted, so a card never
      * triggers a third-party request. An empty directory is the normal
@@ -426,15 +148,5 @@ final class App
         }
 
         return $icons;
-    }
-
-    /** @return list<Item> */
-    private function cachedItems(): array
-    {
-        try {
-            return $this->cache->load();
-        } catch (\RuntimeException) {
-            return [];
-        }
     }
 }

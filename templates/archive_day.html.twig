@@ -49,10 +49,10 @@
         {% else %}
         <article class="card gone">
           <div class="srcline">
-            <span class="src">{{ entry.stored.source_name }}</span>
+            <span class="src">{{ entry.sourceName }}</span>
           </div>
-          <h3><a href="{{ entry.stored.link }}" rel="noopener">{{ entry.stored.title }}</a></h3>
-          {% if entry.stored.summary %}<p class="summary">{{ entry.stored.summary }}</p>{% endif %}
+          <h3><a href="{{ entry.link }}" rel="noopener">{{ entry.title }}</a></h3>
+          {% if entry.summary %}<p class="summary">{{ entry.summary }}</p>{% endif %}
           <p class="note">{{ t('archive.unknown_source') }}</p>
         </article>
         {% endif %}

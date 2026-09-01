@@ -11,6 +11,7 @@ use Meridian\Edition\Mode;
 use Meridian\Edition\Section;
 use Meridian\Feed\Item;
 use Meridian\Registry\Rating;
+use Meridian\Registry\Registry;
 use Meridian\Registry\Source;
 use Meridian\Spectrum\Diversity;
 use PHPUnit\Framework\TestCase;
@@ -93,6 +94,32 @@ final class ArchiveTest extends TestCase
         $archive->save(self::edition('2026-08-27'));
 
         self::assertSame(['2026-08-27', '2026-08-25'], $archive->dates());
+    }
+
+    public function testRestoreRebuildsCardsOnlyForSourcesStillInTheDataset(): void
+    {
+        $archive = new Archive($this->dir);
+        $edition = self::edition('2026-08-27');
+        $archive->save($edition);
+        $taz = $edition->sections[0]->articles[0]->source;
+        $dlf = $edition->sections[0]->articles[0]->alsoCoveredBy[0]->source;
+
+        $both = $archive->restore('2026-08-27', new Registry([$taz, $dlf]));
+        self::assertNotNull($both);
+        self::assertSame('climate', $both[0]->topic);
+        self::assertSame('Klimakrise: Bericht', $both[0]->entries[0]->article?->item->title);
+        self::assertCount(1, $both[0]->entries[0]->article->alsoCoveredBy);
+
+        // A removed cluster member drops out; the primary still renders as a card.
+        $primaryOnly = $archive->restore('2026-08-27', new Registry([$taz]));
+        self::assertSame([], $primaryOnly[0]->entries[0]->article?->alsoCoveredBy);
+
+        // A removed primary keeps its stored text but gets no card.
+        $gone = $archive->restore('2026-08-27', new Registry([$dlf]));
+        self::assertNull($gone[0]->entries[0]->article);
+        self::assertSame('taz — die tageszeitung', $gone[0]->entries[0]->sourceName);
+
+        self::assertNull($archive->restore('2026-08-28', new Registry([$taz])));
     }
 
     public function testLoadRejectsMalformedDatesAndMissingDays(): void

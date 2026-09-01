@@ -73,6 +73,13 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Split App into route groups (2026-09-01): `EditionRoutes`,
+      `DatasetRoutes` and `ContentPages` (the renamed `LegalPages`, now
+      also `/methodology`) take Request and View and return null for
+      paths they do not own, like `AccountRoutes` already did; App keeps
+      wiring, viewer, locale and the 404. Archive rehydration moved to
+      `Archive::restore()`, the cache fallback to
+      `ItemCache::loadOrEmpty()`. The public pages have render tests now
 - [x] Evidence and keyword lists open in a modal (2026-09-01): one
       shared native `<dialog>` in the layout lifts every
       `details.modal` — the details' content moves into the dialog and

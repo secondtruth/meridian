@@ -59,17 +59,21 @@ php -S 127.0.0.1:8932 -t public     # dev server
   `Distribution`/`Slice` (read share vs. the dataset's composition,
   blind spots, leans) → `BalanceReport` for `/balance`.
 - `src/Web` — `App` wires services, resolves the viewer and locale, and
-  routes the public pages (`/`, `/sources`, `/publishers`,
-  `/collections`, `/categories`, `/methodology`, 404); `/publishers` groups the sources by their
-  `publisher` field (`Registry::publishers()` → `Registry\Publisher`) to
-  surface media ownership, Ground-News-style. `SpectrumMap` lays out the
+  hands the request down a chain of route groups; each owns a set of
+  paths and returns null for the rest, the first non-null response wins,
+  and what nobody claims is the 404. The groups: `AccountRoutes` (every
+  path that needs an account), `ContentPages` (text rather than data:
+  `/methodology`, `/impressum`, `/privacy`), `EditionRoutes` (`/`,
+  `/archive`, `/archive/{date}` via `Archive::restore()`) and
+  `DatasetRoutes` (`/sources`, `/publishers`, `/collections`,
+  `/categories`). `/publishers` groups the sources by their `publisher`
+  field (`Registry::publishers()` → `Registry\Publisher`) to surface
+  media ownership, Ground-News-style. `SpectrumMap` lays out the
   `/sources` map (coincident dots spread apart, labels only where they
-  collide with nothing, the rest numbered). `AccountRoutes` owns every
-  path that needs an account and returns null for the rest, so `App`
-  falls through. `Request`/`Response`/`Cookie` keep handlers free of
-  superglobals and `header()`; `View` is the per-request Twig
-  environment, `Viewer` is who is reading (anonymous is a first-class
-  case). `templates/layout.html.twig` holds the shared UI (editorial
+  collide with nothing, the rest numbered). `Request`/`Response`/`Cookie`
+  keep handlers free of superglobals and `header()`; `View` is the
+  per-request Twig environment, `Viewer` is who is reading (anonymous is
+  a first-class case). `templates/layout.html.twig` holds the shared UI (editorial
   header, sober utilitarian content area, light/dark via `data-theme` +
   `prefers-color-scheme`), pages extend it.
 - `src/Account` + `src/Auth` — optional accounts: OIDC authorization-code

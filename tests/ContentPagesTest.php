@@ -6,7 +6,7 @@ namespace Meridian\Tests;
 
 use Meridian\Auth\OidcConfig;
 use Meridian\I18n\Translator;
-use Meridian\Web\LegalPages;
+use Meridian\Web\ContentPages;
 use Meridian\Web\Request;
 use Meridian\Web\Response;
 use Meridian\Web\View;
@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  * guard (a TODO in the rendered output must surface the banner), and the
  * dynamic identity-provider naming.
  */
-final class LegalPagesTest extends TestCase
+final class ContentPagesTest extends TestCase
 {
     private const ROOT = __DIR__ . '/..';
 
@@ -38,7 +38,7 @@ final class LegalPagesTest extends TestCase
             Viewer::anonymous($oidc !== null),
         );
 
-        return new LegalPages($oidc)->handle($request, $view);
+        return new ContentPages($oidc)->handle($request, $view);
     }
 
     public function testImpressumRendersCompleteWithoutDraftBanner(): void
@@ -110,10 +110,22 @@ final class LegalPagesTest extends TestCase
         self::assertStringContainsString('>Privacy</a>', $en);
     }
 
+    public function testMethodologyRendersInBothLocales(): void
+    {
+        $de = $this->dispatch('/methodology');
+        self::assertNotNull($de);
+        self::assertSame(200, $de->status);
+        self::assertStringContainsString('Methodik', $de->body);
+
+        $en = $this->dispatch('/methodology', locale: 'en');
+        self::assertStringContainsString('Methodology', $en->body);
+    }
+
     public function testUnclaimedPathsAndPostsAreLeftToTheApp(): void
     {
         self::assertNull($this->dispatch('/'));
-        self::assertNull($this->dispatch('/methodology'));
+        self::assertNull($this->dispatch('/sources'));
         self::assertNull($this->dispatch('/impressum', method: 'POST'));
+        self::assertNull($this->dispatch('/methodology', method: 'POST'));
     }
 }

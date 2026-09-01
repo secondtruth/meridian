@@ -38,6 +38,21 @@ final readonly class ItemCache
         return array_map(Item::fromArray(...), $data);
     }
 
+    /**
+     * The items, or none: pages render before the first cron run and
+     * show their empty state instead of failing.
+     *
+     * @return list<Item>
+     */
+    public function loadOrEmpty(): array
+    {
+        try {
+            return $this->load();
+        } catch (\RuntimeException) {
+            return [];
+        }
+    }
+
     public function lastFetchedAt(): ?\DateTimeImmutable
     {
         $mtime = is_file($this->path) ? filemtime($this->path) : false;

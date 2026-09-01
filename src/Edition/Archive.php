@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Meridian\Edition;
 
+use Meridian\Feed\Item;
+use Meridian\Registry\Registry;
+
 /**
  * Date-addressable snapshots of the compact edition (rating-system.md
  * §7): one JSON file per day, written by the daily cron after the
@@ -82,7 +85,7 @@ final class Archive
 
     /**
      * @return array{date: string, generated_at: string,
-     *               sections: list<array{topic: string, articles: list<array<string, string>>}>}|null
+     *               sections: list<array{topic: string, articles: list<array<string, mixed>>}>}|null
      */
     public function load(string $date): ?array
     {
@@ -96,5 +99,69 @@ final class Archive
         $data = json_decode((string) file_get_contents($file), true);
 
         return is_array($data) ? $data : null;
+    }
+
+    /**
+     * A frozen day rebuilt for display. Articles whose source is still in
+     * the dataset come back as {@see Article}s carrying the *current*
+     * rating (the page labels it as such); articles from since-removed
+     * sources keep only their stored text. Cluster members from removed
+     * sources are dropped silently — a telling without a rating is not a
+     * telling in this product.
+     *
+     * @return list<ArchivedSection>|null null when no such day is archived
+     */
+    public function restore(string $date, Registry $registry): ?array
+    {
+        $data = $this->load($date);
+        if ($data === null) {
+            return null;
+        }
+
+        $sections = [];
+        foreach ($data['sections'] as $section) {
+            $entries = [];
+            foreach ($section['articles'] as $stored) {
+                $source = $registry->get($stored['source_id']);
+                $tellings = [];
+                foreach ($stored['also_covered_by'] ?? [] as $member) {
+                    $memberSource = $registry->get($member['source_id']);
+                    if ($memberSource === null) {
+                        continue;
+                    }
+                    $tellings[] = new Article(
+                        self::item($member['source_id'], $member['title'], $member['link'], '', $member['published']),
+                        $memberSource,
+                        $section['topic'],
+                    );
+                }
+                $entries[] = new ArchivedEntry(
+                    sourceName: $stored['source_name'],
+                    title: $stored['title'],
+                    link: $stored['link'],
+                    summary: $stored['summary'],
+                    article: $source === null ? null : new Article(
+                        self::item($stored['source_id'], $stored['title'], $stored['link'], $stored['summary'], $stored['published']),
+                        $source,
+                        $section['topic'],
+                        $tellings,
+                    ),
+                );
+            }
+            $sections[] = new ArchivedSection($section['topic'], $entries);
+        }
+
+        return $sections;
+    }
+
+    private static function item(string $sourceId, string $title, string $link, string $summary, string $published): Item
+    {
+        return new Item(
+            sourceId: $sourceId,
+            title: $title,
+            link: $link,
+            summary: $summary,
+            published: new \DateTimeImmutable($published),
+        );
     }
 }

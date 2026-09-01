@@ -443,13 +443,7 @@ final class AccountRoutes
             return null;
         }
 
-        try {
-            $items = $this->cache->load();
-        } catch (\RuntimeException) {
-            return null;
-        }
-
-        return $this->builder->findFresh($this->registry, $items, new \DateTimeImmutable(), $url);
+        return $this->builder->findFresh($this->registry, $this->cache->loadOrEmpty(), new \DateTimeImmutable(), $url);
     }
 
     private function denyWithoutUser(Request $request, View $view, Viewer $viewer): ?Response
