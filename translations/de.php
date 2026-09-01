@@ -15,6 +15,8 @@ return [
         'balance' => 'Balance',
         'watchlist' => 'Merkliste',
         'topics_aria' => 'Themen',
+        'scroll_prev' => 'Themen nach links blättern',
+        'scroll_next' => 'Themen nach rechts blättern',
     ],
     'welcome' => [
         'aria' => 'Einführung für Erstbesucher',

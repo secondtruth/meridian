@@ -76,8 +76,10 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 - [x] Design pass after the category bar (2026-09-01): priority+ topbar
       (all pages inline from 76 rem, Kategorien/Archiv/Methodik in the
       ellipsis below, mode switch drops to its own row below 60 rem);
-      category bar with hidden scrollbar, edge fades and a scroll-spy
-      active state; spectrum map laid out by `Web\SpectrumMap` (display
+      category bar with hidden scrollbar, edge fades, a scroll-spy
+      active state and hover-only chevron buttons that page the bar
+      (layout wraps the subnav block in `.catrail`; buttons stay
+      hidden without JS and on touch); spectrum map laid out by `Web\SpectrumMap` (display
       names, coincident dots spread on a ring, labels only where they
       collide with nothing, the rest numbered inside the dot with an
       index below — SpectrumMapTest); one-title publishers collapsed

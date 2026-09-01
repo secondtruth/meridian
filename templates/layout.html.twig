@@ -183,6 +183,22 @@
     padding: .26rem .7rem; border-radius: 999px; white-space: nowrap;
   }
   .catbar a:last-child { margin-right: 3rem; }
+  /* Scroll buttons: JavaScript unhides them per direction while the rail
+     is hovered or focused; pointer-only, touch scrolls the bar itself. */
+  .catrail { position: relative; }
+  .catrail .scrollbtn {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+    display: none; place-items: center; width: 1.9rem; height: 1.9rem; padding: 0;
+    border: 1px solid var(--line-strong); border-radius: 999px; cursor: pointer;
+    background: var(--surface); color: var(--muted); box-shadow: var(--shadow-panel);
+  }
+  .catrail .scrollbtn .icon { width: 1rem; height: 1rem; vertical-align: 0; }
+  .catrail .scrollbtn:hover { color: var(--accent); border-color: var(--accent); }
+  .catrail .scrollbtn.prev { left: .45rem; }
+  .catrail .scrollbtn.next { right: .45rem; }
+  @media (hover: hover) {
+    .catrail:hover .scrollbtn:not([hidden]), .catrail:focus-within .scrollbtn:not([hidden]) { display: grid; }
+  }
   .catbar a:hover { color: var(--ink); background: var(--accent-soft); }
   .catbar a.active { color: var(--accent); background: var(--accent-soft); }
   .catbar a b { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 600; }
@@ -435,7 +451,14 @@
   <a class="langbtn" href="{{ lang_url(other_locale) }}" title="{{ t('ui.lang_switch') }}">{{ other_locale|upper }}</a>
   <button class="themebtn" id="themebtn" aria-label="{{ t('ui.theme_toggle') }}" title="{{ t('ui.theme_toggle') }}">{{ ui.icon('sun-moon') }}</button>
 </nav>
-{% block subnav %}{% endblock %}
+{% set subnav %}{% block subnav %}{% endblock %}{% endset %}
+{% if subnav|trim %}
+<div class="catrail">
+  <button class="scrollbtn prev" type="button" aria-label="{{ t('nav.scroll_prev') }}" hidden>{{ ui.icon('chevron-left') }}</button>
+  {{ subnav|raw }}
+  <button class="scrollbtn next" type="button" aria-label="{{ t('nav.scroll_next') }}" hidden>{{ ui.icon('chevron-right') }}</button>
+</div>
+{% endif %}
 <div class="ruler" aria-hidden="true"></div>
 
 {% block content %}{% endblock %}
@@ -475,8 +498,22 @@
     var bar = document.querySelector('.catbar');
     if (!bar) return;
     var links = Array.prototype.slice.call(bar.querySelectorAll('a[href^="#"]'));
-    var onScroll = function () { bar.classList.toggle('scrolled', bar.scrollLeft > 4); };
+    var prev = document.querySelector('.catrail .scrollbtn.prev');
+    var next = document.querySelector('.catrail .scrollbtn.next');
+    var onScroll = function () {
+      var canPrev = bar.scrollLeft > 4;
+      var canNext = bar.scrollLeft + bar.clientWidth < bar.scrollWidth - 4;
+      bar.classList.toggle('scrolled', canPrev);
+      if (prev) prev.hidden = !canPrev;
+      if (next) next.hidden = !canNext;
+    };
+    var page = function (direction) {
+      bar.scrollBy({ left: direction * bar.clientWidth * 0.6, behavior: 'smooth' });
+    };
+    if (prev) prev.addEventListener('click', function () { page(-1); });
+    if (next) next.addEventListener('click', function () { page(1); });
     bar.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
     onScroll();
 
     var byId = {};

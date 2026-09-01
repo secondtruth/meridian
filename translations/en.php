@@ -15,6 +15,8 @@ return [
         'balance' => 'Balance',
         'watchlist' => 'Watchlist',
         'topics_aria' => 'Topics',
+        'scroll_prev' => 'Scroll topics left',
+        'scroll_next' => 'Scroll topics right',
     ],
     'welcome' => [
         'aria' => 'Introduction for first-time visitors',
