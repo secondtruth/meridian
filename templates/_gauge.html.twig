@@ -1,0 +1,10 @@
+{# One axis gauge: a diverging bar from the centre line to the rating's
+   position, coloured by band. `value` is the -3..+3 rating, `color` a CSS
+   colour expression; the .gauge styles live in layout.html.twig. #}
+{% macro bar(name, title, value, color) %}
+{%- set pct = axis_percent(value) -%}
+<span class="gauge" title="{{ title }}">
+  <span class="name">{{ name }}</span>
+  <span class="track"><span class="fill" style="{% if pct >= 50 %}left: 50%; width: {{ pct - 50 }}%{% else %}left: {{ pct }}%; width: {{ 50 - pct }}%{% endif %}; background: {{ color }}"></span></span>
+</span>
+{% endmacro %}

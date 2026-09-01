@@ -3,6 +3,7 @@
    actions — only for articles the edition itself resolves (see
    docs/accounts.md); collection pages render read-only cards. #}
 {% import '_icons.html.twig' as ui %}
+{% import '_gauge.html.twig' as gauge %}
 {% set r = article.source.rating %}
 {% set is_read = interactive and read_urls[article.item.link] is defined %}
 <article class="card{{ is_read ? ' is-read' }}">
@@ -12,7 +13,7 @@
     {% endif %}
     <span class="src">{{ article.source.name }}</span>
     <span class="cc">{{ article.source.country }}</span>
-    <span class="pill">{{ label_perspective(article.source.perspective) }}</span>
+    <span class="pill persp-{{ article.source.perspective }}">{{ label_perspective(article.source.perspective) }}</span>
     {% if is_read %}<span class="readmark" title="{{ t('edition.read_title') }}">{{ ui.icon('check') }}</span>{% endif %}
     <span class="time">{{ article.item.published|reltime }}</span>
   </div>
@@ -31,14 +32,8 @@
     {% if r.stateInfluence != 'none' %}<span class="tag">{{ label_state_influence(r.stateInfluence) }}</span>{% endif %}
   </div>
   <div class="instruments">
-    <span class="gauge" title="{{ t('axis.economic_title') }}: {{ label_economic(r.economic) }} ({{ r.economic|decimal }})">
-      <span class="name">{{ t('axis.econ_short') }}</span>
-      <span class="track"><span class="dot" style="left: {{ axis_percent(r.economic) }}%; background: var(--econ-{{ band_of(r.economic) }})"></span></span>
-    </span>
-    <span class="gauge" title="{{ t('axis.cultural_title') }}: {{ label_cultural(r.cultural) }} ({{ r.cultural|decimal }})">
-      <span class="name">{{ t('axis.galtan_short') }}</span>
-      <span class="track"><span class="dot" style="left: {{ axis_percent(r.cultural) }}%; background: var(--cult-{{ band_of(r.cultural) }})"></span></span>
-    </span>
+    {{ gauge.bar(t('axis.econ_short'), t('axis.economic_title') ~ ': ' ~ label_economic(r.economic) ~ ' (' ~ r.economic|decimal ~ ')', r.economic, 'var(--econ-' ~ band_of(r.economic) ~ ')') }}
+    {{ gauge.bar(t('axis.galtan_short'), t('axis.cultural_title') ~ ': ' ~ label_cultural(r.cultural) ~ ' (' ~ r.cultural|decimal ~ ')', r.cultural, 'var(--cult-' ~ band_of(r.cultural) ~ ')') }}
     <span class="rel" role="img"
           aria-label="{{ t('reliability.title') }}: {{ r.reliability }}/5"
           title="{{ t('reliability.title') }}: {{ r.reliability }}/5 · {{ t('party_family.label') }}: {{ label_party_family(r.partyFamily) }}">{{ reliability_dots(r.reliability) }}</span>

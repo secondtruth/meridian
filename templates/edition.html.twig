@@ -34,9 +34,14 @@
   .sectionhead .spread { margin-left: auto; display: flex; align-items: center; gap: .55rem; }
   .spread .label { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
   .sectionhead .persp { font-size: .74rem; color: var(--muted); }
-  .sectionhead .persp b { color: var(--ink); font-weight: 500; }
+  .sectionhead .persp b { color: var(--persp, var(--ink)); font-weight: 600; }
 
-  .blindspot { margin: -.3rem 0 .8rem; font-size: .74rem; color: var(--muted); }
+  .blindspot {
+    margin: -.3rem 0 .8rem; font-size: .74rem; color: var(--muted);
+    display: flex; align-items: baseline; gap: .45rem;
+    border-left: 2px solid var(--accent); padding-left: .6rem;
+  }
+  .blindspot .icon { color: var(--accent); align-self: center; }
   .blindspot b { font-weight: 600; color: var(--ink); letter-spacing: .04em; }
 
   .dailylimit { max-width: 76rem; margin: 0 auto; padding: .9rem clamp(1rem, 4vw, 2.5rem) 0; }
@@ -143,7 +148,7 @@
         <p class="context">
           <span class="count">{{ section.articles|length == 1 ? t('edition.articles_count_one') : t('edition.articles_count', section.articles|length) }}</span>
           <span class="persp">{{ t('edition.perspectives_in') }}
-            <b>{% for p in section.diversity.coveredPerspectives %}{{ label_perspective(p) }}{% if not loop.last %} · {% endif %}{% endfor %}</b>
+            {% for p in section.diversity.coveredPerspectives %}<b class="persp-{{ p }}">{{ label_perspective(p) }}</b>{% if not loop.last %} · {% endif %}{% endfor %}
           </span>
         </p>
       </div>
@@ -162,8 +167,9 @@
     {% endfor %}
     {% if blindspots %}
     <p class="blindspot">
-      <b>{{ t('edition.blindspot_intro') }}</b>
-      {% for spot in blindspots %}{{ spot in ['left', 'right'] ? t('edition.blindspot_' ~ spot) : spot }}{% if not loop.last %} · {% endif %}{% endfor %}
+      {{ ui.icon('eye-off') }}
+      <span><b>{{ t('edition.blindspot_intro') }}</b>
+      {% for spot in blindspots %}{{ spot in ['left', 'right'] ? t('edition.blindspot_' ~ spot) : spot }}{% if not loop.last %} · {% endif %}{% endfor %}</span>
     </p>
     {% endif %}
     <div class="cards">

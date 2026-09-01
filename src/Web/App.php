@@ -233,7 +233,7 @@ final class App
         return $view->render('sources.html.twig', [
             'nav_active' => 'sources',
             'sources' => $this->registry->all(),
-            'map_points' => $this->spectrumMapPoints(),
+            'map_points' => SpectrumMap::points($this->registry->all()),
             'dataset_grid' => AxisGrid::count($this->registry->all()),
             'in_focus' => $inFocus,
             'perspective_counts' => $perspectiveCounts,
@@ -436,51 +436,5 @@ final class App
         } catch (\RuntimeException) {
             return [];
         }
-    }
-
-    /**
-     * Precomputes spectrum-map coordinates (economic → x, cultural → y,
-     * TAN up) with greedy label collision avoidance: labels near the
-     * right edge flip to the left of their dot, overlapping labels are
-     * nudged downwards.
-     *
-     * @return list<array{source: \Meridian\Registry\Source, cx: float, cy: float,
-     *                    lx: float, ly: float, anchor: string}>
-     */
-    private function spectrumMapPoints(): array
-    {
-        $points = [];
-        foreach ($this->registry->all() as $source) {
-            $cx = 50.0 + ($source->rating->economic + 3.0) / 6.0 * 640.0;
-            $cy = 30.0 + (3.0 - $source->rating->cultural) / 6.0 * 380.0;
-            $flip = $cx > 600.0;
-            $points[] = [
-                'source' => $source,
-                'cx' => $cx,
-                'cy' => $cy,
-                'lx' => $flip ? $cx - 12.0 : $cx + 12.0,
-                'ly' => $cy + 4.0,
-                'anchor' => $flip ? 'end' : 'start',
-            ];
-        }
-
-        usort($points, fn ($a, $b) => $a['ly'] <=> $b['ly']);
-        $labelWidth = fn (array $p): float => strlen($p['source']->id) * 6.5;
-        for ($pass = 0; $pass < 3; ++$pass) {
-            foreach ($points as $i => $p) {
-                foreach (array_slice($points, 0, $i) as $other) {
-                    $overlapY = abs($p['ly'] - $other['ly']) < 13.0;
-                    $aStart = $p['anchor'] === 'end' ? $p['lx'] - $labelWidth($p) : $p['lx'];
-                    $bStart = $other['anchor'] === 'end' ? $other['lx'] - $labelWidth($other) : $other['lx'];
-                    $overlapX = $aStart < $bStart + $labelWidth($other) && $bStart < $aStart + $labelWidth($p);
-                    if ($overlapY && $overlapX) {
-                        $points[$i]['ly'] = $other['ly'] + 13.0;
-                        $p = $points[$i];
-                    }
-                }
-            }
-        }
-
-        return $points;
     }
 }

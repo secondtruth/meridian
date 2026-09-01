@@ -62,7 +62,9 @@ php -S 127.0.0.1:8932 -t public     # dev server
   routes the public pages (`/`, `/sources`, `/publishers`,
   `/collections`, `/categories`, `/methodology`, 404); `/publishers` groups the sources by their
   `publisher` field (`Registry::publishers()` → `Registry\Publisher`) to
-  surface media ownership, Ground-News-style. `AccountRoutes` owns every
+  surface media ownership, Ground-News-style. `SpectrumMap` lays out the
+  `/sources` map (coincident dots spread apart, labels only where they
+  collide with nothing, the rest numbered). `AccountRoutes` owns every
   path that needs an account and returns null for the rest, so `App`
   falls through. `Request`/`Response`/`Cookie` keep handlers free of
   superglobals and `header()`; `View` is the per-request Twig

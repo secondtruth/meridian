@@ -1,4 +1,5 @@
 {% extends 'layout.html.twig' %}
+{% import '_gauge.html.twig' as gauge %}
 
 {% block title %}Meridian — {{ t('nav.sources') }}{% endblock %}
 
@@ -10,6 +11,16 @@
   .mapwrap svg { display: block; width: 100%; height: auto; min-width: 560px; }
   .maplegend { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; margin-top: .7rem; font-size: .74rem; color: var(--muted); }
   .maplegend .sw { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: .3rem; }
+  .mapindex { margin: .7rem 0 0; padding-top: .6rem; border-top: 1px solid var(--line); font-size: .74rem; color: var(--muted); }
+  .mapindex ol {
+    margin: .3rem 0 0; padding: 0; list-style: none;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: .2rem .9rem;
+  }
+  .mapindex li { display: flex; align-items: baseline; gap: .4rem; color: var(--ink); }
+  .mapindex .n {
+    flex-shrink: 0; min-width: 1.35rem; text-align: center; border-radius: 999px;
+    color: var(--surface); font-size: .66rem; font-weight: 700; line-height: 1.35rem; align-self: center;
+  }
 
   .srcgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr)); gap: .8rem; }
   .srccard .head { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
@@ -85,11 +96,16 @@
           {% set r = point.source.rating %}
           <g role="img" aria-label="{{ point.source.name }} — {{ rating_summary(r) }}">
             <title>{{ point.source.name }} — {{ rating_summary(r) }} · {{ t('sources.reliability_summary', r.reliability) }} · {{ t('sources.confidence_summary', t('grade.' ~ r.confidence)) }}</title>
-            <circle cx="{{ point.cx }}" cy="{{ point.cy }}" r="{{ 4 + r.reliability }}"
+            <circle cx="{{ point.cx|number_format(1, '.', '') }}" cy="{{ point.cy|number_format(1, '.', '') }}" r="{{ point.r }}"
                     fill="var(--persp-{{ point.source.perspective }})" fill-opacity="0.85"
                     stroke="var(--surface)" stroke-width="1.5"/>
-            <text x="{{ point.lx }}" y="{{ point.ly }}" font-size="11" fill="var(--ink)"
-                  text-anchor="{{ point.anchor }}">{{ point.source.id }}</text>
+            {% if point.number is null %}
+            <text x="{{ point.lx|number_format(1, '.', '') }}" y="{{ point.ly|number_format(1, '.', '') }}" font-size="11" fill="var(--ink)"
+                  text-anchor="{{ point.anchor }}">{{ point.source.name }}</text>
+            {% else %}
+            <text x="{{ point.cx|number_format(1, '.', '') }}" y="{{ (point.cy + 2.6)|number_format(1, '.', '') }}" font-size="{{ point.number < 10 ? 8 : 7 }}" font-weight="700"
+                  fill="var(--surface)" text-anchor="middle">{{ point.number }}</text>
+            {% endif %}
           </g>
         {% endfor %}
       </svg>
@@ -100,7 +116,19 @@
         <span><span class="sw" style="background: var(--persp-international)"></span>{{ label_perspective('international') }}</span>
         <span>{{ t('sources.map_dotsize') }}</span>
         <span>{{ t('sources.map_axis_note') }}</span>
+        <span>{{ t('sources.map_jitter') }}</span>
       </div>
+      {% set numbered = map_points|filter(p => p.number is not null) %}
+      {% if numbered is not empty %}
+      <div class="mapindex">
+        {{ t('sources.map_index') }}
+        <ol>
+          {% for point in numbered %}
+          <li><span class="n" style="background: var(--persp-{{ point.source.perspective }})">{{ point.number }}</span> {{ point.source.name }}</li>
+          {% endfor %}
+        </ol>
+      </div>
+      {% endif %}
     </div>
   </section>
 
@@ -119,7 +147,7 @@
           {% endif %}
           <h3><a href="{{ source.homepage }}" rel="noopener">{{ source.name }}</a></h3>
           <span class="cc">{{ source.country }}</span>
-          <span class="pill">{{ label_perspective(source.perspective) }}</span>
+          <span class="pill persp-{{ source.perspective }}">{{ label_perspective(source.perspective) }}</span>
         </div>
         <div class="tags">
           <span class="tag">{{ label_economic(r.economic) }}</span>
@@ -128,18 +156,9 @@
           <span class="tag">{{ label_state_influence(r.stateInfluence) }}</span>
         </div>
         <div class="gauges">
-          <span class="gauge" title="{{ t('axis.economic_title') }}: {{ r.economic|decimal }}">
-            <span class="name">{{ t('axis.econ_short') }}</span>
-            <span class="track"><span class="dot" style="left: {{ axis_percent(r.economic) }}%; background: var(--econ-{{ band_of(r.economic) }})"></span></span>
-          </span>
-          <span class="gauge" title="{{ t('axis.cultural_title') }}: {{ r.cultural|decimal }}">
-            <span class="name">{{ t('axis.galtan_short') }}</span>
-            <span class="track"><span class="dot" style="left: {{ axis_percent(r.cultural) }}%; background: var(--cult-{{ band_of(r.cultural) }})"></span></span>
-          </span>
-          <span class="gauge" title="{{ t('axis.eu_title') }}: {{ r.euStance|decimal }}">
-            <span class="name">{{ t('axis.eu_short') }}</span>
-            <span class="track"><span class="dot" style="left: {{ axis_percent(r.euStance) }}%; background: var(--accent)"></span></span>
-          </span>
+          {{ gauge.bar(t('axis.econ_short'), t('axis.economic_title') ~ ': ' ~ r.economic|decimal, r.economic, 'var(--econ-' ~ band_of(r.economic) ~ ')') }}
+          {{ gauge.bar(t('axis.galtan_short'), t('axis.cultural_title') ~ ': ' ~ r.cultural|decimal, r.cultural, 'var(--cult-' ~ band_of(r.cultural) ~ ')') }}
+          {{ gauge.bar(t('axis.eu_short'), t('axis.eu_title') ~ ': ' ~ r.euStance|decimal, r.euStance, 'var(--accent)') }}
         </div>
         <dl>
           <dt>{{ t('sources.reliability') }}</dt>

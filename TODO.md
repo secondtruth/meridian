@@ -73,6 +73,18 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Design pass after the category bar (2026-09-01): priority+ topbar
+      (all pages inline from 76 rem, Kategorien/Archiv/Methodik in the
+      ellipsis below, mode switch drops to its own row below 60 rem);
+      category bar with hidden scrollbar, edge fades and a scroll-spy
+      active state; spectrum map laid out by `Web\SpectrumMap` (display
+      names, coincident dots spread on a ring, labels only where they
+      collide with nothing, the rest numbered inside the dot with an
+      index below — SpectrumMapTest); one-title publishers collapsed
+      into one card ("ein Titel" gone); perspective colours on pills
+      and section heads (`persp-*` classes, global-south darkened for
+      contrast); blind-spot line with eye-off icon and accent edge;
+      axis gauges as diverging bars from the centre (`_gauge.html.twig`)
 - [x] Category bar under the topbar, Ground-News-style (2026-09-01):
       the edition's topic pill row became a shared `subnav` rail in the
       layout (`.catbar`); edition, /categories and /archive/<date> fill

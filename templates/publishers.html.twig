@@ -9,12 +9,11 @@
   .pubcard .head h3 { margin: 0; font-size: 1.02rem; font-weight: 700; }
   .pubcard .head .cc { font-size: .72rem; color: var(--muted); letter-spacing: .08em; }
   .pubcard .head .pill { margin-left: auto; }
-  .pubcard .count-badge {
-    margin-left: auto; font-size: .66rem; font-weight: 600; color: var(--muted);
-    font-variant-numeric: tabular-nums;
-  }
-  .pubcard .meta { font-size: .74rem; color: var(--muted); }
-  .pubcard .meta b { color: var(--ink); font-weight: 600; }
+  .pubcard .head .rel { margin-left: auto; font-size: .74rem; }
+  .pubcard .head .pill + .rel { margin-left: 0; }
+  .pubcard .outletline { margin: 0; font-size: .8rem; color: var(--muted); }
+  .pubcard .outletline a { text-decoration: none; font-weight: 600; color: var(--ink); }
+  .pubcard .outletline a:hover { color: var(--accent); text-decoration: underline; }
   .pubcard .outlets { list-style: none; margin: 0; padding: .55rem 0 0; border-top: 1px solid var(--line); display: grid; gap: .55rem; }
   .pubcard .outlet { display: flex; flex-direction: column; gap: .28rem; }
   .pubcard .outlet .line { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
@@ -53,15 +52,12 @@
     </div>
     <div class="pubgrid">
       {% for publisher in publishers %}
-      <article class="card pubcard {{ publisher.isGroup ? 'group' }}">
+      {% if publisher.isGroup %}
+      <article class="card pubcard group">
         <div class="head">
           <h3>{{ publisher.name }}</h3>
           <span class="cc">{{ publisher.countries|join(' · ') }}</span>
-          {% if publisher.isGroup %}
-            <span class="pill">{{ t('publishers.group_badge', publisher.outletCount) }}</span>
-          {% else %}
-            <span class="count-badge">{{ t('publishers.single_badge') }}</span>
-          {% endif %}
+          <span class="pill">{{ t('publishers.group_badge', publisher.outletCount) }}</span>
         </div>
         <div class="tags">
           {% for ownership in publisher.ownerships %}
@@ -80,7 +76,7 @@
           <li class="outlet">
             <div class="line">
               <a href="{{ outlet.homepage }}" rel="noopener">{{ outlet.name }}</a>
-              <span class="pill">{{ label_perspective(outlet.perspective) }}</span>
+              <span class="pill persp-{{ outlet.perspective }}">{{ label_perspective(outlet.perspective) }}</span>
               <span class="rel">{{ reliability_dots(r.reliability) }}</span>
             </div>
             <div class="tags">
@@ -92,6 +88,33 @@
           </li>
           {% endfor %}
         </ul>
+      {% else %}
+      {# A house with one title is that title: one card, the outlet's own
+         rating, the house named only where it differs from the outlet. #}
+      {% set outlet = publisher.outlets|first %}
+      {% set r = outlet.rating %}
+      <article class="card pubcard">
+        <div class="head">
+          <h3>{{ publisher.name }}</h3>
+          <span class="cc">{{ publisher.countries|join(' · ') }}</span>
+          <span class="pill persp-{{ outlet.perspective }}">{{ label_perspective(outlet.perspective) }}</span>
+          <span class="rel">{{ reliability_dots(r.reliability) }}</span>
+        </div>
+        {% if outlet.name != publisher.name %}
+        <p class="outletline">{{ t('publishers.outlet_label') }}: <a href="{{ outlet.homepage }}" rel="noopener">{{ outlet.name }}</a></p>
+        {% else %}
+        <p class="outletline"><a href="{{ outlet.homepage }}" rel="noopener">{{ outlet.homepage|replace({'https://': '', 'http://': ''})|trim('/') }}</a></p>
+        {% endif %}
+        <div class="tags">
+          {% for ownership in publisher.ownerships %}
+            <span class="tag">{{ t('ownership.' ~ ownership) }}</span>
+          {% endfor %}
+          <span class="tag">{{ label_economic(r.economic) }}</span>
+          <span class="tag">{{ label_cultural(r.cultural) }}</span>
+          <span class="tag">{{ label_eu(r.euStance) }}</span>
+          <span class="tag">{{ label_state_influence(r.stateInfluence) }}</span>
+        </div>
+      {% endif %}
         <dl>
           <dt>{{ t('publishers.funding') }}</dt><dd>{% for f in publisher.fundings %}{{ t('funding.' ~ f) }}{% if not loop.last %}, {% endif %}{% endfor %}</dd>
           <dt>{{ t('publishers.reliability') }}</dt>

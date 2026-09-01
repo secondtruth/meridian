@@ -27,7 +27,7 @@
     --shadow-panel: 0 6px 18px #0002;
     --econ-0: #a8362d; --econ-1: #bf6a52; --econ-2: #a39e90; --econ-3: #4f74a8; --econ-4: #2d5290;
     --cult-0: #3c7d3a; --cult-1: #6f9a55; --cult-2: #a39e90; --cult-3: #a07946; --cult-4: #7d5426;
-    --persp-dach: #0d6e60; --persp-europe: #4f74a8; --persp-global-south: #b07818; --persp-international: #716d62;
+    --persp-dach: #0d6e60; --persp-europe: #4f74a8; --persp-global-south: #9a6612; --persp-international: #716d62;
   }
   [data-theme="dark"] { color-scheme: dark; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; } }
@@ -143,10 +143,24 @@
   .accountbtn.active { border-color: var(--accent); color: var(--accent); }
   .langbtn:hover, .themebtn:hover, .accountbtn:hover { color: var(--ink); }
 
-  @media (max-width: 45rem) {
+  /* Priority+ navigation. At the content width (76rem) every page sits
+     inline and the overflow menu disappears; narrower, the .wide links
+     move into it. Below 60rem the mode switch drops to its own row so
+     the navigation never wraps a single item; below 45rem the
+     navigation follows it. */
+  .mainnav a.wide { display: none; }
+  @media (min-width: 76rem) {
+    .mainnav a.wide { display: inline-block; }
+    .morenav { display: none; }
+  }
+  @media (max-width: 60rem) {
     .topbar { flex-wrap: wrap; column-gap: .5rem; row-gap: .3rem; }
-    .mainnav { order: 10; flex-basis: 100%; margin-left: 0; }
+    .topbar::after { content: ""; flex-basis: 100%; height: 0; order: 10; }
     .modeswitch { order: 11; }
+  }
+  @media (max-width: 45rem) {
+    .topbar::after { display: none; }
+    .mainnav { order: 10; flex-basis: 100%; margin-left: 0; }
   }
 
   /* ── Category bar: second rail under the topbar on topic-bearing pages ── */
@@ -154,14 +168,23 @@
     display: flex; align-items: center; gap: .2rem;
     padding: .35rem clamp(1rem, 4vw, 2.5rem);
     background: var(--surface); border-bottom: 1px solid var(--line);
-    overflow-x: auto; scrollbar-width: thin;
+    overflow-x: auto; scrollbar-width: none;
+    /* The fade hints at hidden items; the last link's margin keeps it out
+       of the fade once scrolled to the end. */
+    mask-image: linear-gradient(90deg, #000 calc(100% - 3rem), transparent);
+  }
+  .catbar::-webkit-scrollbar { display: none; }
+  .catbar.scrolled {
+    mask-image: linear-gradient(90deg, transparent, #000 3rem, #000 calc(100% - 3rem), transparent);
   }
   .catbar a {
     flex: 0 0 auto; display: inline-flex; align-items: center; gap: .4rem;
     text-decoration: none; font-size: .76rem; font-weight: 600; color: var(--muted);
     padding: .26rem .7rem; border-radius: 999px; white-space: nowrap;
   }
+  .catbar a:last-child { margin-right: 3rem; }
   .catbar a:hover { color: var(--ink); background: var(--accent-soft); }
+  .catbar a.active { color: var(--accent); background: var(--accent-soft); }
   .catbar a b { color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 600; }
   .catbar .icon { width: .95em; height: .95em; vertical-align: -.12em; }
 
@@ -264,6 +287,14 @@
     font-size: .66rem; font-weight: 600; padding: .08rem .5rem; letter-spacing: .04em;
     white-space: nowrap;
   }
+  /* Perspective is the first diversity dimension, so it carries the same
+     colour everywhere: pills, section heads, the spectrum map. */
+  .persp-dach { --persp: var(--persp-dach); }
+  .persp-europe { --persp: var(--persp-europe); }
+  .persp-global-south { --persp: var(--persp-global-south); }
+  .persp-international { --persp: var(--persp-international); }
+  .pill[class*="persp-"] { border-color: var(--persp); color: var(--persp); }
+  b[class*="persp-"] { color: var(--persp); }
   .tag {
     font-size: .64rem; color: var(--muted); border: 1px solid var(--line);
     border-radius: .25rem; padding: .05rem .4rem; background: var(--bg);
@@ -276,9 +307,8 @@
     content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px;
     background: var(--line-strong);
   }
-  .gauge .dot {
-    position: absolute; top: 50%; width: 9px; height: 9px; border-radius: 50%;
-    transform: translate(-50%, -50%); border: 1.5px solid var(--surface); z-index: 1;
+  .gauge .fill {
+    position: absolute; top: 0; bottom: 0; min-width: 2px; border-radius: 999px; z-index: 1;
   }
   .rel { letter-spacing: .12em; color: var(--muted); white-space: nowrap; }
 
@@ -373,15 +403,20 @@
     <a href="/sources" class="{{ nav_active == 'sources' ? 'active' }}">{{ t('nav.sources') }}</a>
     <a href="/publishers" class="{{ nav_active == 'publishers' ? 'active' }}">{{ t('nav.publishers') }}</a>
     <a href="/collections" class="{{ nav_active == 'collections' ? 'active' }}">{{ t('nav.collections') }}</a>
-    <a href="/categories" class="{{ nav_active == 'categories' ? 'active' }}">{{ t('nav.categories') }}</a>
+    <a href="/categories" class="wide {{ nav_active == 'categories' ? 'active' }}">{{ t('nav.categories') }}</a>
     {% if viewer.isSignedIn %}
       <a href="/balance" class="{{ nav_active == 'balance' ? 'active' }}">{{ t('nav.balance') }}</a>
       <a href="/watchlist" class="{{ nav_active == 'watchlist' ? 'active' }}">{{ t('nav.watchlist') }}</a>
     {% endif %}
+    <a href="/archive" class="wide {{ nav_active == 'archive' ? 'active' }}">{{ t('nav.archive') }}</a>
+    <a href="/methodology" class="wide {{ nav_active == 'methodology' ? 'active' }}">{{ t('nav.methodology') }}</a>
+    {# Priority+ overflow: below the full-width breakpoint the .wide links
+       hide and this menu carries them instead (see the topbar CSS). #}
     <details class="morenav">
-      <summary class="{{ nav_active in ['archive', 'methodology'] ? 'active' }}"
+      <summary class="{{ nav_active in ['categories', 'archive', 'methodology'] ? 'active' }}"
                aria-label="{{ t('nav.more') }}" title="{{ t('nav.more') }}">{{ ui.icon('ellipsis') }}</summary>
       <div class="morepanel">
+        <a href="/categories" class="{{ nav_active == 'categories' ? 'active' }}">{{ t('nav.categories') }}</a>
         <a href="/archive" class="{{ nav_active == 'archive' ? 'active' }}">{{ t('nav.archive') }}</a>
         <a href="/methodology" class="{{ nav_active == 'methodology' ? 'active' }}">{{ t('nav.methodology') }}</a>
       </div>
@@ -434,6 +469,44 @@
   })();
 </script>
 {% endif %}
+<script>
+  // Category bar: fade the scrolled-out side and mark the section in view.
+  (function () {
+    var bar = document.querySelector('.catbar');
+    if (!bar) return;
+    var links = Array.prototype.slice.call(bar.querySelectorAll('a[href^="#"]'));
+    var onScroll = function () { bar.classList.toggle('scrolled', bar.scrollLeft > 4); };
+    bar.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    var byId = {};
+    links.forEach(function (link) { byId[link.getAttribute('href').slice(1)] = link; });
+    var setActive = function (id) {
+      links.forEach(function (link) { link.classList.toggle('active', link === byId[id]); });
+      var link = byId[id];
+      if (!link) return;
+      var left = link.offsetLeft - bar.clientWidth / 2 + link.offsetWidth / 2;
+      bar.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+    };
+    var targets = Object.keys(byId).map(function (id) { return document.getElementById(id); }).filter(Boolean);
+    if (!targets.length || !('IntersectionObserver' in window)) return;
+    var visible = {};
+    var pick = function () {
+      var best = null;
+      targets.forEach(function (el) {
+        if (visible[el.id] && (!best || el.getBoundingClientRect().top < best.getBoundingClientRect().top)) best = el;
+      });
+      if (best) setActive(best.id);
+    };
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { visible[entry.target.id] = entry.isIntersecting; });
+      pick();
+    }, { rootMargin: '-30% 0px -55% 0px' });
+    targets.forEach(function (el) { observer.observe(el); });
+    window.addEventListener('hashchange', function () { setActive(location.hash.slice(1)); });
+    if (location.hash) setActive(location.hash.slice(1));
+  })();
+</script>
 <script>
   // Close the overflow menu when clicking or focusing elsewhere.
   (function () {
