@@ -42,6 +42,9 @@
   .topicnav a:hover { color: var(--ink); border-color: var(--accent); }
   .topicnav a b { color: var(--accent); font-variant-numeric: tabular-nums; }
 
+  .sectionhead { align-items: center; }
+  .sectionhead .titling { display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+  .sectionhead .context { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem 1.1rem; }
   .sectionhead .spread { margin-left: auto; display: flex; align-items: center; gap: .55rem; }
   .spread .label { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
   .sectionhead .persp { font-size: .74rem; color: var(--muted); }
@@ -147,11 +150,15 @@
   {% for section in edition.sections %}
   <section id="{{ section.topic }}">
     <div class="sectionhead">
-      <h2>{{ label_topic(section.topic) }}</h2>
-      <span class="count">{{ section.articles|length == 1 ? t('edition.articles_count_one') : t('edition.articles_count', section.articles|length) }}</span>
-      <span class="persp">{{ t('edition.perspectives_in') }}
-        <b>{% for p in section.diversity.coveredPerspectives %}{{ label_perspective(p) }}{% if not loop.last %} · {% endif %}{% endfor %}</b>
-      </span>
+      <div class="titling">
+        <h2>{{ label_topic(section.topic) }}</h2>
+        <p class="context">
+          <span class="count">{{ section.articles|length == 1 ? t('edition.articles_count_one') : t('edition.articles_count', section.articles|length) }}</span>
+          <span class="persp">{{ t('edition.perspectives_in') }}
+            <b>{% for p in section.diversity.coveredPerspectives %}{{ label_perspective(p) }}{% if not loop.last %} · {% endif %}{% endfor %}</b>
+          </span>
+        </p>
+      </div>
       <span class="spread">
         <span class="label">{{ t('edition.spectrum') }}</span>
         {% set d = section.economicDistribution %}

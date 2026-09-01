@@ -73,6 +73,12 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] Section head split into two lines (2026-09-01): the axis grid
+      already gives the row its height, so article count and
+      perspectives moved below the topic title; grid stays right,
+      wraps under on narrow viewports (measured at 375 px, no
+      horizontal overflow). Archive heads (title + count only) are
+      untouched
 - [x] First-visit welcome box on the edition page (2026-08-31): what
       Meridian is and why, the three axes with GAL–TAN/DACH spelled
       out, what the spectrum grid shows, link to /methodology; both
