@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Meridian\Web;
+namespace Meridian\Web\Controller;
 
 use Meridian\Auth\OidcConfig;
+use Meridian\Web\Request;
+use Meridian\Web\Response;
+use Meridian\Web\View;
 
 /**
  * Pages that are text rather than data: the methodology, the Impressum
@@ -25,7 +28,7 @@ use Meridian\Auth\OidcConfig;
  * dynamically from the OIDC configuration, so the published text always
  * matches the deployment instead of a hardcoded name.
  */
-final readonly class ContentPages
+final readonly class ContentController
 {
     public function __construct(private ?OidcConfig $oidc)
     {

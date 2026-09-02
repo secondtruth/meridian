@@ -17,9 +17,9 @@ use Meridian\I18n\Translator;
 use Meridian\Registry\Rating;
 use Meridian\Registry\Registry;
 use Meridian\Registry\Source;
-use Meridian\Web\AccountRoutes;
-use Meridian\Web\ReadingRoutes;
-use Meridian\Web\SignInRoutes;
+use Meridian\Web\Controller\AccountController;
+use Meridian\Web\Controller\ReadingController;
+use Meridian\Web\Controller\SignInController;
 use Meridian\Web\Request;
 use Meridian\Web\View;
 use Meridian\Web\Viewer;
@@ -81,9 +81,9 @@ final class AccountAreaTest extends TestCase
         $client = $accountsConfigured
             ? new OidcClient(new OidcConfig('https://id.example', 'meridian', 'secret'), $this->cacheDir)
             : null;
-        $signIn = new SignInRoutes($this->store, $client);
-        $account = new AccountRoutes($this->store, $client);
-        $reading = new ReadingRoutes(
+        $signIn = new SignInController($this->store, $client);
+        $account = new AccountController($this->store, $client);
+        $reading = new ReadingController(
             $this->store,
             $this->registry(),
             new Builder(),

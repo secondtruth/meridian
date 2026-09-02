@@ -7,6 +7,12 @@ namespace Meridian\Web;
 use Meridian\Account\Sessions;
 use Meridian\I18n\Translator;
 use Meridian\Services;
+use Meridian\Web\Controller\AccountController;
+use Meridian\Web\Controller\ContentController;
+use Meridian\Web\Controller\DatasetController;
+use Meridian\Web\Controller\EditionController;
+use Meridian\Web\Controller\ReadingController;
+use Meridian\Web\Controller\SignInController;
 
 /**
  * Request-scoped wiring for all pages — Meridian is a website.
@@ -66,14 +72,14 @@ final readonly class App
     {
         $s = $this->services;
 
-        return new SignInRoutes($s->store(), $s->oidcClient())->handle($request, $view, $viewer)
-            ?? new AccountRoutes($s->store(), $s->oidcClient())->handle($request, $view, $viewer)
-            ?? new ReadingRoutes($s->store(), $s->registry(), $s->builder(), $s->itemCache())
+        return new SignInController($s->store(), $s->oidcClient())->handle($request, $view, $viewer)
+            ?? new AccountController($s->store(), $s->oidcClient())->handle($request, $view, $viewer)
+            ?? new ReadingController($s->store(), $s->registry(), $s->builder(), $s->itemCache())
                 ->handle($request, $view, $viewer)
-            ?? new ContentPages($s->oidcConfig())->handle($request, $view)
-            ?? new EditionRoutes($s->registry(), $s->builder(), $s->itemCache(), $s->archive(), $s->store())
+            ?? new ContentController($s->oidcConfig())->handle($request, $view)
+            ?? new EditionController($s->registry(), $s->builder(), $s->itemCache(), $s->archive(), $s->store())
                 ->handle($request, $view, $viewer)
-            ?? new DatasetRoutes($s->registry(), $s->builder(), $s->itemCache(), $s->collections())
+            ?? new DatasetController($s->registry(), $s->builder(), $s->itemCache(), $s->collections())
                 ->handle($request, $view)
             ?? $view->render('notfound.html.twig', [], 404);
     }

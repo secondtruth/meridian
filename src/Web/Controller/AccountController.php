@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Meridian\Web;
+namespace Meridian\Web\Controller;
 
 use Meridian\Account\Preferences;
 use Meridian\Account\Sessions;
@@ -10,13 +10,18 @@ use Meridian\Account\Store;
 use Meridian\Account\Watchlist;
 use Meridian\Auth\OidcClient;
 use Meridian\Edition\Classifier;
+use Meridian\Web\Cookie;
+use Meridian\Web\Request;
+use Meridian\Web\Response;
+use Meridian\Web\View;
+use Meridian\Web\Viewer;
 
 /**
  * The account itself: settings, export, clearing the history and
  * deleting the account. Every state-changing route is a POST carrying
  * the session's CSRF token. Returns null for paths it does not own.
  */
-final readonly class AccountRoutes
+final readonly class AccountController
 {
     public function __construct(
         private Store $store,

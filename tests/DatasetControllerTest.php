@@ -12,7 +12,7 @@ use Meridian\I18n\Translator;
 use Meridian\Registry\Rating;
 use Meridian\Registry\Registry;
 use Meridian\Registry\Source;
-use Meridian\Web\DatasetRoutes;
+use Meridian\Web\Controller\DatasetController;
 use Meridian\Web\Request;
 use Meridian\Web\Response;
 use Meridian\Web\View;
@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
  * template variable fails the build rather than the page, plus the
  * fall-through contract for paths the group does not own.
  */
-final class DatasetRoutesTest extends TestCase
+final class DatasetControllerTest extends TestCase
 {
     private const ROOT = __DIR__ . '/..';
 
@@ -77,7 +77,7 @@ final class DatasetRoutesTest extends TestCase
                 rating: new Rating(0.0, -0.5, 1.0, 'nonpartisan', 5, 'high', 'indirect', 'high'),
             ),
         ]);
-        $routes = new DatasetRoutes(
+        $routes = new DatasetController(
             $registry,
             new Builder(),
             new ItemCache($this->dir . '/items.json'),

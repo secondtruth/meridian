@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Meridian\Web;
+namespace Meridian\Web\Controller;
 
 use Meridian\Account\ArticleRef;
 use Meridian\Account\Reports;
@@ -14,6 +14,10 @@ use Meridian\Edition\Builder;
 use Meridian\Feed\ItemCache;
 use Meridian\Registry\Registry;
 use Meridian\Spectrum\Balance;
+use Meridian\Web\Request;
+use Meridian\Web\Response;
+use Meridian\Web\View;
+use Meridian\Web\Viewer;
 
 /**
  * What a signed-in reader does with articles: the reading balance, the
@@ -22,7 +26,7 @@ use Meridian\Spectrum\Balance;
  * so nothing a request sends can invent one (accounts.md). Returns null
  * for paths it does not own.
  */
-final readonly class ReadingRoutes
+final readonly class ReadingController
 {
     private const BALANCE_PERIODS = [7, 30, 90];
     private const REPORTS_PER_DAY = 20;

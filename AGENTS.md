@@ -70,13 +70,14 @@ php -S 127.0.0.1:8932 -t public     # dev server
 - `src/Web` — `App` resolves the viewer and locale, and hands the
   request down a chain of route groups; each owns a set of
   paths and returns null for the rest, the first non-null response wins,
-  and what nobody claims is the 404. The groups: `SignInRoutes` (the OIDC
-  handshake), `AccountRoutes` (settings, export, deletion), `ReadingRoutes`
-  (balance, watchlist, reading log, reports; `AccountGuard` holds the
-  shared sign-in and CSRF checks), `ContentPages` (text rather than data:
-  `/methodology`, `/impressum`, `/privacy`), `EditionRoutes` (`/`,
+  and what nobody claims is the 404. The groups live in `Web\Controller`:
+  `SignInController` (the OIDC handshake), `AccountController` (settings,
+  export, deletion), `ReadingController` (balance, watchlist, reading log,
+  reports; `AccountGuard` holds the shared sign-in and CSRF checks),
+  `ContentController` (text rather than data:
+  `/methodology`, `/impressum`, `/privacy`), `EditionController` (`/`,
   `/archive`, `/archive/{date}` via `Archive::restore()`) and
-  `DatasetRoutes` (`/sources`, `/publishers`, `/collections`,
+  `DatasetController` (`/sources`, `/publishers`, `/collections`,
   `/categories`). `/publishers` groups the sources by their `publisher`
   field (`Registry::publishers()` → `Registry\Publisher`) to surface
   media ownership, Ground-News-style. `SpectrumMap` lays out the

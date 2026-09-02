@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Meridian\Web;
+namespace Meridian\Web\Controller;
 
 use Meridian\Account\Store;
 use Meridian\Edition\Archive;
@@ -10,6 +10,11 @@ use Meridian\Edition\Builder;
 use Meridian\Edition\Mode;
 use Meridian\Feed\ItemCache;
 use Meridian\Registry\Registry;
+use Meridian\Web\Cookie;
+use Meridian\Web\Request;
+use Meridian\Web\Response;
+use Meridian\Web\View;
+use Meridian\Web\Viewer;
 
 /**
  * Today's edition and its frozen predecessors: `/`, `/archive` and
@@ -18,7 +23,7 @@ use Meridian\Registry\Registry;
  * Returns null for paths it does not own — including an archive date
  * that was never frozen, which App answers with its 404.
  */
-final readonly class EditionRoutes
+final readonly class EditionController
 {
     private const WELCOME_COOKIE = 'meridian-welcome';
 

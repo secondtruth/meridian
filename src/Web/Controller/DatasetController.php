@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Meridian\Web;
+namespace Meridian\Web\Controller;
 
 use Meridian\Collection\Collections;
 use Meridian\Collection\Duel;
@@ -12,13 +12,17 @@ use Meridian\Edition\Classifier;
 use Meridian\Feed\ItemCache;
 use Meridian\Registry\Registry;
 use Meridian\Spectrum\AxisGrid;
+use Meridian\Web\Request;
+use Meridian\Web\Response;
+use Meridian\Web\SpectrumMap;
+use Meridian\Web\View;
 
 /**
  * The pages that show what the dataset consists of: `/sources`,
  * `/publishers`, `/collections` and `/categories`. Returns null for
  * paths it does not own.
  */
-final readonly class DatasetRoutes
+final readonly class DatasetController
 {
     public function __construct(
         private Registry $registry,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Meridian\Web;
+namespace Meridian\Web\Controller;
 
 use Meridian\Account\Sessions;
 use Meridian\Account\Store;
@@ -10,6 +10,11 @@ use Meridian\Auth\OidcClient;
 use Meridian\Auth\OidcConfig;
 use Meridian\Auth\PendingLogin;
 use Meridian\Auth\PendingLogins;
+use Meridian\Web\Cookie;
+use Meridian\Web\Request;
+use Meridian\Web\Response;
+use Meridian\Web\View;
+use Meridian\Web\Viewer;
 
 /**
  * The OIDC handshake: `/login` starts it, the callback completes it,
@@ -17,7 +22,7 @@ use Meridian\Auth\PendingLogins;
  * no identity provider is configured, which every route answers with
  * the same "accounts are off" page.
  */
-final readonly class SignInRoutes
+final readonly class SignInController
 {
     private PendingLogins $pendingLogins;
 

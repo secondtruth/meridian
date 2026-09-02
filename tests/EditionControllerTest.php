@@ -19,7 +19,7 @@ use Meridian\Registry\Rating;
 use Meridian\Registry\Registry;
 use Meridian\Registry\Source;
 use Meridian\Spectrum\Diversity;
-use Meridian\Web\EditionRoutes;
+use Meridian\Web\Controller\EditionController;
 use Meridian\Web\Request;
 use Meridian\Web\Response;
 use Meridian\Web\View;
@@ -31,7 +31,7 @@ use PHPUnit\Framework\TestCase;
  * contract: unclaimed paths and unknown archive days return null so App
  * answers with its 404.
  */
-final class EditionRoutesTest extends TestCase
+final class EditionControllerTest extends TestCase
 {
     private const ROOT = __DIR__ . '/..';
 
@@ -87,7 +87,7 @@ final class EditionRoutesTest extends TestCase
             $request,
             $viewer,
         );
-        $routes = new EditionRoutes(
+        $routes = new EditionController(
             new Registry([self::source()]),
             new Builder(),
             new ItemCache($this->dir . '/items.json'),

@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Meridian\Web;
+namespace Meridian\Web\Controller;
+
+use Meridian\Web\Request;
+use Meridian\Web\Response;
+use Meridian\Web\View;
+use Meridian\Web\Viewer;
 
 /**
  * The checks in front of every account action. Each returns null when

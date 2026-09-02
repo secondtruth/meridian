@@ -6,7 +6,7 @@ namespace Meridian\Tests;
 
 use Meridian\Auth\OidcConfig;
 use Meridian\I18n\Translator;
-use Meridian\Web\ContentPages;
+use Meridian\Web\Controller\ContentController;
 use Meridian\Web\Request;
 use Meridian\Web\Response;
 use Meridian\Web\View;
@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  * guard (a TODO in the rendered output must surface the banner), and the
  * dynamic identity-provider naming.
  */
-final class ContentPagesTest extends TestCase
+final class ContentControllerTest extends TestCase
 {
     private const ROOT = __DIR__ . '/..';
 
@@ -38,7 +38,7 @@ final class ContentPagesTest extends TestCase
             Viewer::anonymous($oidc !== null),
         );
 
-        return new ContentPages($oidc)->handle($request, $view);
+        return new ContentController($oidc)->handle($request, $view);
     }
 
     public function testImpressumRendersCompleteWithoutDraftBanner(): void
