@@ -24,7 +24,7 @@ final class EditionsArchiveCommand extends Command
         $edition = $this->services->builder()->build(
             $this->services->registry(),
             $this->services->itemCache()->load(),
-            new \DateTimeImmutable(),
+            $this->services->clock()->now(),
             Mode::Compact,
         );
 

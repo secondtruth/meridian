@@ -43,7 +43,7 @@ final class ReportsListCommand extends Command
 
         $resolve = $input->getOption('resolve');
         if ($resolve !== null) {
-            $done = $store->reports->resolve((int) $resolve, new \DateTimeImmutable());
+            $done = $store->reports->resolve((int) $resolve, $this->services->clock()->now());
             $output->writeln($done
                 ? sprintf('report %d marked as reviewed', (int) $resolve)
                 : sprintf('<error>no open report with ID %d</error>', (int) $resolve));

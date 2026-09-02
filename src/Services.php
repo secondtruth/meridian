@@ -14,6 +14,8 @@ use Meridian\Feed\ItemCache;
 use Meridian\I18n\Translator;
 use Meridian\Registry\Registry;
 use Meridian\Registry\Topics;
+use Psr\Clock\ClockInterface;
+use Symfony\Component\Clock\NativeClock;
 
 /**
  * The composition root: every long-lived collaborator is built here,
@@ -36,9 +38,21 @@ final class Services
     private bool $oidcLoaded = false;
     private ?OidcClient $oidcClient = null;
 
-    public function __construct(public readonly string $rootDir)
-    {
+    /**
+     * @param ClockInterface $clock the process's one clock: the web entry point
+     *                              freezes it into Request::$now, a command
+     *                              reads it once at the start of its run
+     */
+    public function __construct(
+        public readonly string $rootDir,
+        private readonly ClockInterface $clock = new NativeClock(),
+    ) {
         $this->dataDir = $rootDir . '/data';
+    }
+
+    public function clock(): ClockInterface
+    {
+        return $this->clock;
     }
 
     public function registry(): Registry

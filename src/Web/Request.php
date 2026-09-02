@@ -36,7 +36,8 @@ final readonly class Request
     ) {
     }
 
-    public static function fromGlobals(): self
+    /** @param \DateTimeImmutable|null $now the process clock's reading; null falls back to the wall clock */
+    public static function fromGlobals(?\DateTimeImmutable $now = null): self
     {
         // Forwarded headers (X-Forwarded-Proto/-Host/-For) are only honored
         // when they come from a trusted peer. Default: the immediate client
@@ -64,6 +65,7 @@ final readonly class Request
             cookies: array_map(strval(...), $http->cookies->all()),
             host: $http->getHttpHost(),
             secure: $http->isSecure(),
+            now: $now ?? new \DateTimeImmutable(),
         );
     }
 

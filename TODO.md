@@ -73,6 +73,10 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] One clock (2026-09-02): `Services` carries a PSR-20 clock
+      (symfony/clock); `index.php` freezes it into `Request::$now`, the
+      three commands with a time reference read it at the start of their
+      run, tests inject a `MockClock`
 - [x] Composition root, request clock and Twig extensions (2026-09-02):
       `Services` builds the collaborators for App and bin/meridian, the
       console commands take it instead of path strings; `Request::$now`

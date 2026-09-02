@@ -31,7 +31,7 @@ final class AccountsPruneCommand extends Command
             return Command::SUCCESS;
         }
 
-        $now = new \DateTimeImmutable();
+        $now = $this->services->clock()->now();
         $removed = $store->prune($now) + (new PendingLogins($store->db))->purgeExpired($now);
 
         $output->writeln(sprintf('OK — %d expired records removed', $removed));

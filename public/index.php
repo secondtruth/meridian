@@ -17,4 +17,5 @@ if (PHP_SAPI === 'cli-server') {
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-(new App(new Services(dirname(__DIR__))))->handle(Request::fromGlobals())->send();
+$services = new Services(dirname(__DIR__));
+(new App($services))->handle(Request::fromGlobals($services->clock()->now()))->send();

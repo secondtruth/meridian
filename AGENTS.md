@@ -63,8 +63,10 @@ php -S 127.0.0.1:8932 -t public     # dev server
   from the project root. Only the two entry points (`Web\App`,
   `bin/meridian`) hold one; everything else takes its collaborators
   through the constructor, so it never becomes a service locator.
-  `Web\Request::$now` is the request's single clock — every age,
-  window and timestamp derives from it, tests pick the moment.
+  It also owns the process clock (PSR-20 via symfony/clock): `index.php`
+  freezes a reading into `Web\Request::$now`, a command reads it once at
+  the start of its run, and every age, window and timestamp derives from
+  that one moment — tests hand in a `MockClock`.
 - `src/Web` — `App` resolves the viewer and locale, and hands the
   request down a chain of route groups; each owns a set of
   paths and returns null for the rest, the first non-null response wins,
