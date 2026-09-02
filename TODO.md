@@ -73,6 +73,10 @@ From the 2026-08-27 review of Ground News, AllSides and Verity News:
 
 ## Done
 
+- [x] One curl wrapper (2026-09-02): Fetcher and FaviconMirror lost their
+      identical `download()` methods and take `Support\Http` with their
+      own timeout and redirect policy; the OIDC back channel keeps the
+      strict defaults
 - [x] Route groups renamed to controllers under `Web\Controller`
       (2026-09-02): `SignInController`, `AccountController`,
       `ReadingController`, `ContentController`, `EditionController`,

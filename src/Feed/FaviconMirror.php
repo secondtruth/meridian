@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Meridian\Feed;
 
 use Meridian\Registry\Source;
+use Meridian\Support\Http;
 
 /**
  * Mirrors source favicons into the public directory so cards can show
@@ -16,9 +17,12 @@ use Meridian\Registry\Source;
  */
 final class FaviconMirror
 {
-    private const USER_AGENT = 'Meridian/0.1 (prototype news aggregator)';
-    private const TIMEOUT_SECONDS = 15;
     private const MAX_BYTES = 262144; // an icon, not an image gallery
+
+    public function __construct(
+        private readonly Http $http = new Http(timeoutSeconds: 15, followRedirects: true),
+    ) {
+    }
 
     /**
      * Fetches and stores one source's favicon. Returns the stored
@@ -32,7 +36,7 @@ final class FaviconMirror
 
         foreach ($this->candidateUrls($source->homepage) as $url) {
             try {
-                $bytes = $this->download($url);
+                $bytes = $this->http->get($url);
             } catch (\RuntimeException) {
                 continue;
             }
@@ -62,7 +66,7 @@ final class FaviconMirror
     {
         $urls = [];
         try {
-            $declared = self::iconUrl($this->download($homepage), $homepage);
+            $declared = self::iconUrl($this->http->get($homepage), $homepage);
             if ($declared !== null) {
                 $urls[] = $declared;
             }
@@ -126,30 +130,5 @@ final class FaviconMirror
             str_contains(substr($bytes, 0, 1024), '<svg') => 'svg',
             default => null,
         };
-    }
-
-    private function download(string $url): string
-    {
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS => 5,
-            CURLOPT_TIMEOUT => self::TIMEOUT_SECONDS,
-            CURLOPT_USERAGENT => self::USER_AGENT,
-            CURLOPT_ENCODING => '',
-        ]);
-        $body = curl_exec($ch);
-        $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-        $error = curl_error($ch);
-
-        if ($body === false) {
-            throw new \RuntimeException("download failed: {$error}");
-        }
-        if ($status >= 400) {
-            throw new \RuntimeException("HTTP {$status}");
-        }
-
-        return $body;
     }
 }

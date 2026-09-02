@@ -5,20 +5,34 @@ declare(strict_types=1);
 namespace Meridian\Support;
 
 /**
- * Minimal JSON client for the OIDC back channel. Unlike the feed
- * fetcher this never follows redirects and never tolerates a failure:
- * an identity provider that answers oddly must not silently produce a
- * half-verified login.
+ * The one curl wrapper: feeds, favicons and the OIDC back channel all
+ * go through it, each with its own policy set at construction. The
+ * back channel keeps the defaults — no redirects, a short timeout —
+ * because an identity provider that answers oddly must not silently
+ * produce a half-verified login; the crawlers follow redirects and wait
+ * longer. Any failure is an exception; tolerance is the caller's call.
  */
 class Http
 {
-    private const TIMEOUT_SECONDS = 10;
     private const USER_AGENT = 'Meridian/0.1 (prototype news aggregator)';
+    private const MAX_REDIRECTS = 5;
+
+    public function __construct(
+        private readonly int $timeoutSeconds = 10,
+        private readonly bool $followRedirects = false,
+    ) {
+    }
+
+    /** The raw body of a GET — a feed document, an HTML page, an icon. */
+    public function get(string $url): string
+    {
+        return $this->send($url, null);
+    }
 
     /** @return array<string, mixed> */
     public function getJson(string $url): array
     {
-        return $this->decode($this->send($url, null), $url);
+        return $this->decode($this->send($url, null, accept: 'application/json'), $url);
     }
 
     /**
@@ -29,21 +43,23 @@ class Http
      */
     public function postForm(string $url, array $form, ?array $basicAuth = null): array
     {
-        return $this->decode($this->send($url, http_build_query($form), $basicAuth), $url);
+        return $this->decode($this->send($url, http_build_query($form), $basicAuth, 'application/json'), $url);
     }
 
     /** @param array<string, string>|null $basicAuth */
-    protected function send(string $url, ?string $body, ?array $basicAuth = null): string
+    protected function send(string $url, ?string $body, ?array $basicAuth = null, ?string $accept = null): string
     {
         $handle = curl_init($url);
         $options = [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_TIMEOUT => self::TIMEOUT_SECONDS,
+            CURLOPT_FOLLOWLOCATION => $this->followRedirects,
+            CURLOPT_MAXREDIRS => self::MAX_REDIRECTS,
+            CURLOPT_TIMEOUT => $this->timeoutSeconds,
             CURLOPT_USERAGENT => self::USER_AGENT,
+            CURLOPT_ENCODING => '',
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_HTTPHEADER => ['Accept: application/json'],
+            CURLOPT_HTTPHEADER => $accept === null ? [] : ["Accept: {$accept}"],
         ];
         if ($body !== null) {
             $options[CURLOPT_POST] = true;
@@ -64,7 +80,7 @@ class Http
             throw new \RuntimeException("request to {$url} failed: {$error}");
         }
         if ($status >= 400) {
-            throw new \RuntimeException("request to {$url} answered HTTP {$status}: " . substr($response, 0, 200));
+            throw new \RuntimeException("request to {$url} answered HTTP {$status}");
         }
 
         return $response;

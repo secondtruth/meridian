@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Meridian\Feed;
 
 use Meridian\Registry\Registry;
+use Meridian\Support\Http;
 
 /**
  * Downloads all feeds of all sources. Individual feed failures are
@@ -13,11 +14,9 @@ use Meridian\Registry\Registry;
  */
 final class Fetcher
 {
-    private const USER_AGENT = 'Meridian/0.1 (prototype news aggregator)';
-    private const TIMEOUT_SECONDS = 20;
-
     public function __construct(
         private readonly FeedParser $parser = new FeedParser(),
+        private readonly Http $http = new Http(timeoutSeconds: 20, followRedirects: true),
     ) {
     }
 
@@ -34,7 +33,7 @@ final class Fetcher
         foreach ($registry->all() as $source) {
             foreach ($source->feeds as $feedUrl) {
                 try {
-                    $parsed = $this->parser->parse($this->download($feedUrl));
+                    $parsed = $this->parser->parse($this->http->get($feedUrl));
                 } catch (\RuntimeException $e) {
                     $failed[] = $feedUrl;
                     if ($onError !== null) {
@@ -55,30 +54,5 @@ final class Fetcher
         }
 
         return ['items' => $items, 'failed' => $failed];
-    }
-
-    private function download(string $url): string
-    {
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS => 5,
-            CURLOPT_TIMEOUT => self::TIMEOUT_SECONDS,
-            CURLOPT_USERAGENT => self::USER_AGENT,
-            CURLOPT_ENCODING => '',
-        ]);
-        $body = curl_exec($ch);
-        $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-        $error = curl_error($ch);
-
-        if ($body === false) {
-            throw new \RuntimeException("download failed: {$error}");
-        }
-        if ($status >= 400) {
-            throw new \RuntimeException("HTTP {$status}");
-        }
-
-        return $body;
     }
 }
